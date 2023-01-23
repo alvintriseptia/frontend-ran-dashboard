@@ -1,3 +1,3 @@
 import Home from "./Home.vue";
-
-export { Home };
+import Count from "./Count.vue";
+export { Home, Count };

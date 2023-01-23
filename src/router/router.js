@@ -7,6 +7,11 @@ const routes = [
 		name: "home",
 		component: views.Home,
 	},
+	{
+		path: "/count",
+		name: "count",
+		component: views.Count,
+	},
 ];
 
 const router = createRouter({

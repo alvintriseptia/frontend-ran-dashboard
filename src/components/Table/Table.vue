@@ -17,5 +17,6 @@
 
 <script setup>
 import { useFetch } from "@/composables";
-const { data, error, loading } = useFetch("/api/todos");
+const url = "https://jsonplaceholder.typicode.com/todos";
+const { data, error, loading } = useFetch(url);
 </script>

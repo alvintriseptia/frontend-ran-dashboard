@@ -9,6 +9,7 @@ import {
 	SearchSelect,
 	Table,
 } from "@/components";
+import { useCounterStore } from "@/stores";
 
 const chartData = {
 	labels: ["10.00", "10.05", "10.10", "10.15", "10.20", "10.25", "10.30"],
@@ -96,6 +97,9 @@ const selectOptions = [
 	{ label: "Option 10", value: "option-10" },
 	{ label: "Option 11", value: "option-11" },
 ];
+
+const counterStore = useCounterStore();
+const { increment } = counterStore;
 </script>
 
 <template>
@@ -133,10 +137,19 @@ const selectOptions = [
 			<h2 class="font-semibold">Search Select Option</h2>
 			<SearchSelect :options="selectOptions" />
 		</div>
+		<div class="flex flex-col gap-y-4 items-center w-full">
+			<h2 class="font-semibold">Counter using Pinia</h2>
+			<h3>{{ counterStore }}</h3>
+			<Button @click="increment">Count up</Button>
+
+			<router-link class="text-blue-500" to="/count">
+				Go to Count View
+			</router-link>
+		</div>
 		<div class="flex flex-col gap-y-4 items-center"></div>
 		<div class="flex flex-col gap-y-4 items-center w-full">
 			<h2 class="font-semibold">Table with API</h2>
-			<div class="w-1/2">
+			<div class="lg:w-1/2">
 				<Table />
 			</div>
 		</div>
