@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import * as views from "../views";
+import * as views from "@/views";
 
 const routes = [
 	{
@@ -11,6 +11,11 @@ const routes = [
 		path: "/count",
 		name: "count",
 		component: views.Count,
+	},
+	{
+		path: "/maps",
+		name: "maps",
+		component: views.Maps,
 	},
 ];
 

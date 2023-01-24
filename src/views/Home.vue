@@ -99,7 +99,6 @@ const selectOptions = [
 ];
 
 const counterStore = useCounterStore();
-const { increment } = counterStore;
 </script>
 
 <template>
@@ -140,11 +139,15 @@ const { increment } = counterStore;
 		<div class="flex flex-col gap-y-4 items-center w-full">
 			<h2 class="font-semibold">Counter using Pinia</h2>
 			<h3>{{ counterStore }}</h3>
-			<Button @click="increment">Count up</Button>
 
 			<router-link class="text-blue-500" to="/count">
 				Go to Count View
 			</router-link>
+		</div>
+		<div class="flex flex-col gap-y-4 items-center w-full">
+			<h2 class="font-semibold">Google Maps with ThreeJs</h2>
+
+			<router-link class="text-blue-500" to="/maps"> Go to Maps </router-link>
 		</div>
 		<div class="flex flex-col gap-y-4 items-center"></div>
 		<div class="flex flex-col gap-y-4 items-center w-full">

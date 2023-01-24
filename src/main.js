@@ -10,7 +10,7 @@ import "@/styles/index.css";
 const pinia = createPinia();
 const app = createApp(App);
 app.use(ElementPlus);
-app.use(routes);
 app.use(pinia);
+app.use(routes);
 
 app.mount("#app");
