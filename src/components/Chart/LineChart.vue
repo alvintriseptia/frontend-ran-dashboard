@@ -1,44 +1,38 @@
 <template>
-	<Line :data="chartData" :options="chartOptions" />
+	<LineChartGenerator :chart-data="chartData" :chart-options="chartOptions" />
 </template>
 
-<script>
+<script setup>
 import {
 	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
 	Title,
 	Tooltip,
 	Legend,
+	LineElement,
+	LinearScale,
+	CategoryScale,
+	PointElement,
 } from "chart.js";
-import { Line } from "vue-chartjs";
+import { Line as LineChartGenerator } from "vue-chartjs/legacy";
 
 ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
 	Title,
 	Tooltip,
-	Legend
+	Legend,
+	LineElement,
+	LinearScale,
+	CategoryScale,
+	PointElement
 );
 
-export default {
-	name: "LineChart",
-	components: {
-		Line,
+const props = defineProps({
+	chartData: {
+		type: Object,
+		required: true,
 	},
-	props: {
-		chartData: {
-			type: Object,
-			required: true,
-		},
-		chartOptions: {
-			type: Object,
-			required: true,
-		},
+	chartOptions: {
+		type: Object,
+		required: true,
 	},
-};
+});
 </script>

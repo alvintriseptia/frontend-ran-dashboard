@@ -1,16 +1,24 @@
-import ElementPlus from "element-plus";
 import { createPinia } from "pinia";
-import { createApp } from "vue";
-import "element-plus/dist/index.css";
+import Vue from "vue";
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
 
 import App from "@/App.vue";
-import routes from "@/router/router";
+import router from "@/router/router";
 import "@/styles/index.css";
+import VueRouter from "vue-router";
 
 const pinia = createPinia();
-const app = createApp(App);
-app.use(ElementPlus);
-app.use(pinia);
-app.use(routes);
 
-app.mount("#app");
+Vue.use(VueRouter);
+Vue.use(ElementUI);
+Vue.use(pinia);
+
+const app = new Vue({
+	router,
+	pinia,
+	ElementUI,
+	render: function (createElement) {
+		return createElement(App);
+	},
+}).$mount("#app");
