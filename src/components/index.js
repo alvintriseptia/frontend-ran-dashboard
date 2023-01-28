@@ -17,3 +17,6 @@ export { Table };
 
 import Card from "./Layout/Card.vue";
 export { Card };
+
+import ActivityItem from "./ListItem/ActivityItem.vue";
+export { ActivityItem };

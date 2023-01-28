@@ -12,5 +12,17 @@
 }
 
 body {
-	background-color: #f5f5f5;
+	background-color: #fbf6f6;
+}
+
+.el-tag.el-tag--success {
+	background-color: rgba(22, 163, 74, 0.2);
+	color: rgba(22, 163, 74, 1);
+	font-weight: 600;
+}
+
+.el-tag.el-tag--info {
+	background-color: rgba(255, 119, 35, 0.2);
+	color: #ff7723;
+	font-weight: 600;
 }

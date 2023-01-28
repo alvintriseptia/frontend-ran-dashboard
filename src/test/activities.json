@@ -1,0 +1,84 @@
+{
+	"data": [
+		{
+			"siteId": "SMG106",
+			"subDept": "Semarang",
+			"program": "Alarm",
+			"subProgram": "Unproper Configuration",
+			"isDone": true,
+			"activity": "Melakukan pengecekan kondisi dan kualitas barang"
+		},
+		{
+			"siteId": "UNR707",
+			"subDept": "Demak",
+			"program": "Power System",
+			"subProgram": "Unbalance Recti Load",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "TMG500",
+			"subDept": "Magelang",
+			"program": "Cost Leadership",
+			"subProgram": "Tower, Power and Space Rental",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "SMG106",
+			"subDept": "Semarang",
+			"program": "Alarm",
+			"subProgram": "Unproper Configuration",
+			"isDone": true,
+			"activity": "Melakukan pengecekan kondisi dan kualitas barang"
+		},
+		{
+			"siteId": "UNR707",
+			"subDept": "Demak",
+			"program": "Power System",
+			"subProgram": "Unbalance Recti Load",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "TMG500",
+			"subDept": "Magelang",
+			"program": "Cost Leadership",
+			"subProgram": "Tower, Power and Space Rental",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "SMG106",
+			"subDept": "Semarang",
+			"program": "Alarm",
+			"subProgram": "Unproper Configuration",
+			"isDone": true,
+			"activity": "Melakukan pengecekan kondisi dan kualitas barang"
+		},
+		{
+			"siteId": "UNR707",
+			"subDept": "Demak",
+			"program": "Power System",
+			"subProgram": "Unbalance Recti Load",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "TMG500",
+			"subDept": "Magelang",
+			"program": "Cost Leadership",
+			"subProgram": "Tower, Power and Space Rental",
+			"isDone": false,
+			"activity": "Standarisasi RCA dan Enginner Comment"
+		},
+		{
+			"siteId": "SMG106",
+			"subDept": "Semarang",
+			"program": "Alarm",
+			"subProgram": "Unproper Configuration",
+			"isDone": true,
+			"activity": "Melakukan pengecekan kondisi dan kualitas barang"
+		}
+	]
+}
