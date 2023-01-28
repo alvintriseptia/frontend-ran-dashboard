@@ -2,7 +2,8 @@ import LineChart from "./Chart/LineChart.vue";
 import BarChart from "./Chart/BarChart.vue";
 import PieChart from "./Chart/PieChart.vue";
 import ProgramChart from "./Chart/ProgramChart.vue";
-export { LineChart, BarChart, PieChart, ProgramChart };
+import HorizontalBarChart from "./Chart/HorizontalBarChart.vue";
+export { LineChart, BarChart, HorizontalBarChart, PieChart, ProgramChart };
 
 import Button from "./Button/Button.vue";
 import OutlinedButton from "./Button/OutlinedButton.vue";

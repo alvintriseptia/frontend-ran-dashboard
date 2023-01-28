@@ -7,25 +7,16 @@
 			:chart-options="chartOptions"
 			:chart-data="chartData"
 			:chart-id="chartId"
-			:width="120"
-			:height="120"
+			:width="100"
+			:height="100"
+			:plugins="chartPlugins"
 		/>
 	</div>
 </template>
 
 <script setup>
 import { Doughnut } from "vue-chartjs/legacy";
-import colorsTheme from "@/styles/colorsTheme";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-
-import {
-	Chart as ChartJS,
-	Title,
-	Tooltip,
-	Legend,
-	ArcElement,
-	CategoryScale,
-} from "chart.js";
+import { colorsTheme, centerDoughnutPlugin } from "@/utils";
 
 const props = defineProps({
 	chartId: {
@@ -52,7 +43,7 @@ const chartData = {
 		{
 			backgroundColor: [colorsTheme.green, colorsTheme.orange],
 			data: [props.doneActivity, props.notYetActivity],
-			cutout: "70%",
+			cutout: "75%",
 			borderWidth: 1,
 			datalabels: {
 				labels: {
@@ -63,7 +54,7 @@ const chartData = {
 							return ctx.dataset.backgroundColor;
 						},
 						font: { size: 12 },
-						offset: 5,
+						offset: 0,
 						formatter: function (value, ctx) {
 							return ctx.chart.data.labels[ctx.dataIndex] + ": " + value;
 						},
@@ -80,14 +71,6 @@ const chartOptions = {
 	plugins: {
 		legend: {
 			display: false,
-		},
-		datalabels: {
-			color: "white",
-			display: function (ctx) {
-				return ctx.dataset.data[ctx.dataIndex] > 10;
-			},
-			offset: 0,
-			padding: 0,
 		},
 	},
 	aspectRatio: 3 / 2,
@@ -106,57 +89,5 @@ const chartOptions = {
 	},
 };
 
-const centerDoughnutPlugin = {
-	id: "center-text",
-	beforeDraw: (chart) => {
-		// get canvas width and height
-		const width = chart.width;
-		const height = chart.height;
-		const ctx = chart.ctx;
-
-		// get text to display
-		ctx.restore();
-		let fontSize = (height / 114).toFixed(2);
-		ctx.font = "bold " + fontSize + "em helvetica";
-		ctx.textBaseline = "middle";
-
-		// get total done and not done
-		const totalDone = chart.config.data.datasets[0].data[0];
-		const totalNotDone = chart.config.data.datasets[0].data[1];
-		let percentage = ((totalDone / (totalDone + totalNotDone)) * 100).toFixed(
-			1
-		);
-
-		// if last digit is 0, remove it
-		if (percentage % 1 === 0) {
-			percentage = Math.round(percentage);
-		}
-
-		// display text
-		let text = "";
-		if (isNaN(percentage)) {
-			text = "Tidak ada data";
-			ctx.font = fontSize + "em helvetica";
-			ctx.fillStyle = colorsTheme.gray;
-		} else {
-			text = percentage + "%";
-		}
-
-		let textX = Math.round((width - ctx.measureText(text).width) / 2);
-		let textY = height / 1.87;
-
-		ctx.fillText(text, textX, textY);
-		ctx.save();
-	},
-};
-
-ChartJS.register(
-	Title,
-	Tooltip,
-	Legend,
-	ArcElement,
-	CategoryScale,
-	ChartDataLabels,
-	centerDoughnutPlugin
-);
+const chartPlugins = [centerDoughnutPlugin];
 </script>

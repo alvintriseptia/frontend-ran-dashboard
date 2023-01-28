@@ -1,11 +1,11 @@
 <template>
 	<el-select
 		v-model="value"
-		multiple
+		:multiple="isMultiple"
 		filterable
 		remote
 		reserve-keyword
-		placeholder="Please enter a keyword"
+		:placeholder="placeholder"
 		remote-show-suffix
 		:remote-method="remoteMethod"
 		:loading="loading"
@@ -32,6 +32,14 @@ const props = defineProps({
 	options: {
 		type: Array,
 		default: () => [],
+	},
+	placeholder: {
+		type: String,
+		default: "Select",
+	},
+	isMultiple: {
+		type: Boolean,
+		default: true,
 	},
 });
 

@@ -10,7 +10,7 @@
 			}}</el-tag>
 		</div>
 		<p class="text-sm">{{ props.activity }}</p>
-		<el-divider v-show="!props.isLastItem" class="my-2"></el-divider>
+		<el-divider v-if="!props.isLastItem" class="my-2"></el-divider>
 	</div>
 </template>
 
