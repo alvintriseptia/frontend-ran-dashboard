@@ -5,17 +5,7 @@ const routes = [
 	{
 		path: "/",
 		name: "home",
-		component: views.Home,
-	},
-	{
-		path: "/count",
-		name: "count",
-		component: views.Count,
-	},
-	{
-		path: "/maps",
-		name: "maps",
-		component: views.Maps,
+		component: views.Dashboard,
 	},
 ];
 

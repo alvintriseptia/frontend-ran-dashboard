@@ -6,3 +6,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+	font-family: "Roboto", sans-serif;
+}
+
+body {
+	background-color: #fbf6f6;
+	color: #333;
+}
+
+.el-tag.el-tag--success {
+	background-color: rgba(22, 163, 74, 0.2);
+	color: rgba(22, 163, 74, 1);
+	font-weight: 600;
+}
+
+.el-tag.el-tag--info {
+	background-color: rgba(255, 119, 35, 0.2);
+	color: #ff7723;
+	font-weight: 600;
+}

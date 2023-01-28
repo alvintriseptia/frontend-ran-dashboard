@@ -1,0 +1,52 @@
+{
+	"data": [
+		{
+			"id": "1",
+			"programName": "Cost Leadership",
+			"totalActivity": 100,
+			"doneActivity": 80
+		},
+		{
+			"id": "2",
+			"programName": "Differentiation",
+			"totalActivity": 100,
+			"doneActivity": 60
+		},
+		{
+			"id": "3",
+			"programName": "Focus",
+			"totalActivity": 100,
+			"doneActivity": 40
+		},
+		{
+			"id": "4",
+			"programName": "Stuck in the middle",
+			"totalActivity": 100,
+			"doneActivity": 20
+		},
+		{
+			"id": "5",
+			"programName": "No strategy",
+			"totalActivity": 100,
+			"doneActivity": 0
+		},
+		{
+			"id": "6",
+			"programName": "Power System",
+			"totalActivity": 990,
+			"doneActivity": 5
+		},
+		{
+			"id": "7",
+			"programName": "External",
+			"totalActivity": 767,
+			"doneActivity": 90
+		},
+		{
+			"id": "8",
+			"programName": "Budget",
+			"totalActivity": 65,
+			"doneActivity": 1
+		}
+	]
+}
