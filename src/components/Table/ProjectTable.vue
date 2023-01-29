@@ -63,7 +63,14 @@
 									: 'bg-red-100 text-gray-500'
 							"
 						>
-							{{ week }}
+							{{
+								(
+									week +
+									weekInMonths
+										.slice(0, index)
+										.reduce((acc, cur) => acc + cur, 0)
+								).toString()
+							}}
 						</div>
 					</template>
 					<template #default="{ row }">

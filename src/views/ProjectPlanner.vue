@@ -1,5 +1,5 @@
 <script setup>
-import { ProjectTable, SearchSelect } from "@/components";
+import { ProjectTable, SearchSelect, Card } from "@/components";
 import { dateUtil } from "@/utils";
 import { ref } from "vue";
 
@@ -14,9 +14,10 @@ const updateWeekHighlighted = (value) => {
 </script>
 
 <template>
-	<div>
+	<Card title="Project Planner">
 		<section class="flex gap-x-4 mb-4 items-center">
 			<SearchSelect
+				placeholder="Select Week"
 				:options="
 					Array.from({ length: totalWeeks }, (_, i) => {
 						return {
@@ -28,7 +29,6 @@ const updateWeekHighlighted = (value) => {
 				:isMultiple="false"
 				@onUpdate="updateWeekHighlighted"
 			/>
-			{{ weekHighlighted }}
 			<div class="flex items-center gap-x-2">
 				<div class="w-4 h-4 bg-purple-300"></div>
 				<span class="text-gray-900">Actual Start</span>
@@ -42,7 +42,6 @@ const updateWeekHighlighted = (value) => {
 				<span class="text-gray-900">Week Highlight</span>
 			</div>
 		</section>
-		<h2 class="text-xl lg:text-2xl font-bold mb-4">Project Planner</h2>
 		<ProjectTable :weekHighlighted="weekHighlighted" />
-	</div>
+	</Card>
 </template>

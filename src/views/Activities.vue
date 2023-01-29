@@ -4,6 +4,7 @@ import {
 	SearchSelect,
 	ActivityTable,
 	ImportActivity,
+	Card,
 } from "@/components";
 import activitiesJson from "@/test/activities.json";
 import { ref } from "vue";
@@ -26,21 +27,22 @@ const closeImportActivities = () => {
 </script>
 
 <template>
-	<div>
-		<h2 class="text-xl lg:text-2xl font-bold mb-4">Activites</h2>
-		<section class="flex gap-x-4 mb-6 justify-between">
-			<SearchSelect :options="activities" placeholder="Cari activities" />
-			<div class="flex gap-x-4">
-				<!-- <OutlinedButton>Input Activity</OutlinedButton> -->
-				<OutlinedButton @onClick="showImportActivities"
-					>Import Activities</OutlinedButton
-				>
-			</div>
-		</section>
-		<ActivityTable />
-		<ImportActivity
-			:isShow="isShowImportActivities"
-			@closeImportActivities="closeImportActivities"
-		/>
-	</div>
+	<Card title="Activites">
+		<div>
+			<section class="flex gap-x-4 mb-6 justify-between">
+				<SearchSelect :options="activities" placeholder="Cari activities" />
+				<div class="flex gap-x-4">
+					<!-- <OutlinedButton>Input Activity</OutlinedButton> -->
+					<OutlinedButton @onClick="showImportActivities"
+						>Import Activities</OutlinedButton
+					>
+				</div>
+			</section>
+			<ActivityTable />
+			<ImportActivity
+				:isShow="isShowImportActivities"
+				@closeImportActivities="closeImportActivities"
+			/>
+		</div>
+	</Card>
 </template>

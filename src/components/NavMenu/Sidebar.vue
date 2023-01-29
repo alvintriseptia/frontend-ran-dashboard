@@ -1,7 +1,7 @@
 <template>
 	<el-menu
-		default-active="1"
 		class="font-medium fixed top-0 bottom-0 z-50"
+		:default-active="initialIndex"
 		:collapse="isCollapse"
 		@open="handleOpen"
 		@close="handleClose"
@@ -54,6 +54,15 @@ import { onMounted, ref } from "vue";
 import { colorsTheme } from "@/utils";
 import telkomsel from "@/assets/images/telkomsel.png";
 import telkomselLogo from "@/assets/images/telkomsel-logo.png";
+
+let initialIndex = "0";
+if (window.location.pathname === "/") {
+	initialIndex = "1";
+} else if (window.location.pathname === "/project-planner") {
+	initialIndex = "2";
+} else if (window.location.pathname === "/activities") {
+	initialIndex = "3";
+}
 
 const isCollapse = ref(false);
 
