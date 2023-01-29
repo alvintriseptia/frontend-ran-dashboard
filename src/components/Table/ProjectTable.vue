@@ -113,6 +113,8 @@ const props = defineProps({
 	},
 });
 
+console.log(props.weekHighlighted);
+
 const currentWeek = computed(() => {
 	return props.weekHighlighted + skippedColumns - 1;
 });
