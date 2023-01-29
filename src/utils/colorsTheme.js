@@ -3,8 +3,10 @@ const orange = "#FF7723";
 const lightRed = "#FBF6F6";
 const green = "rgb(22, 163, 74)";
 const gray = "rgb(107, 114, 128)";
+const lightGray = "#F5F5F5";
 const dark = "#333";
 const white = "#fff";
+const yellow = "#FFD700";
 
 export default {
 	primary,
@@ -14,4 +16,6 @@ export default {
 	gray,
 	dark,
 	white,
+	yellow,
+	lightGray,
 };

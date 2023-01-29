@@ -14,7 +14,8 @@ import SearchSelect from "./Select/SearchSelect.vue";
 export { Select, SearchSelect };
 
 import Table from "./Table/Table.vue";
-export { Table };
+import ProjectTable from "./Table/ProjectTable.vue";
+export { Table, ProjectTable };
 
 import Card from "./Layout/Card.vue";
 export { Card };

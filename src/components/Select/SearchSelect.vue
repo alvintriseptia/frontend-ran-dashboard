@@ -10,6 +10,7 @@
 		:remote-method="remoteMethod"
 		:loading="loading"
 		class="w-[300px]"
+		@change="onChange"
 	>
 		<el-option
 			v-for="item in options"
@@ -21,7 +22,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, ref } from "vue";
+import { defineProps, defineEmits, onMounted, ref } from "vue";
 
 const loading = ref(false);
 const list = ref([]);
@@ -41,14 +42,20 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	onUpdate: {
+		type: Function,
+		default: () => {},
+	},
 });
+
+const emit = defineEmits(["onUpdate"]);
 
 onMounted(() => {
 	list.value = props.options.map((item) => {
-		return { value: `value:${item.value}`, label: `label:${item.label}` };
+		return { value: `value:${item.value}`, label: `${item.label}` };
 	});
 
-	options.value = list.value.slice(0, 3);
+	options.value = list.value.slice(0, 5);
 });
 
 const remoteMethod = (query) => {
@@ -61,7 +68,11 @@ const remoteMethod = (query) => {
 			});
 		}, 200);
 	} else {
-		options.value = list.value.slice(0, 3);
+		options.value = list.value.slice(0, 5);
 	}
+};
+
+const onChange = (val) => {
+	emit("onUpdate", val);
 };
 </script>
