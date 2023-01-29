@@ -43,5 +43,14 @@ const updateWeekHighlighted = (value) => {
 			</div>
 		</section>
 		<ProjectTable :weekHighlighted="weekHighlighted" />
+		<section class="mt-4">
+			<el-pagination
+				:page-size="10"
+				:pager-count="11"
+				layout="prev, pager, next"
+				:total="50"
+			>
+			</el-pagination>
+		</section>
 	</Card>
 </template>
