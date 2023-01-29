@@ -41,9 +41,9 @@ const activityData = activites.data;
 
 <template>
 	<div>
-		<section class="grid grid-cols-12 gap-8">
+		<section class="grid grid-cols-12 gap-y-8 md:gap-8">
 			<Card title="Programs Summary" class="col-span-12 lg:col-span-9">
-				<div class="flex flex-wrap gap-6">
+				<div class="flex flex-wrap gap-y-6 md:gap-6 justify-center">
 					<ProgramChart
 						v-for="item in programData"
 						:key="item.id"

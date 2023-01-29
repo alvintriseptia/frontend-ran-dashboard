@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="shadow-lg px-4 py-2 border border-gray-200 rounded-lg w-[250px] bg-white"
+		class="shadow-lg px-4 py-2 border border-gray-200 rounded-lg w-[200px] md:w-[250px] bg-white"
 	>
 		<h2 class="text-lg font-semibold mb-2">{{ props.programName }}</h2>
 		<Doughnut

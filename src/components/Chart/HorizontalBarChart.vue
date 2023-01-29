@@ -4,7 +4,7 @@
 		<Bar
 			:chart-data="chartData"
 			:chart-options="chartOptions"
-			class="h-[400px] w-[400px]"
+			class="h-[400px] w-[200px] md:w-[400px]"
 		/>
 	</div>
 </template>
