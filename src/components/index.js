@@ -7,7 +7,8 @@ export { LineChart, BarChart, HorizontalBarChart, PieChart, ProgramChart };
 
 import Button from "./Button/Button.vue";
 import OutlinedButton from "./Button/OutlinedButton.vue";
-export { Button, OutlinedButton };
+import PopOver from "./Button/PopOver.vue";
+export { Button, OutlinedButton, PopOver };
 
 import Select from "./Select/Select.vue";
 import SearchSelect from "./Select/SearchSelect.vue";
@@ -15,7 +16,8 @@ export { Select, SearchSelect };
 
 import Table from "./Table/Table.vue";
 import ProjectTable from "./Table/ProjectTable.vue";
-export { Table, ProjectTable };
+import ActivityTable from "./Table/ActivityTable.vue";
+export { Table, ProjectTable, ActivityTable };
 
 import Card from "./Layout/Card.vue";
 export { Card };

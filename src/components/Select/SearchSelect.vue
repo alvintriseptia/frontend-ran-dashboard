@@ -17,6 +17,7 @@
 			:key="item.value"
 			:label="item.label"
 			:value="item.value"
+			v-loading="loading"
 		/>
 	</el-select>
 </template>

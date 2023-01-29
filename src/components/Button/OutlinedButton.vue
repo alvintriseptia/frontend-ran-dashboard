@@ -1,6 +1,6 @@
 <template>
 	<button
-		class="px-4 py-2 rounded-lg text-primary border border-primary hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-all"
+		class="px-4 py-2 font-medium rounded-lg text-primary border border-primary hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition-all"
 		:class="{ 'opacity-50 cursor-not-allowed': props.disabled }"
 		:disabled="props.disabled"
 		:type="props.type"
