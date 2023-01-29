@@ -107,7 +107,6 @@ const props = defineProps({
 });
 
 const currentWeek = computed(() => {
-	console.log(props.weekHighlighted + skippedColumns - 1);
 	return props.weekHighlighted + skippedColumns - 1;
 });
 
@@ -246,3 +245,21 @@ const data = [
 	},
 ];
 </script>
+
+<style>
+.el-table th.el-table__cell > .cell {
+	padding: 0;
+}
+
+.el-table--border .el-table__cell:first-child .cell {
+	padding-left: 0;
+}
+
+.no-hover-table {
+	pointer-events: none;
+}
+
+.el-popover {
+	min-width: auto;
+}
+</style>
