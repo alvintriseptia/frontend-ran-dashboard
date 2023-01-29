@@ -1,12 +1,8 @@
 <template>
 	<el-table
 		:data="data"
-		style="width: 100%"
-		:header-cell-style="{
-			textAlign: 'center',
-			background: colorsTheme.lightGray,
-			padding: '0px',
-		}"
+		:style="{ width: '100%', overflowX: 'auto' }"
+		header-cell-class-name="header-color-activity"
 	>
 		<el-table-column prop="status" label="Status" width="80">
 			<template #default="{ row }">
@@ -44,8 +40,21 @@
 
 <script setup>
 import allActivities from "@/test/allActivities.json";
-import { colorsTheme } from "@/utils";
 import { PopOver } from "@/components";
 
 const data = allActivities.data;
 </script>
+
+<style>
+.header-color-activity {
+	background-color: #f5f5f5 !important;
+	padding: 0 !important;
+	text-align: center !important;
+}
+
+.header-color-activity:nth-child(even) {
+	background-color: rgb(229, 231, 235) !important;
+	padding: 0 !important;
+	text-align: center !important;
+}
+</style>

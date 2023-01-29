@@ -29,11 +29,11 @@ const getWeekOfMonth = (month) => {
 };
 
 const getTotalWeeks = () => {
-	const date = new Date();
-	const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-	const lastDayOfYear = new Date(date.getFullYear(), 11, 31);
-	const used = firstDayOfYear.getDay() + lastDayOfYear.getDate();
-	return Math.ceil(used / 7);
+	const year = new Date().getFullYear();
+	const firstDayOfYear = new Date(year, 0, 1);
+	const lastDayOfYear = new Date(year, 11, 31);
+	const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+	return Math.ceil((lastDayOfYear - firstDayOfYear) / millisecondsPerWeek);
 };
 
 const monthNames = [

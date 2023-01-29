@@ -24,3 +24,9 @@ export { Card };
 
 import ActivityItem from "./ListItem/ActivityItem.vue";
 export { ActivityItem };
+
+import ImportActivity from "./Input/ImportActivity.vue";
+export { ImportActivity };
+
+import Sidebar from "./NavMenu/Sidebar.vue";
+export { Sidebar };

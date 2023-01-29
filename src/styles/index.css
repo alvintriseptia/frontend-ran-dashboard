@@ -21,7 +21,7 @@
 }
 
 :root {
-	--el-color-primary: #ed1c24;
+	--el-color-primary: ;
 	--el-color-secondary: #ff9d0b;
 }
 
@@ -44,20 +44,4 @@ body {
 	background-color: rgba(255, 119, 35, 0.2);
 	color: #ff7723;
 	font-weight: 600;
-}
-
-.el-table th.el-table__cell > .cell {
-	padding: 0;
-}
-
-.el-table--border .el-table__cell:first-child .cell {
-	padding-left: 0;
-}
-
-.no-hover-table {
-	pointer-events: none;
-}
-
-.el-popover {
-	min-width: auto;
 }
