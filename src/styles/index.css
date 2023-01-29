@@ -27,3 +27,15 @@ body {
 	color: #ff7723;
 	font-weight: 600;
 }
+
+.el-table th.el-table__cell > .cell {
+	padding: 0;
+}
+
+.el-table--border .el-table__cell:first-child .cell {
+	padding-left: 0;
+}
+
+.no-hover-table {
+	pointer-events: none;
+}
