@@ -1,11 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "Roboto";
+	src: url("@/assets/fonts/Roboto-Regular.ttf");
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: "Roboto";
+	src: url("@/assets/fonts/Roboto-Medium.ttf");
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: "Roboto";
+	src: url("@/assets/fonts/Roboto-Bold.ttf");
+	font-weight: 700;
+}
+
 :root {
 	--el-color-primary: #ed1c24;
 	--el-color-secondary: #ff9d0b;
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 * {
 	font-family: "Roboto", sans-serif;
@@ -38,4 +56,8 @@ body {
 
 .no-hover-table {
 	pointer-events: none;
+}
+
+.el-popover {
+	min-width: auto;
 }

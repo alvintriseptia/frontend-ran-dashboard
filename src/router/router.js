@@ -12,6 +12,11 @@ const routes = [
 		name: "project-planner",
 		component: views.ProjectPlanner,
 	},
+	{
+		path: "/activities",
+		name: "activities",
+		component: views.Activities,
+	},
 ];
 
 const router = new VueRouter({

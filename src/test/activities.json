@@ -14,7 +14,7 @@
 			"program": "Power System",
 			"subProgram": "Unbalance Recti Load",
 			"isDone": false,
-			"activity": "Standarisasi RCA dan Enginner Comment"
+			"activity": "BPS Ticketing"
 		},
 		{
 			"siteId": "TMG500",
@@ -30,7 +30,7 @@
 			"program": "Alarm",
 			"subProgram": "Unproper Configuration",
 			"isDone": true,
-			"activity": "Melakukan pengecekan kondisi dan kualitas barang"
+			"activity": "Sosialisasi handover program racing alarm dari RTPO ke TI"
 		},
 		{
 			"siteId": "UNR707",
@@ -38,7 +38,7 @@
 			"program": "Power System",
 			"subProgram": "Unbalance Recti Load",
 			"isDone": false,
-			"activity": "Standarisasi RCA dan Enginner Comment"
+			"activity": "Stock CPRI MM"
 		},
 		{
 			"siteId": "TMG500",
