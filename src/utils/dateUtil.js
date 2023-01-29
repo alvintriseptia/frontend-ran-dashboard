@@ -29,11 +29,8 @@ const getWeekOfMonth = (month) => {
 };
 
 const getTotalWeeks = () => {
-	const year = new Date().getFullYear();
-	const firstDayOfYear = new Date(year, 0, 1);
-	const lastDayOfYear = new Date(year, 11, 31);
-	const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
-	return Math.ceil((lastDayOfYear - firstDayOfYear) / millisecondsPerWeek);
+	const weekInMonth = Array.from({ length: 12 }, (_, i) => getWeekOfMonth(i));
+	return weekInMonth.reduce((a, b) => a + b, 0);
 };
 
 const monthNames = [
