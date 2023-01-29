@@ -40,10 +40,7 @@ const activityData = activites.data;
 </script>
 
 <template>
-	<div class="container mx-auto px-4 py-2">
-		<h1 class="text-3xl font-bold mb-4">
-			Dashboard Squad Operation & Availability 2023
-		</h1>
+	<div>
 		<section class="grid grid-cols-12 gap-8">
 			<Card title="Programs Summary" class="col-span-12 lg:col-span-9">
 				<div class="flex flex-wrap gap-6">

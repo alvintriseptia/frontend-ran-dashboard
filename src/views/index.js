@@ -1,2 +1,3 @@
 import Dashboard from "./Dashboard.vue";
-export { Dashboard };
+import ProjectPlanner from "./ProjectPlanner.vue";
+export { Dashboard, ProjectPlanner };

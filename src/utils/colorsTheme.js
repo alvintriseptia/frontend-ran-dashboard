@@ -5,6 +5,7 @@ const green = "rgb(22, 163, 74)";
 const gray = "rgb(107, 114, 128)";
 const dark = "#333";
 const white = "#fff";
+const yellow = "#FFD700";
 
 export default {
 	primary,
@@ -14,4 +15,5 @@ export default {
 	gray,
 	dark,
 	white,
+	yellow,
 };
