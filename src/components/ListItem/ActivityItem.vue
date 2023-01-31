@@ -5,9 +5,9 @@
 		</p>
 		<div class="flex gap-x-2 text-xs items-center mb-1">
 			<p class="text-gray-500">{{ props.siteId }} - {{ props.subDept }}</p>
-			<el-tag size="mini" :type="props.isDone ? 'success' : 'info'">{{
-				props.isDone ? "Done" : "Not Yet"
-			}}</el-tag>
+			<el-tag size="mini" :type="getTagItemColor(props.isDone)">
+				{{ props.isDone ? "Done" : "Not Yet" }}
+			</el-tag>
 		</div>
 		<p class="text-sm">{{ props.activity }}</p>
 		<el-divider v-if="!props.isLastItem" class="my-2"></el-divider>
@@ -45,4 +45,8 @@ const props = defineProps({
 		required: true,
 	},
 });
+
+function getTagItemColor(isDone) {
+	return isDone ? "success" : "info";
+}
 </script>

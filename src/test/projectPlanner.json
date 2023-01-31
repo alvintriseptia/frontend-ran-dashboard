@@ -1,0 +1,158 @@
+{
+	"data": [
+		{
+			"no": 1,
+			"program": "Program 1",
+			"subProgram": "Sub Program 1",
+			"activity": "Pembuatan template baku untuk reporting (BA Temuan, Activity weekly, Work Order, Improvement plan etc)",
+			"target": 100,
+			"percentage": 50,
+			"weekStart": 37,
+			"weekEnd": 48,
+			"weekStartBeyond": 50,
+			"weekStartActual": null,
+			"weekCompleteBeyond": 55,
+			"weekCompleteActual": null,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 2,
+			"program": "Program 2",
+			"subProgram": "Sub Program 2",
+			"activity": "Activation BBLTI Feature",
+			"target": 100,
+			"percentage": 50,
+			"weekStart": 1,
+			"weekEnd": 12,
+			"weekStartBeyond": null,
+			"weekStartActual": 4,
+			"weekCompleteBeyond": null,
+			"weekCompleteActual": 12,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 3,
+			"program": "Program 3",
+			"subProgram": "Sub Program 3",
+			"activity": "Activity 3",
+			"target": 100,
+			"percentage": 70,
+			"weekStart": 5,
+			"weekEnd": 24,
+			"weekStartBeyond": null,
+			"weekStartActual": 5,
+			"weekCompleteBeyond": null,
+			"weekCompleteActual": 6,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 4,
+			"program": "Program 4",
+			"subProgram": "Sub Program 4",
+			"activity": "Activity 4",
+			"target": 100,
+			"percentage": 100,
+			"weekStart": 25,
+			"weekEnd": 36,
+			"weekStartBeyond": null,
+			"weekStartActual": 25,
+			"weekCompleteBeyond": 39,
+			"weekCompleteActual": null,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 5,
+			"program": "Program 5",
+			"subProgram": "Sub Program 5",
+			"activity": "Activity 5",
+			"target": 100,
+			"percentage": 50,
+			"weekStart": 37,
+			"weekEnd": 48,
+			"weekStartBeyond": 49,
+			"weekStartActual": null,
+			"weekCompleteBeyond": 60,
+			"weekCompleteActual": null,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 6,
+			"program": "Program 6",
+			"subProgram": "Sub Program 6",
+			"activity": "Activity 6",
+			"target": 100,
+			"percentage": 10,
+			"weekStart": 13,
+			"weekEnd": 24,
+			"weekStartBeyond": 49,
+			"weekStartActual": null,
+			"weekCompleteBeyond": 60,
+			"weekCompleteActual": null,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		},
+		{
+			"no": 7,
+			"program": "Program 7",
+			"subProgram": "Sub Program 7",
+			"activity": "Activity 7",
+			"target": 100,
+			"percentage": 20,
+			"weekStart": 25,
+			"weekEnd": 36,
+			"weekStartBeyond": null,
+			"weekStartActual": 25,
+			"weekCompleteBeyond": null,
+			"weekCompleteActual": 36,
+			"periods": [
+				4, 3, 4, 4, 3, 7, 6, 0, 2, 5, 8, 5, 5, 0, 0, 0, 1, 1, 1, 4, 7, 9, 7, 4,
+				9, 5, 9, 3, 9, 4, 8, 7, 3, 5, 2, 4, 4, 7, 8, 1, 9, 8, 7, 5, 8, 3, 4, 3,
+				0, 8, 2, 2, 5, 7, 4, 8, 1, 8, 0, 3, 9, 8, 2
+			],
+			"pic": "NOS, RTPO",
+			"budget": "-",
+			"cost": ""
+		}
+	]
+}

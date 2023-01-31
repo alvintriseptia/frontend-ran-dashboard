@@ -4,6 +4,11 @@
 		:style="{ width: '100%', overflowX: 'auto' }"
 		header-cell-class-name="header-color-activity"
 	>
+		<el-table-column label="No" width="60">
+			<template #default="{ row, $index }">
+				{{ $index + 1 }}
+			</template>
+		</el-table-column>
 		<el-table-column prop="status" label="Status" width="80">
 			<template #default="{ row }">
 				<PopOver :status="row.status" />
@@ -29,19 +34,23 @@
 		<el-table-column prop="do" label="DO" width="150" />
 		<el-table-column prop="ns" label="NS" width="150" />
 		<el-table-column prop="pic" label="PIC" width="150" />
-		<el-table-column prop="targetQuarterStart" label="Start Q" width="60" />
-		<el-table-column prop="targetQuarterEnd" label="End Q" width="60" />
+		<el-table-column prop="targetQuarter" label="Target Q" width="60" />
 		<el-table-column prop="date" label="Date" width="100" />
 		<el-table-column prop="remark" label="Remark" width="150" />
 		<el-table-column prop="budget" label="Budget" width="150" />
-		<el-table-column prop="cost" label="Cost" width="200" />
+		<el-table-column label="Cost" width="200">
+			<template #default="{ row }">
+				{{ numberFormat.currencyFormat(row.cost) }}
+			</template>
+		</el-table-column>
 	</el-table>
 </template>
 
 <script setup>
+// Import data
 import allActivities from "@/test/allActivities.json";
 import { PopOver } from "@/components";
-
+import { numberFormat } from "@/utils";
 const data = allActivities.data;
 </script>
 

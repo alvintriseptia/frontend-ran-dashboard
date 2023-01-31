@@ -1,34 +1,8 @@
-<script setup>
-import { ref } from "vue";
-import { colorsTheme } from "@/utils";
-import { useWindow, useRoute } from "@/composables";
-import telkomsel from "@/assets/images/telkomsel.png";
-import telkomselLogo from "@/assets/images/telkomsel-logo.png";
-
-const { isMobile } = useWindow();
-
-const isCollapse = ref(false);
-
-const handleCollapse = () => {
-	if (isMobile.value) {
-		isCollapse.value = !isCollapse.value;
-	}
-};
-
-const { path } = useRoute();
-</script>
-
 <template>
 	<el-menu
 		class="font-medium fixed top-0 left-0 z-50"
 		:class="{ 'right-0 w-full': isMobile, 'bottom-0': !isMobile }"
-		:default-active="
-			path.includes('/project-planner')
-				? '2'
-				: path.includes('/activities')
-				? '3'
-				: '1'
-		"
+		:default-active="getDefaultActiveIndex(path)"
 		:collapse="!isMobile ? false : isCollapse"
 		:active-text-color="colorsTheme.primary"
 	>
@@ -76,6 +50,33 @@ const { path } = useRoute();
 		</div>
 	</el-menu>
 </template>
+<script setup>
+import { ref } from "vue";
+import { colorsTheme } from "@/utils";
+import { useWindow, useRoute } from "@/composables";
+import telkomsel from "@/assets/images/telkomsel.png";
+import telkomselLogo from "@/assets/images/telkomsel-logo.png";
+
+const { isMobile } = useWindow();
+
+const isCollapse = ref(false);
+
+const handleCollapse = () => {
+	if (isMobile.value) {
+		isCollapse.value = !isCollapse.value;
+	}
+};
+
+function getDefaultActiveIndex(currentPath) {
+	if (currentPath.includes("/project-planner")) {
+		return "2";
+	} else if (currentPath.includes("/activities")) {
+		return "3";
+	}
+	return "1";
+}
+const { path } = useRoute();
+</script>
 
 <style>
 .el-menu-vertical-demo:not(.el-menu--collapse) {

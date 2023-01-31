@@ -1,44 +1,3 @@
-<script setup>
-import ChartDataLabels from "chartjs-plugin-datalabels";
-
-import {
-	ProgramChart,
-	Card,
-	ActivityItem,
-	HorizontalBarChart,
-	SearchSelect,
-} from "@/components";
-import programs from "@/test/programs.json";
-import activites from "@/test/activities.json";
-import { programOptions, subProgramOptions } from "@/test/optionsData";
-import { dateUtil } from "@/utils";
-
-import {
-	Chart as ChartJS,
-	Title,
-	Tooltip,
-	Legend,
-	ArcElement,
-	BarElement,
-	CategoryScale,
-	LinearScale,
-} from "chart.js";
-
-ChartJS.register(
-	Title,
-	Tooltip,
-	Legend,
-	ArcElement,
-	BarElement,
-	CategoryScale,
-	LinearScale,
-	ChartDataLabels
-);
-
-const programData = programs.data;
-const activityData = activites.data;
-</script>
-
 <template>
 	<div>
 		<section class="grid grid-cols-12 gap-y-8 md:gap-8">
@@ -87,16 +46,49 @@ const activityData = activites.data;
 						placeholder="Pilih Sub Program"
 					/>
 				</div>
-				<div class="m-10 flex gap-6 flex-wrap justify-center">
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-					<HorizontalBarChart />
-				</div>
+				<ActivitySummaryTable />
 			</Card>
 		</section>
 	</div>
 </template>
+
+<script setup>
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
+import {
+	ProgramChart,
+	Card,
+	ActivityItem,
+	ActivitySummaryTable,
+	SearchSelect,
+} from "@/components";
+import programs from "@/test/programs.json";
+import activites from "@/test/activities.json";
+import { programOptions, subProgramOptions } from "@/test/optionsData";
+import { dateUtil } from "@/utils";
+
+import {
+	Chart as ChartJS,
+	Title,
+	Tooltip,
+	Legend,
+	ArcElement,
+	BarElement,
+	CategoryScale,
+	LinearScale,
+} from "chart.js";
+
+ChartJS.register(
+	Title,
+	Tooltip,
+	Legend,
+	ArcElement,
+	BarElement,
+	CategoryScale,
+	LinearScale,
+	ChartDataLabels
+);
+
+const programData = programs.data;
+const activityData = activites.data;
+</script>
