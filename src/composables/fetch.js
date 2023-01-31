@@ -2,7 +2,7 @@ import { ref, isRef, unref, watchEffect } from "vue";
 
 export function useFetch(url) {
 	const loading = ref(true);
-	const data = ref([]);
+	const data = ref(null);
 	const error = ref(null);
 
 	function doFetch() {
@@ -13,8 +13,18 @@ export function useFetch(url) {
 		// unref() unwraps potential refs
 		fetch(unref(url))
 			.then((res) => res.json())
-			.then((json) => (data.value = json.slice(0, 10)))
-			.catch((err) => (error.value = err))
+			.then((json) => {
+				if (json.status.toLowerCase() === "success") {
+					console.log(json);
+					data.value = json.data;
+				} else {
+					error.value = json.message;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				error.value = err.message;
+			})
 			.finally(() => (loading.value = false));
 	}
 
@@ -27,5 +37,5 @@ export function useFetch(url) {
 		doFetch();
 	}
 
-	return { data, error, loading };
+	return { loading, data, error, doFetch };
 }

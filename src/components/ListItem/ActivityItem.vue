@@ -4,7 +4,7 @@
 			<strong>{{ props.program }}</strong> - {{ props.subProgram }}
 		</p>
 		<div class="flex gap-x-2 text-xs items-center mb-1">
-			<p class="text-gray-500">{{ props.siteId }} - {{ props.subDept }}</p>
+			<p class="text-gray-500">{{ props.siteId }} - {{ props.siteName }}</p>
 			<el-tag size="mini" :type="getTagItemColor(props.isDone)">
 				{{ props.isDone ? "Done" : "Not Yet" }}
 			</el-tag>
@@ -28,7 +28,7 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	subDept: {
+	siteName: {
 		type: String,
 		required: true,
 	},

@@ -109,29 +109,45 @@ const customProgressColors = [
 // Define Methods
 // cellClassChecker will check the current cell to be highlighted
 function cellClassChecker({ row, columnIndex }) {
-	if (columnIndex === currentWeek.value) {
-		return "bg-yellow-200 p-0";
-	} else if (
+	// Actual Start
+	if (
 		columnIndex === row.weekStartActual + (skippedColumns - 1) &&
 		row.weekStartActual !== null
 	) {
 		return "bg-purple-300 p-0";
-	} else if (
+	}
+
+	// Actual Complete
+	else if (
 		columnIndex === row.weekCompleteActual + (skippedColumns - 1) &&
 		row.weekCompleteActual !== null
 	) {
 		return "bg-purple-600 p-0 text-white";
-	} else if (
+	}
+
+	// Actual Start Beyond
+	else if (
 		columnIndex === row.weekStartBeyond + (skippedColumns - 1) &&
 		row.weekStartBeyond !== null
 	) {
 		return "bg-orange-300 p-0";
-	} else if (
+	}
+
+	// Actual Complete Beyond
+	else if (
 		columnIndex === row.weekCompleteBeyond + (skippedColumns - 1) &&
 		row.weekCompleteBeyond !== null
 	) {
 		return "bg-orange-600 p-0 text-white";
-	} else if (
+	}
+
+	// Week Highlighted
+	else if (columnIndex === currentWeek.value) {
+		return "bg-yellow-200 p-0";
+	}
+
+	// Plan Duration Highlited
+	else if (
 		columnIndex >= row.weekStart + (skippedColumns - 1) &&
 		columnIndex <= row.weekEnd + (skippedColumns - 1)
 	) {

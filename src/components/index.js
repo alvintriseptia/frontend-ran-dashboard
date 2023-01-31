@@ -30,7 +30,8 @@ export { Table, ProjectTable, ActivityTable, ActivitySummaryTable };
 // =================================================================================================================== //
 // Layout
 import Card from "./Layout/Card.vue";
-export { Card };
+import LoadingSpinner from "./Layout/LoadingSpinner.vue";
+export { Card, LoadingSpinner };
 
 // =================================================================================================================== //
 // List Item
