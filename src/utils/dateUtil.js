@@ -1,12 +1,20 @@
+const convertDateToDDMMMYY = (date) => {
+	const d = new Date(date);
+	const day = d.getDate();
+	const month = d.toLocaleString("id-ID", { month: "short" });
+	const year = d.getFullYear().toString().substring(-2);
+	return `${day} ${month} ${year}`;
+};
+
 const getWeekInYear = () => {
 	// get current date
 	const date = new Date();
 	// get first day of year
 	const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-	// calculate full weeks to current date
-	const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+	// calculate elapsed days since first day of year
+	const pastDaysOfYear = (date - firstDayOfYear) / 8.64e7;
 	// return week number
-	return Math.floor((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+	return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
 };
 
 const getWeekOfMonth = (month) => {
@@ -53,4 +61,5 @@ export default {
 	getWeekOfMonth,
 	getTotalWeeks,
 	monthNames,
+	convertDateToDDMMMYY,
 };

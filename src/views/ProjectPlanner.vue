@@ -1,18 +1,3 @@
-<script setup>
-import { ProjectTable, SearchSelect, Card } from "@/components";
-import { dateUtil } from "@/utils";
-import { ref } from "vue";
-
-const totalWeeks = dateUtil.getTotalWeeks();
-const currentWeek = dateUtil.getWeekInYear();
-const weekHighlighted = ref(currentWeek);
-
-const updateWeekHighlighted = (value) => {
-	const week = value.split(":")[1];
-	weekHighlighted.value = parseInt(week);
-};
-</script>
-
 <template>
 	<Card title="Project Planner">
 		<section class="flex gap-x-4 mb-4 items-center">
@@ -29,17 +14,13 @@ const updateWeekHighlighted = (value) => {
 				:isMultiple="false"
 				@onUpdate="updateWeekHighlighted"
 			/>
-			<div class="flex items-center gap-x-2">
-				<div class="w-4 h-4 bg-purple-300"></div>
-				<span class="text-gray-900">Actual Start</span>
-			</div>
-			<div class="flex items-center gap-x-2">
-				<div class="w-4 h-4 bg-purple-100"></div>
-				<span class="text-gray-900">Plan Duration</span>
-			</div>
-			<div class="flex items-center gap-x-2">
-				<div class="w-4 h-4 bg-yellow-300"></div>
-				<span class="text-gray-900">Week Highlight</span>
+			<div
+				class="flex items-center gap-x-2"
+				v-for="item in dataLabel"
+				:key="item.label"
+			>
+				<div class="w-4 h-4" :class="item.color"></div>
+				<span class="text-gray-900">{{ item.label }}</span>
 			</div>
 		</section>
 		<ProjectTable :weekHighlighted="weekHighlighted" />
@@ -54,3 +35,52 @@ const updateWeekHighlighted = (value) => {
 		</section>
 	</Card>
 </template>
+
+<script setup>
+import { ProjectTable, SearchSelect, Card } from "@/components";
+import { dateUtil } from "@/utils";
+import { ref } from "vue";
+
+// total weeks in a year
+const totalWeeks = dateUtil.getTotalWeeks();
+
+// current week in a year
+const currentWeek = dateUtil.getWeekInYear();
+const weekHighlighted = ref(currentWeek);
+
+console.log(currentWeek);
+
+// update week highlighted, when user select week
+// because the default value has been "week:1"
+const updateWeekHighlighted = (value) => {
+	const week = value.split(":")[1];
+	weekHighlighted.value = parseInt(week);
+};
+
+const dataLabel = [
+	{
+		label: "Week Highlight",
+		color: "bg-yellow-300",
+	},
+	{
+		label: "Plan Duration",
+		color: "bg-purple-100",
+	},
+	{
+		label: "Actual Start",
+		color: "bg-purple-300",
+	},
+	{
+		label: "Actual Complete",
+		color: "bg-purple-600",
+	},
+	{
+		label: "Beyond Plan Start",
+		color: "bg-orange-300",
+	},
+	{
+		label: "Beyond Plan Complete",
+		color: "bg-orange-600",
+	},
+];
+</script>

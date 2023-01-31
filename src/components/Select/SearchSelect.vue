@@ -25,11 +25,13 @@
 <script setup>
 import { defineProps, defineEmits, onMounted, ref } from "vue";
 
+// Define variable
 const loading = ref(false);
 const list = ref([]);
 const options = ref([]);
 const value = ref([]);
 
+// Define props
 const props = defineProps({
 	options: {
 		type: Array,
@@ -49,8 +51,10 @@ const props = defineProps({
 	},
 });
 
+// Define emits
 const emit = defineEmits(["onUpdate"]);
 
+// onMounted, to set the initial value
 onMounted(() => {
 	list.value = props.options.map((item) => {
 		return { value: `value:${item.value}`, label: `${item.label}` };
@@ -59,6 +63,8 @@ onMounted(() => {
 	options.value = list.value.slice(0, 5);
 });
 
+// Define methods
+// remoteMethod is used to search the options
 const remoteMethod = (query) => {
 	if (query) {
 		loading.value = true;
@@ -73,6 +79,7 @@ const remoteMethod = (query) => {
 	}
 };
 
+// onChange is used to emit the value
 const onChange = (val) => {
 	emit("onUpdate", val);
 };

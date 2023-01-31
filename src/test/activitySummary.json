@@ -1,0 +1,87 @@
+{
+	"status": "success",
+	"message": null,
+	"data": [
+		{
+			"deskripsiActivity": "Routine Check Interference Indoor",
+			"totalDoneActivity": 2,
+			"totalNotYetActivity": 1,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 1
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 2,
+					"notYet": 0
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 0,
+					"notYet": 0
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 0,
+					"notYet": 0
+				}
+			]
+		},
+		{
+			"deskripsiActivity": "Activate Alarm Battery Stolen for Potential Site",
+			"totalDoneActivity": 3,
+			"totalNotYetActivity": 4,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 1
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 1,
+					"notYet": 0
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 1,
+					"notYet": 1
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 1,
+					"notYet": 0
+				}
+			]
+		},
+		{
+			"title": "Total DO",
+			"totalDoneActivity": 3,
+			"totalNotYetActivity": 4,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 2
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 3,
+					"notYet": 1
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 1,
+					"notYet": 1
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 1,
+					"notYet": 0
+				}
+			]
+		}
+	]
+}

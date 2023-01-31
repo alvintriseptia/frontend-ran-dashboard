@@ -23,7 +23,9 @@
 		</section>
 		<section class="mb-6">
 			<h3 class="font-medium mb-1">Template</h3>
-			<OutlinedButton>Download Template</OutlinedButton>
+			<OutlinedButton>
+				<a href="/Activity Template.xlsx" download>Download Template</a>
+			</OutlinedButton>
 		</section>
 		<section>
 			<el-upload
