@@ -46,3 +46,7 @@ body {
 	color: #ff7723;
 	font-weight: 600;
 }
+
+.el-button--primary {
+	color: #ed1c24;
+}
