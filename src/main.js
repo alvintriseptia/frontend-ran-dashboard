@@ -8,6 +8,10 @@ import router from "@/router/router";
 import "@/styles/index.css";
 import VueRouter from "vue-router";
 import locale from "element-ui/lib/locale/lang/id";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.withCredentials = false;
 
 const pinia = createPinia();
 

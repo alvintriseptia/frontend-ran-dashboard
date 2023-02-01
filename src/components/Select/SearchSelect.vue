@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref } from "vue";
+import { defineProps, defineEmits, onMounted, ref, computed, watch } from "vue";
 
 // Define variable
 const loading = ref(false);
@@ -56,11 +56,18 @@ const emit = defineEmits(["onUpdate"]);
 
 // onMounted, to set the initial value
 onMounted(() => {
-	list.value = props.options.map((item) => {
-		return { value: `value:${item.value}`, label: `${item.label}` };
-	});
+	list.value = computed(() => props.options);
 
-	options.value = list.value.slice(0, 5);
+	watch(
+		list,
+		() => {
+			if (list.value.length > 0) {
+				options.value = list.value;
+				value.value = list.value[0].value;
+			}
+		},
+		{ immediate: true }
+	);
 });
 
 // Define methods

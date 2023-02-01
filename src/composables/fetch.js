@@ -22,7 +22,6 @@ export function useFetch({
 			params: unref(params),
 			headers: unref(headers),
 			method,
-			baseURL: "http://localhost:8080",
 		})
 			.then((res) => {
 				data.value = res.data.data;
