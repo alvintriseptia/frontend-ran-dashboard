@@ -8,89 +8,67 @@
 		}"
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
+		size="mini"
 	>
 		<el-table-column
-			v-for="item in tableHeader"
-			:key="item.prop"
-			:prop="item.prop"
-			:label="item.label"
-			:min-width="item.prop == 'DESKRIPSIACTIVITY' ? '400' : '100'"
+			v-for="(item, index) in tableStructure"
+			:key="index"
+			:label="convertLabel(item)"
+			:min-width="item == 'title' ? '400' : '150'"
 		>
+			<template #default="{ row }">
+				{{
+					typeof row[item] === "object"
+						? `${row[item].done} / ${row[item].notYet}`
+						: row[item]
+				}}
+			</template>
 		</el-table-column>
 	</el-table>
 </template>
 
 <script setup>
 // Import data
-import activitySummary from "@/test/activitySummary.json";
-import { stringUtil, colorsTheme } from "@/utils";
+import { colorsTheme, stringUtil } from "@/utils";
+import { computed } from "vue";
 
 // Data
-const data = activitySummary.data;
-
-// prepare table header
-let tableHeader = [
-	{
-		label: "Activities",
-		prop: "DESKRIPSIACTIVITY",
+const props = defineProps({
+	data: {
+		type: Object,
+		default: () => ({
+			tableStructure: [],
+			tableData: [],
+		}),
 	},
-];
-
-// Get all DO list
-data[0]["DO"].map((item) => {
-	return tableHeader.push({
-		label: stringUtil.toCapitalize(item.namaDO),
-		prop: item.namaDO,
-	});
 });
 
-// push total
-tableHeader.push({
-	label: "Total",
-	prop: "TOTAL",
+const tableStructure = computed(() => {
+	if (props.data) {
+		return props.data.tableStructure;
+	}
 });
-
-// prepare table data
-let tableData = [];
-
-data.map((item, index) => {
-	if (index !== data.length - 1) {
-		let data = {
-			DESKRIPSIACTIVITY: item.deskripsiActivity,
-			TOTAL: `${item.totalDoneActivity}/${
-				item.totalDoneActivity + item.totalNotYetActivity
-			}`,
-		};
-
-		// Get all DO list
-		item["DO"].map((doItem) => {
-			data[doItem.namaDO] = `${doItem.done}/${doItem.done + doItem.notYet}`;
-		});
-
-		tableData.push(data);
-	} else {
-		let data = {
-			DESKRIPSIACTIVITY: "Grand Total",
-			TOTAL: `${item.totalDoneActivity}/${
-				item.totalDoneActivity + item.totalNotYetActivity
-			}`,
-		};
-
-		// Get all DO list
-		item["DO"].map((doItem) => {
-			data[doItem.namaDO] = `${doItem.done}/${doItem.done + doItem.notYet}`;
-		});
-
-		tableData.push(data);
+const tableData = computed(() => {
+	if (props.data) {
+		return props.data.tableData;
 	}
 });
 
 // Define Methods
 // cellClassChecker will check the current cell to be highlighted
 function cellClassChecker({ row }) {
-	if (row.DESKRIPSIACTIVITY == "Grand Total") {
+	if (row.title == "Grand Total") {
 		return "p-0 bg-gray-200  text-gray-500";
 	}
 	return "p-0 text-gray-500";
+}
+
+function convertLabel(title) {
+	if (title === "title") {
+		return "Activity";
+	} else if (title === "grandTotal") {
+		return "Grand Total";
+	}
+	return stringUtil.toCapitalize(title);
 }
 </script>

@@ -19,12 +19,6 @@
 	src: url("@/assets/fonts/Roboto-Bold.ttf");
 	font-weight: 700;
 }
-
-:root {
-	--el-color-primary: ;
-	--el-color-secondary: #ff9d0b;
-}
-
 * {
 	font-family: "Roboto", sans-serif;
 }

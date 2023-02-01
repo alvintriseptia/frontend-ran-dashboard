@@ -2,16 +2,25 @@
 	<div>
 		<section class="grid grid-cols-12 gap-y-8 md:gap-8">
 			<Card title="Programs Summary" class="col-span-12 lg:col-span-9">
-				<div class="flex flex-wrap gap-y-6 md:gap-6 justify-center">
+				<el-container
+					class="flex flex-wrap gap-y-6 md:gap-6 justify-center items-center min-h-[400px]"
+				>
 					<ProgramChart
-						v-for="item in programData"
-						:key="item.id"
-						:chart-id="item.id"
-						:programName="item.programName"
-						:doneActivity="item.doneActivity"
-						:notYetActivity="item.totalActivity - item.doneActivity"
+						v-if="programSummary.data"
+						v-for="(item, index) in programSummary.data"
+						:key="index"
+						:chart-id="index.toString()"
+						:programName="item.namaProgram"
+						:doneActivity="item.done"
+						:notYetActivity="item.notYet"
 					/>
-				</div>
+					<APIResponseLayout
+						:error="logActivities.error"
+						:loading="logActivities.loading"
+						:refreshFunction="logActivities.doFetch"
+						:data="logActivities.data"
+					/>
+				</el-container>
 			</Card>
 			<Card
 				title="Weekly Log Activites"
@@ -20,18 +29,26 @@
 				maxHeight="calc(100vh - 4rem - 2.5rem - 2.5rem - 2.5rem)"
 			>
 				<ActivityItem
-					v-for="(item, index) in activityData"
-					:key="item.id"
-					:program="item.program"
-					:subProgram="item.subProgram"
-					:siteId="item.siteId"
-					:subDept="item.subDept"
-					:isDone="item.isDone"
-					:activity="item.activity"
-					:isLastItem="index === activityData.length - 1"
+					v-if="logActivities.data"
+					v-for="(item, index) in logActivities.data"
+					:key="index"
+					:program="item.namaProgram"
+					:subProgram="item.namaSubprogram"
+					:siteId="item.siteID"
+					:siteName="item.siteName"
+					:isDone="item.status.toLowerCase() === 'done'"
+					:activity="item.deskripsiActivity"
+					:isLastItem="index === logActivities.data.length - 1"
+				/>
+				<APIResponseLayout
+					:error="logActivities.error"
+					:loading="logActivities.loading"
+					:refreshFunction="logActivities.doFetch"
+					:data="logActivities.data"
 				/>
 			</Card>
 		</section>
+
 		<section class="my-10">
 			<Card title="Activities Summary">
 				<div class="flex gap-x-4 mb-6">
@@ -39,14 +56,21 @@
 						:options="programOptions"
 						:isMultiple="false"
 						placeholder="Pilih Program"
+						@onUpdate="handleProgramUpdate"
 					/>
 					<SearchSelect
-						:options="subProgramOptions[0].data"
+						:options="subProgramOptions"
 						:isMultiple="false"
 						placeholder="Pilih Sub Program"
+						@onUpdate="handleSubProgramUpdate"
+					/>
+					<Select
+						:options="quarters"
+						placeholder="Pilih Kuartal"
+						@onChange="handleQuarterUpdate"
 					/>
 				</div>
-				<ActivitySummaryTable />
+				<ActivitySummaryTable :data="activitySummary.data" />
 			</Card>
 		</section>
 	</div>
@@ -54,18 +78,18 @@
 
 <script setup>
 import ChartDataLabels from "chartjs-plugin-datalabels";
-
+import { ref, onMounted, watch } from "vue";
 import {
 	ProgramChart,
 	Card,
 	ActivityItem,
 	ActivitySummaryTable,
 	SearchSelect,
+	APIResponseLayout,
+	Select,
 } from "@/components";
-import programs from "@/test/programs.json";
-import activites from "@/test/activities.json";
-import { programOptions, subProgramOptions } from "@/test/optionsData";
 import { dateUtil } from "@/utils";
+import { useFetch } from "@/composables";
 
 import {
 	Chart as ChartJS,
@@ -89,6 +113,113 @@ ChartJS.register(
 	ChartDataLabels
 );
 
-const programData = programs.data;
-const activityData = activites.data;
+// Program Summary
+const programSummary = ref(
+	useFetch({ url: "/api/activity-plan/program-progress" })
+);
+
+// Weekly Log Activities
+const logActivities = ref(
+	useFetch({ url: "/api/activity-plan/latest-plan-update" })
+);
+
+// Activity Summary
+// Activity summary params
+const activitySummaryParams = ref({
+	program: "1",
+	subprogram: "",
+	target_quartal: "",
+});
+
+const activitySummary = useFetch({
+	url: "/api/activity-plan/activity-progress-by-do",
+	params: activitySummaryParams,
+});
+
+// Quarter options
+const quarters = [
+	{
+		label: "All",
+		value: "",
+	},
+	{
+		label: "Q1",
+		value: "Q1",
+	},
+	{
+		label: "Q2",
+		value: "!2",
+	},
+	{
+		label: "Q3",
+		value: "Q3",
+	},
+	{
+		label: "Q4",
+		value: "Q4",
+	},
+];
+
+// handle quarter change
+const handleQuarterUpdate = (value) => {
+	activitySummaryParams.value.target_quartal = value;
+};
+
+// Programs
+const programs = useFetch({ url: "/api/program" });
+// get program options by mapping programs
+const programOptions = ref([]);
+
+// handle program change
+const handleProgramUpdate = (value) => {
+	activitySummaryParams.value.program = value;
+	subProgramParams.value.programId = value;
+};
+
+// Get all sub programs
+const subProgramParams = ref({ programId: "1" });
+const subPrograms = useFetch({
+	url: "/api/subprogram",
+	params: subProgramParams,
+});
+
+// // get sub program options by mapping sub programs
+const subProgramOptions = ref([]);
+
+// handle sub program change
+const handleSubProgramUpdate = (value) => {
+	activitySummaryParams.value.subprogram = value;
+};
+
+onMounted(() => {
+	// watch programs
+	watch(programs.data, () => {
+		if (programs.data) {
+			programOptions.value = programs.data.value.map((item) => {
+				return {
+					label: item.nama,
+					value: item.id,
+				};
+			});
+
+			subProgramParams.value.programId = programOptions.value[0].value;
+		}
+	});
+
+	// watch sub programs
+	watch(subPrograms.data, () => {
+		if (subPrograms.data) {
+			subProgramOptions.value = subPrograms.data.value.map((item) => {
+				return {
+					label: item.nama,
+					value: item.id,
+				};
+			});
+			subProgramOptions.value.unshift({
+				label: "All",
+				value: "",
+			});
+		}
+	});
+});
 </script>

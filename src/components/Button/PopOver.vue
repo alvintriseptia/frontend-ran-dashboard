@@ -7,7 +7,7 @@
 					'text-green-500': status === 'Done',
 				}"
 				size="mini"
-				@click="visible = false"
+				@click="handleClick('Done')"
 			>
 				Done
 			</button>
@@ -15,10 +15,10 @@
 				type="danger"
 				class="w-full text-gray-500 text-sm border border-transparent hover:border-orange-500 transition-all hover:text-orange-500"
 				:class="{
-					'text-orange-500': status === 'NY',
+					'text-orange-500': status === 'Not Yet',
 				}"
 				size="mini"
-				@click="visible = false"
+				@click="handleClick('Not Yet')"
 			>
 				Not Yet
 			</button>
@@ -48,6 +48,18 @@ export default {
 		status: {
 			type: String,
 			default: "Done",
+		},
+	},
+	emits: ["onUpdate"],
+	methods: {
+		handleClick(statusClicked) {
+			if (statusClicked === this.status) {
+				this.visible = !this.visible;
+				return;
+			}
+			this.visible = !this.visible;
+			const status = this.status === "Done" ? "NY" : "Done";
+			this.$emit("onUpdate", status);
 		},
 	},
 };

@@ -122,7 +122,23 @@ const activities = ref(
 
 // handle limit change
 const handleLimitChange = (val) => {
-	activitiesParams.value.limit = val;
+	// get current page
+	const currentPage = Math.ceil(
+		(activitiesParams.value.page * activitiesParams.value.limit) / val
+	);
+	if (currentPage > activities.value.totalPage) {
+		activitiesParams.value = {
+			...activitiesParams.value,
+			limit: val,
+			page: activities.value.totalPage,
+		};
+	} else {
+		activitiesParams.value = {
+			...activitiesParams.value,
+			limit: val,
+			page: currentPage,
+		};
+	}
 };
 
 // handle pagination
@@ -133,8 +149,15 @@ const handleCurrentChange = (val) => {
 // handle date range
 const handleDateRangeChange = (dateRange) => {
 	if (dateRange) {
-		activitiesParams.value.startDate = dateRange[0];
-		activitiesParams.value.endDate = dateRange[1];
+		// add 1 day to start date and end date
+		// because by default date range will return 1 day before to fit BE requirement
+		const startDate = new Date(dateRange[0]);
+		startDate.setDate(startDate.getDate() + 1);
+		activitiesParams.value.startDate = startDate;
+
+		const endDate = new Date(dateRange[1]);
+		endDate.setDate(endDate.getDate() + 1);
+		activitiesParams.value.endDate = endDate;
 	} else {
 		activitiesParams.value.startDate = "";
 		activitiesParams.value.endDate = "";

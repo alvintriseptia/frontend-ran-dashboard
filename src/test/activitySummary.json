@@ -57,6 +57,87 @@
 			]
 		},
 		{
+			"deskripsiActivity": "Activate Alarm Battery Stolen for Potential Site",
+			"totalDoneActivity": 3,
+			"totalNotYetActivity": 4,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 1
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 1,
+					"notYet": 0
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 1,
+					"notYet": 1
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 1,
+					"notYet": 0
+				}
+			]
+		},
+		{
+			"deskripsiActivity": "Activate Alarm Battery Stolen for Potential Site",
+			"totalDoneActivity": 3,
+			"totalNotYetActivity": 4,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 1
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 1,
+					"notYet": 0
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 1,
+					"notYet": 1
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 1,
+					"notYet": 0
+				}
+			]
+		},
+		{
+			"deskripsiActivity": "Activate Alarm Battery Stolen for Potential Site",
+			"totalDoneActivity": 3,
+			"totalNotYetActivity": 4,
+			"DO": [
+				{
+					"namaDO": "DEMAK",
+					"done": 0,
+					"notYet": 1
+				},
+				{
+					"namaDO": "MAGELANG",
+					"done": 1,
+					"notYet": 0
+				},
+				{
+					"namaDO": "PEKALONGAN",
+					"done": 1,
+					"notYet": 1
+				},
+				{
+					"namaDO": "SEMARANG",
+					"done": 1,
+					"notYet": 0
+				}
+			]
+		},
+		{
 			"title": "Total DO",
 			"totalDoneActivity": 3,
 			"totalNotYetActivity": 4,

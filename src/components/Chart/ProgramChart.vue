@@ -7,8 +7,8 @@
 			:chart-options="chartOptions"
 			:chart-data="chartData"
 			:chart-id="chartId"
-			:width="100"
-			:height="100"
+			:width="120"
+			:height="120"
 			:plugins="chartPlugins"
 		/>
 	</div>

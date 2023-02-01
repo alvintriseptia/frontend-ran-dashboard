@@ -61,12 +61,14 @@ const emit = defineEmits(["onUpdate", "onChange"]);
 // onMounted, to set the initial value
 onMounted(() => {
 	options.value = computed(() => {
-		return props.options.map((item) => {
-			return {
-				value: item.deskripsiActivity,
-				label: item.deskripsiActivity,
-			};
-		});
+		return props.options
+			? props.options.map((item) => {
+					return {
+						value: item.deskripsiActivity,
+						label: item.deskripsiActivity,
+					};
+			  })
+			: [];
 	});
 });
 

@@ -30,9 +30,15 @@ const props = defineProps({
 		type: String,
 		default: "Select",
 	},
+	width: {
+		type: String,
+		default: "100px",
+	},
 });
 
 const value = ref(props.options[0].value);
+
+console.log(props.value);
 
 const emit = defineEmits(["onChange"]);
 
