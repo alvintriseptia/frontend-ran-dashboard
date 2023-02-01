@@ -1,5 +1,9 @@
 <template>
-	<div class="flex h-screen justify-center items-center">LOGIN</div>
+	<div class="flex justify-center items-center h-[calc(100vh-8rem)]">
+		<Form />
+	</div>
 </template>
 
-<script setup></script>
+<script setup>
+import { Form } from "@/components";
+</script>

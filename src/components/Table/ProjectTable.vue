@@ -63,8 +63,18 @@
 			</el-table-column>
 		</el-table-column>
 		<el-table-column prop="pic" label="PIC" :width="150" />
-		<el-table-column prop="budget" label="BUDGET" :width="100" />
-		<el-table-column prop="cost" label="COST" :width="150">
+		<el-table-column
+			prop="budget"
+			label="BUDGET"
+			:width="100"
+			v-if="userStore.getters.role === 'admin'"
+		/>
+		<el-table-column
+			prop="cost"
+			label="COST"
+			:width="150"
+			v-if="userStore.getters.role === 'admin'"
+		>
 			<template #default="{ row }">
 				<div class="text-right">
 					{{ numberFormat.currencyFormat(row.cost) }}
@@ -78,6 +88,7 @@
 // Import Data
 import { dateUtil, colorsTheme, numberFormat } from "@/utils";
 import { computed } from "vue";
+import { userStore } from "@/stores";
 
 // Define Props
 const props = defineProps({

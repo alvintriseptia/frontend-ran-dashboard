@@ -20,6 +20,7 @@
 import { Sidebar } from "@/components";
 import { useWindow } from "@/composables";
 import { userStore } from "@/stores";
+import router from "@/router/router";
 
 const { isMobile } = useWindow();
 </script>

@@ -9,10 +9,10 @@ import "@/styles/index.css";
 import VueRouter from "vue-router";
 import locale from "element-ui/lib/locale/lang/id";
 
-import { userStore } from "@/stores";
-
 axios.defaults.baseURL = "http://localhost:8080";
-axios.defaults.withCredentials = false;
+// axios.defaults.headers.common["Access-Control-Allow-Origin"] =
+// 	"http://localhost:8080";
+axios.defaults.withCredentials = true;
 
 Vue.use(VueRouter);
 Vue.use(ElementUI, { locale });

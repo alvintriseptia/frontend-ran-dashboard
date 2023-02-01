@@ -5,7 +5,7 @@ import { userStore } from "@/stores";
 const routes = [
 	{
 		path: "/",
-		name: "home",
+		name: "dashboard",
 		component: views.Dashboard,
 		meta: { requiresAuth: true },
 	},
@@ -34,12 +34,53 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	if (to.matched.some((record) => record.meta.requiresAuth)) {
-		if (userStore.getters.isLoggedIn) {
-			next();
-			return;
+	if (to.path === "/login") {
+		if (userStore.getters.user === null) {
+			userStore.dispatch("getUser").then(() => {
+				if (userStore.getters.isLoggedIn) {
+					next("/");
+				}
+			});
+		} else {
+			if (userStore.getters.isLoggedIn) {
+				next("/");
+			}
 		}
-		next("/login");
+		return;
+	}
+
+	if (to.matched.some((record) => record.meta.requiresAuth)) {
+		if (userStore.getters.user === null) {
+			userStore.dispatch("getUser").then(() => {
+				if (userStore.getters.isLoggedIn) {
+					if (to.path === "/login") {
+						next("/");
+						return;
+					}
+					next();
+					return;
+				} else {
+					if (to.path !== "/login") {
+						next("/login");
+						return;
+					}
+				}
+			});
+		} else {
+			if (userStore.getters.isLoggedIn) {
+				if (to.path === "/login") {
+					next("/");
+					return;
+				}
+				next();
+				return;
+			} else {
+				if (to.path !== "/login") {
+					next("/login");
+					return;
+				}
+			}
+		}
 	} else {
 		next();
 	}

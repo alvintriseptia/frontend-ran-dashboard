@@ -39,8 +39,17 @@
 		<el-table-column prop="targetQuartal" label="Target Q" width="60" />
 		<!-- <el-table-column prop="date" label="Date" width="100" /> -->
 		<el-table-column prop="remark" label="Remark" width="150" />
-		<el-table-column prop="budget" label="Budget" width="150" />
-		<el-table-column label="Cost" width="200">
+		<el-table-column
+			prop="budget"
+			label="Budget"
+			width="150"
+			v-if="userStore.getters.role === 'admin'"
+		/>
+		<el-table-column
+			label="Cost"
+			width="200"
+			v-if="userStore.getters.role === 'admin'"
+		>
 			<template #default="{ row }">
 				{{
 					row.cost && row.cost !== "0"
@@ -58,6 +67,7 @@ import { PopOver } from "@/components";
 import { numberFormat } from "@/utils";
 import { computed, watch } from "vue";
 import { useFetch } from "@/composables";
+import { userStore } from "@/stores";
 
 const props = defineProps({
 	data: {
@@ -93,9 +103,9 @@ const handleStatusUpdate = (row, status) => {
 	});
 
 	watch(data, (newData) => {
-		if (newData >= 0) {
-			console.log("success");
+		if (newData) {
 			row.status = status;
+			row.weekExecuted = parseInt(newData.weekExecuted);
 		}
 	});
 };

@@ -4,7 +4,9 @@
 		:style="{ maxHeight: maxHeight }"
 	>
 		<div class="mb-4">
-			<h2 class="text-xl font-bold">{{ title }}</h2>
+			<div class="flex gap-x-4">
+				<h2 class="text-xl font-bold">{{ title }}</h2>
+			</div>
 			<p v-if="subtitle" class="text-sm text-gray-500">
 				{{ subtitle }}
 			</p>
