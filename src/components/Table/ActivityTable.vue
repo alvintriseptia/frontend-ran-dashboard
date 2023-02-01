@@ -11,7 +11,10 @@
 		</el-table-column>
 		<el-table-column prop="status" label="Status" width="80">
 			<template #default="{ row }">
-				<PopOver :status="row.status" />
+				<PopOver
+					:status="row.status"
+					@onUpdate="(status) => handleStatusUpdate(row, status)"
+				/>
 			</template>
 		</el-table-column>
 		<el-table-column prop="weekExecuted" label="Week Exec" width="80" />
@@ -53,7 +56,8 @@
 // Import data
 import { PopOver } from "@/components";
 import { numberFormat } from "@/utils";
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useFetch } from "@/composables";
 
 const props = defineProps({
 	data: {
@@ -68,6 +72,33 @@ const props = defineProps({
 
 const data = computed(() => props.data);
 const numberStart = computed(() => props.numberStart);
+
+const handleStatusUpdate = (row, status) => {
+	// console.log(row);
+	const body = new FormData();
+
+	const date = new Date();
+	const dateNow = date.toISOString().slice(0, 10);
+
+	body.append("activityId", row.activityID);
+	body.append("siteId", row.siteID);
+	body.append("dateExecuted", dateNow);
+	body.append("status", status);
+
+	// console.log(activityStatusParams);
+	const { data } = useFetch({
+		url: "/api/activity",
+		method: "POST",
+		body,
+	});
+
+	watch(data, (newData) => {
+		if (newData >= 0) {
+			console.log("success");
+			row.status = status;
+		}
+	});
+};
 </script>
 
 <style>

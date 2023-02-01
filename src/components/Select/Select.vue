@@ -4,7 +4,6 @@
 		filterable
 		:placeholder="placeholder"
 		@change="handleChange"
-		:style="{ width }"
 	>
 		<el-option
 			v-for="item in options"
