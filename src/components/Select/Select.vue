@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const props = defineProps({
 	options: {
@@ -30,15 +30,23 @@ const props = defineProps({
 		type: String,
 		default: "Select",
 	},
-	width: {
+	defaultValue: {
 		type: String,
-		default: "100px",
+		default: "",
 	},
 });
 
-const value = ref(props.options[0].value);
+const options = computed(() => props.options);
 
-console.log(props.value);
+const value = ref("");
+
+onMounted(() => {
+	if (props.defaultValue) {
+		value.value = props.defaultValue;
+	} else {
+		value.value = props.options[0].value;
+	}
+});
 
 const emit = defineEmits(["onChange"]);
 

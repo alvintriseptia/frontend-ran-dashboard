@@ -16,7 +16,6 @@ export function useFetch({
 
 	function doFetch() {
 		if (url || (method !== "GET" && body !== null)) {
-			console.log(method);
 			// set state loading before fetching..
 			loading.value = true;
 			// unref() unwraps potential refs

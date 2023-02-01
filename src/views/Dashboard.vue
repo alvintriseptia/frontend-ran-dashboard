@@ -139,7 +139,7 @@ const activitySummary = useFetch({
 // Quarter options
 const quarters = [
 	{
-		label: "All",
+		label: "All Q",
 		value: "",
 	},
 	{
@@ -148,7 +148,7 @@ const quarters = [
 	},
 	{
 		label: "Q2",
-		value: "!2",
+		value: "Q2",
 	},
 	{
 		label: "Q3",
@@ -197,7 +197,7 @@ onMounted(() => {
 		if (programs.data) {
 			programOptions.value = programs.data.value.map((item) => {
 				return {
-					label: item.nama,
+					label: "Program " + item.nama,
 					value: item.id,
 				};
 			});
@@ -211,12 +211,12 @@ onMounted(() => {
 		if (subPrograms.data) {
 			subProgramOptions.value = subPrograms.data.value.map((item) => {
 				return {
-					label: item.nama,
+					label: "Subprogram " + item.nama,
 					value: item.id,
 				};
 			});
 			subProgramOptions.value.unshift({
-				label: "All",
+				label: "All Subprogram",
 				value: "",
 			});
 		}

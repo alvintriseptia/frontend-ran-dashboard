@@ -19,7 +19,7 @@
 			<template #default="{ row }">
 				{{
 					typeof row[item] === "object"
-						? `${row[item].done} / ${row[item].notYet}`
+						? `${row[item].done} / ${row[item].notYet + row[item].done}`
 						: row[item]
 				}}
 			</template>

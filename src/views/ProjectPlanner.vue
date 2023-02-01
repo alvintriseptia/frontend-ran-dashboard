@@ -1,19 +1,14 @@
 <template>
 	<Card title="Project Planner">
 		<section class="flex gap-x-4 mb-4 items-center">
-			<SearchSelect
-				placeholder="Select Week"
-				:options="
-					Array.from({ length: totalWeeks }, (_, i) => {
-						return {
-							label: `Week ${i + 1}`,
-							value: i + 1,
-						};
-					})
-				"
-				:isMultiple="false"
-				@onUpdate="updateWeekHighlighted"
-			/>
+			<div class="w-32">
+				<Select
+					placeholder="Select Week"
+					:options="totalWeeks"
+					@onChange="updateWeekHighlighted"
+					:defaultValue="'Week ' + currentWeek.toString()"
+				/>
+			</div>
 			<div
 				class="flex items-center gap-x-2"
 				v-for="item in dataLabel"
@@ -23,36 +18,72 @@
 				<span class="text-gray-900">{{ item.label }}</span>
 			</div>
 		</section>
-		<ProjectTable :weekHighlighted="weekHighlighted" />
-		<section class="mt-4">
-			<el-pagination
-				:page-size="10"
-				:pager-count="11"
-				layout="prev, pager, next"
-				:total="50"
-			>
-			</el-pagination>
+		<section>
+			<div class="h-80" v-if="error">
+				<el-result icon="error" title="Terjadi Kesalahan" :subTitle="error">
+					<template slot="extra">
+						<el-button type="primary" size="medium" @click="refreshFunction">
+							Refresh
+						</el-button>
+					</template>
+				</el-result>
+			</div>
+
+			<ProjectTable
+				v-else
+				:weekHighlighted="weekHighlighted"
+				:data="rows"
+				:loading="loading"
+				:weekInMonths="weekInMonths"
+			/>
 		</section>
 	</Card>
 </template>
 
 <script setup>
-import { ProjectTable, SearchSelect, Card } from "@/components";
+import { ProjectTable, Select, Card } from "@/components";
 import { dateUtil } from "@/utils";
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { useFetch } from "@/composables";
 
-// total weeks in a year
-const totalWeeks = dateUtil.getTotalWeeks();
+// get project planner from api
+const { data, loading, error } = useFetch({
+	url: "/api/activity-plan/project-planner",
+});
+
+const rows = ref([]);
+const weekInMonths = ref([]);
+const totalWeeks = ref([]);
+
+// watch
+onMounted(() => {
+	watch(data, (newData) => {
+		if (newData) {
+			rows.value = newData.rows;
+			weekInMonths.value = newData.weeksInMonths;
+			if (newData.weeksInMonths && newData.weeksInMonths.length > 0) {
+				let total = 0;
+				for (let i = 0; i < newData.weeksInMonths.length; i++) {
+					total += newData.weeksInMonths[i];
+				}
+				totalWeeks.value = Array.from({ length: total }, (_, i) => {
+					return {
+						label: `Week ${i + 1}`,
+						value: i + 1,
+					};
+				});
+			}
+		}
+	});
+});
 
 // current week in a year
 const currentWeek = dateUtil.getWeekInYear();
 const weekHighlighted = ref(currentWeek);
 
 // update week highlighted, when user select week
-// because the default value has been "week:1"
 const updateWeekHighlighted = (value) => {
-	const week = value.split(":")[1];
-	weekHighlighted.value = parseInt(week);
+	weekHighlighted.value = parseInt(value);
 };
 
 const dataLabel = [
