@@ -11,6 +11,7 @@
 	"dependencies": {
 		"@googlemaps/js-api-loader": "^1.15.1",
 		"@googlemaps/three": "^3.0.3",
+		"axios": "^1.2.6",
 		"chart.js": "^3.8.0",
 		"chartjs-plugin-datalabels": "^2.2.0",
 		"element-ui": "^2.2.28",

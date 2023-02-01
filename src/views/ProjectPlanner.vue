@@ -48,8 +48,6 @@ const totalWeeks = dateUtil.getTotalWeeks();
 const currentWeek = dateUtil.getWeekInYear();
 const weekHighlighted = ref(currentWeek);
 
-console.log(currentWeek);
-
 // update week highlighted, when user select week
 // because the default value has been "week:1"
 const updateWeekHighlighted = (value) => {
