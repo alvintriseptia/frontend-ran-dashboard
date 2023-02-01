@@ -11,6 +11,7 @@
 		}"
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
+		v-model="loading"
 	>
 		<el-table-column label="NO" :width="50">
 			<template #default="{ row, $index }">
@@ -20,7 +21,7 @@
 			</template>
 		</el-table-column>
 		<el-table-column prop="program" label="PROGRAM" :min-width="150" />
-		<el-table-column prop="subProgram" label="SUB PROGRAM" :min-width="150" />
+		<el-table-column prop="subProgram" label="SUB PROGRAM" :min-width="200" />
 		<el-table-column prop="activity" label="ACTIVITY" :min-width="250" />
 		<el-table-column prop="target" label="TARGET" />
 		<el-table-column label="COMPLETE" :width="90">
@@ -61,18 +62,22 @@
 				</el-table-column>
 			</el-table-column>
 		</el-table-column>
-		<el-table-column prop="pic" label="PIC" :width="100" />
+		<el-table-column prop="pic" label="PIC" :width="150" />
 		<el-table-column prop="budget" label="BUDGET" :width="100" />
-		<el-table-column prop="cost" label="COST" :width="150" />
+		<el-table-column prop="cost" label="COST" :width="150">
+			<template #default="{ row }">
+				<div class="text-right">
+					{{ numberFormat.currencyFormat(row.cost) }}
+				</div>
+			</template>
+		</el-table-column>
 	</el-table>
 </template>
 
 <script setup>
 // Import Data
-import { dateUtil, colorsTheme } from "@/utils";
+import { dateUtil, colorsTheme, numberFormat } from "@/utils";
 import { computed } from "vue";
-import projectPlanner from "@/test/projectPlanner.json";
-const data = projectPlanner.data;
 
 // Define Props
 const props = defineProps({
@@ -80,17 +85,30 @@ const props = defineProps({
 		type: Number,
 		default: () => dateUtil.getWeekInYear(),
 	},
+	data: {
+		type: Array,
+		default: () => [],
+	},
+	weekInMonths: {
+		type: Array,
+		default: () => [],
+	},
+	loading: {
+		type: Boolean,
+		default: () => false,
+	},
 });
 
 // Define Computed
+const loading = computed(() => props.loading);
+
 const currentWeek = computed(() => {
 	return props.weekHighlighted + skippedColumns - 1;
 });
 
-// Calculate week each month and store it in array
-const weekInMonths = Array.from({ length: 12 }, (_, i) =>
-	dateUtil.getWeekOfMonth(i)
-);
+const weekInMonths = computed(() => {
+	return props.weekInMonths;
+});
 
 // Define how many columns to skip,
 // to get periods column to be first column
@@ -165,7 +183,7 @@ function convertMonthToMMM(monthName) {
 function getWeekInYear(week, monthNumber) {
 	const weekInYear =
 		week +
-		weekInMonths.slice(0, monthNumber).reduce((acc, cur) => acc + cur, 0);
+		props.weekInMonths.slice(0, monthNumber).reduce((acc, cur) => acc + cur, 0);
 	return weekInYear;
 }
 
