@@ -1,11 +1,11 @@
 <template>
 	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto"
+		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
 		:class="isShow ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
 			<h2 class="text-lg lg:text-xl font-bold">Import Activities</h2>
-			<OutlinedButton size="sm" @onClick="$emit('closeImportActivities')"
+			<OutlinedButton size="sm" @onClick="emit('closeImportActivities')"
 				>&#10006;</OutlinedButton
 			>
 		</div>
@@ -35,7 +35,7 @@
 				:limit="1"
 				:on-change="handleChange"
 				:on-remove="handleRemove"
-				:file-list="file"
+				:file-list="files"
 				accept=".xlsx"
 				type="primary"
 			>
@@ -44,16 +44,21 @@
 			</el-upload>
 		</section>
 		<section class="mt-6">
-			<Button @onClick="$emit('closeImportActivities')">Import</Button>
+			<Button :disabled="excelFile.value ? true : false" @onClick="handleImport"
+				>Import</Button
+			>
 		</section>
 	</div>
 </template>
 
 <script setup>
 import { OutlinedButton, Button } from "@/components";
-import { computed, ref } from "vue";
+import { Loading, Notification } from "element-ui";
+import { computed, ref, watch } from "vue";
+import { useFetch } from "@/composables";
 
-const file = ref([]);
+const excelFile = ref({});
+const files = ref([]);
 
 const props = defineProps({
 	isShow: {
@@ -62,13 +67,63 @@ const props = defineProps({
 	},
 });
 
+const emit = defineEmits(["closeImportActivities"]);
+
 const isShow = computed(() => props.isShow);
 
 const handleChange = (file, fileList) => {
-	file.value = fileList;
+	excelFile.value = file;
+	files.value = fileList;
 };
 
 const handleRemove = (file, fileList) => {
-	file.value = fileList;
+	excelFile.value = file;
+	files.value = fileList;
+};
+
+// Handle Import Activity
+const handleImport = () => {
+	const body = new FormData();
+	body.append("upfile", excelFile.value.raw);
+
+	// console.log(activityStatusParams);
+	const { data, loading, error } = useFetch({
+		url: "/api/activity-plan/upload",
+		method: "POST",
+		body,
+	});
+
+	watch(data, (newData) => {
+		if (newData) {
+			Loading.service().close();
+			emit("closeImportActivities", {
+				isRefresh: newData[0] !== null,
+				data: newData,
+			});
+		}
+	});
+
+	watch(error, (newError) => {
+		if (newError) {
+			Loading.service().close();
+			Notification.error({
+				title: "Error",
+				message: newError.message,
+			});
+		}
+	});
+
+	watch(loading, (newLoading) => {
+		if (newLoading) {
+			Loading.service({
+				lock: true,
+				spinner: "el-icon-loading",
+				background: "rgba(0, 0, 0, 0.3)",
+				fullscreen: true,
+			});
+		} else {
+			Loading.service().close();
+		}
+	});
 };
 </script>
