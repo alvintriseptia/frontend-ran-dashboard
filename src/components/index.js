@@ -10,8 +10,7 @@ export { LineChart, BarChart, HorizontalBarChart, PieChart, ProgramChart };
 // Button
 import Button from "./Button/Button.vue";
 import OutlinedButton from "./Button/OutlinedButton.vue";
-import PopOver from "./Button/PopOver.vue";
-export { Button, OutlinedButton, PopOver };
+export { Button, OutlinedButton };
 
 // =================================================================================================================== //
 // Input
@@ -50,3 +49,9 @@ export { ImportActivity };
 // Nav Menu
 import Sidebar from "./NavMenu/Sidebar.vue";
 export { Sidebar };
+
+// =================================================================================================================== //
+// Dialog
+import PopOver from "./Dialog/PopOver.vue";
+import ModalActivity from "./Dialog/ModalActivity.vue";
+export { PopOver, ModalActivity };
