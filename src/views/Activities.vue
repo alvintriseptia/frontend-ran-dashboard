@@ -1,5 +1,5 @@
 <template>
-	<Card title="Activites">
+	<Card title="Activites" :alert="alertCard">
 		<div>
 			<section class="flex gap-x-4 mb-6 justify-between items-center">
 				<RemoteSearchSelect
@@ -8,7 +8,7 @@
 					@onChange="handleSearchActivitiesName"
 					@onUpdate="handleUpdateActivitiesName"
 				/>
-				<div class="flex gap-x-4">
+				<div class="flex gap-x-4 items-center">
 					<el-date-picker
 						v-model="dateRange"
 						type="monthrange"
@@ -18,7 +18,9 @@
 					>
 					</el-date-picker>
 					<!-- <OutlinedButton>Input Activity</OutlinedButton> -->
-					<OutlinedButton @onClick="showImportActivities"
+					<OutlinedButton
+						v-if="userStore.getters.role === 'admin'"
+						@onClick="showImportActivities"
 						>Import Activities</OutlinedButton
 					>
 				</div>
@@ -53,6 +55,7 @@
 				"
 			/>
 			<ImportActivity
+				v-if="userStore.getters.role === 'admin'"
 				:isShow="isShowImportActivities"
 				@closeImportActivities="closeImportActivities"
 			/>
@@ -71,16 +74,44 @@ import {
 } from "@/components";
 import { ref, unref } from "vue";
 import { useFetch } from "@/composables";
+import { userStore } from "@/stores";
 
 // Menu Import Activities
 const isShowImportActivities = ref(false);
+const alertCard = ref(null);
 
 const showImportActivities = () => {
 	isShowImportActivities.value = true;
 };
 
-const closeImportActivities = () => {
+const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
+	if (result !== null) {
+		console.log(result);
+		if (result.isRefresh) {
+			const title = result.data[1]
+				? "Import Activities Success"
+				: "Some activities success imported, but the other is not imported";
+			alertCard.value = {
+				type: result.data[1] ? "success" : "warning",
+				title: title,
+				description: result.data[1],
+			};
+			activitiesParams.value = {
+				...activitiesParams.value,
+				page: 1,
+			};
+		} else if (result.data[1]) {
+			alertCard.value = {
+				type: "warning",
+				title:
+					"Some activities success imported, but the other is not imported",
+				description: result.data[1],
+			};
+		}
+	} else {
+		alertCard.value = null;
+	}
 };
 
 // =================== Activities ===================

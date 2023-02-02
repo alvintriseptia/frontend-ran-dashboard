@@ -43,7 +43,8 @@ export { ActivityItem };
 // =================================================================================================================== //
 // Input
 import ImportActivity from "./Input/ImportActivity.vue";
-export { ImportActivity };
+import InputActivity from "./Input/InputActivity.vue";
+export { ImportActivity, InputActivity };
 
 // =================================================================================================================== //
 // Nav Menu
