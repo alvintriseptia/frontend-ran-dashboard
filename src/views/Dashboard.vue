@@ -17,7 +17,7 @@
 					<APIResponseLayout
 						:error="logActivities.error"
 						:loading="logActivities.loading"
-						:refreshFunction="logActivities.doFetch"
+						@refreshFunction="logActivities.doFetch"
 						:data="logActivities.data"
 					/>
 				</el-container>
@@ -43,7 +43,7 @@
 				<APIResponseLayout
 					:error="logActivities.error"
 					:loading="logActivities.loading"
-					:refreshFunction="logActivities.doFetch"
+					@refreshFunction="logActivities.doFetch"
 					:data="logActivities.data"
 				/>
 			</Card>

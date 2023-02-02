@@ -32,6 +32,10 @@ export function useFetch({
 
 					// if status error
 					if (res.data.status === "error") {
+						if (res.data.message === "Unauthorized") {
+							console.log("Unauthorized");
+							window.location.replace("/login");
+						}
 						error.value = res.data.message;
 					} else {
 						if (res.data.totalData) {
@@ -44,10 +48,12 @@ export function useFetch({
 					}
 				})
 				.catch((err) => {
-					console.log(err.message);
+					if (err.response.data.message === "Unauthorized") {
+						console.log("Unauthorized");
+						window.location.replace("/login");
+					}
 					error.value = err.message;
-
-					// reset state before fetching..
+					// reset state..
 					data.value = null;
 				})
 				.finally(() => {

@@ -22,7 +22,7 @@
 			<div class="h-80" v-if="error">
 				<el-result icon="error" title="Terjadi Kesalahan" :subTitle="error">
 					<template slot="extra">
-						<el-button type="primary" size="medium" @click="refreshFunction">
+						<el-button type="primary" size="medium" @click="doFetch">
 							Refresh
 						</el-button>
 					</template>
@@ -47,7 +47,7 @@ import { onMounted, ref, watch } from "vue";
 import { useFetch } from "@/composables";
 
 // get project planner from api
-const { data, loading, error } = useFetch({
+const { data, loading, error, doFetch } = useFetch({
 	url: "/api/activity-plan/project-planner",
 });
 
