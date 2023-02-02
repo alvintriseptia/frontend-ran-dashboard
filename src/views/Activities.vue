@@ -17,7 +17,11 @@
 						@change="handleDateRangeChange"
 					>
 					</el-date-picker>
-					<!-- <OutlinedButton>Input Activity</OutlinedButton> -->
+					<OutlinedButton
+						v-if="userStore.getters.role === 'admin'"
+						@onClick="showInputActivities"
+						>Input Activities</OutlinedButton
+					>
 					<OutlinedButton
 						v-if="userStore.getters.role === 'admin'"
 						@onClick="showImportActivities"
@@ -59,6 +63,11 @@
 				:isShow="isShowImportActivities"
 				@closeImportActivities="closeImportActivities"
 			/>
+			<InputActivity
+				v-if="userStore.getters.role === 'admin'"
+				:isShow="isShowInputActivities"
+				@closeImportActivities="closeInputActivities"
+			/>
 		</div>
 	</Card>
 </template>
@@ -69,6 +78,7 @@ import {
 	RemoteSearchSelect,
 	ActivityTable,
 	ImportActivity,
+	InputActivity,
 	Card,
 	Select,
 } from "@/components";
@@ -81,6 +91,9 @@ const isShowImportActivities = ref(false);
 const alertCard = ref(null);
 
 const showImportActivities = () => {
+	if (isShowInputActivities) {
+		isShowInputActivities.value = false;
+	}
 	isShowImportActivities.value = true;
 };
 
@@ -112,6 +125,46 @@ const closeImportActivities = (result) => {
 	} else {
 		alertCard.value = null;
 	}
+};
+
+// Menu Input Activities
+const isShowInputActivities = ref(false);
+
+const showInputActivities = () => {
+	if (isShowImportActivities) {
+		isShowImportActivities.value = false;
+	}
+	isShowInputActivities.value = true;
+};
+
+const closeInputActivities = (result) => {
+	isShowInputActivities.value = false;
+	// if (result !== null) {
+	// 	console.log(result);
+	// 	if (result.isRefresh) {
+	// 		const title = result.data[1]
+	// 			? "Input Activities Success"
+	// 			: "Some activities success inputted, but the other is not inputted";
+	// 		alertCard.value = {
+	// 			type: result.data[1] ? "success" : "warning",
+	// 			title: title,
+	// 			description: result.data[1],
+	// 		};
+	// 		activitiesParams.value = {
+	// 			...activitiesParams.value,
+	// 			page: 1,
+	// 		};
+	// 	} else if (result.data[1]) {
+	// 		alertCard.value = {
+	// 			type: "warning",
+	// 			title:
+	// 				"Some activities success inputted, but the other is not inputted",
+	// 			description: result.data[1],
+	// 		};
+	// 	}
+	// } else {
+	// 	alertCard.value = null;
+	// }
 };
 
 // =================== Activities ===================

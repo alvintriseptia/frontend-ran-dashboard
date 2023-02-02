@@ -4,47 +4,28 @@
 		:class="isShow ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">Import Activities</h2>
-			<OutlinedButton size="sm" @onClick="$emit('closeImportActivities')"
+			<h2 class="text-lg lg:text-xl font-bold">Input Activities</h2>
+			<OutlinedButton size="sm" @onClick="$emit('closeInputActivities')"
 				>&#10006;</OutlinedButton
 			>
 		</div>
-		<section class="mb-4">
-			<h3 class="font-medium mb-1">Petunjuk</h3>
-			<ul class="list-disc list-inside text-sm">
-				<li>
-					File harus berisi data dan formatnya sesuai dengan template yang telah
-					disediakan
-				</li>
-				<li>
-					File yang diupload harus berupa file excel dengan ekstensi .xlsx
-				</li>
-			</ul>
-		</section>
-		<section class="mb-6">
-			<h3 class="font-medium mb-1">Template</h3>
-			<OutlinedButton>
-				<a href="/Activity Template.xlsx" download>Download Template</a>
-			</OutlinedButton>
-		</section>
-		<section>
-			<el-upload
-				action="/"
-				:auto-upload="false"
-				drag
-				:limit="1"
-				:on-change="handleChange"
-				:on-remove="handleRemove"
-				:file-list="file"
-				accept=".xlsx"
-				type="primary"
-			>
-				<i class="el-icon-upload"></i>
-				<div class="el-upload__text">Pilih file atau arahkan file ke sini</div>
-			</el-upload>
-		</section>
-		<section class="mt-6">
-			<Button @onClick="$emit('closeImportActivities')">Import</Button>
+		<el-form :model="form" label-position="top">
+			<el-form-item label="Remark" :label-width="formLabelWidth">
+				<el-input v-model="form.remark" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="Target Quartal" :label-width="formLabelWidth">
+				<el-select v-model="form.targetQuartal" placeholder="Select Quartal">
+					<el-option
+						v-for="item in quarterOptions"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value"
+					></el-option>
+				</el-select>
+			</el-form-item>
+		</el-form>
+		<section class="mt-4">
+			<Button @onClick="onSubmit">Input Data</Button>
 		</section>
 	</div>
 </template>
@@ -53,8 +34,31 @@
 import { OutlinedButton, Button } from "@/components";
 import { computed, ref } from "vue";
 
-const file = ref([]);
-
+const form = ref({});
+const formLabelWidth = "120px";
+const quarterOptions = [
+	{
+		value: "All",
+		label: "All",
+	},
+	{
+		value: "Q1",
+		label: "Q1",
+	},
+	{
+		value: "Q2",
+		label: "Q2",
+	},
+	{
+		value: "Q3",
+		label: "Q3",
+	},
+	{
+		value: "Q4",
+		label: "Q4",
+	},
+];
+const emit = defineEmits(["onSubmit", "onCancel"]);
 const props = defineProps({
 	isShow: {
 		type: Boolean,
@@ -62,13 +66,9 @@ const props = defineProps({
 	},
 });
 
+function onSubmit() {
+	emit("onSubmit", form.value);
+}
+
 const isShow = computed(() => props.isShow);
-
-const handleChange = (file, fileList) => {
-	file.value = fileList;
-};
-
-const handleRemove = (file, fileList) => {
-	file.value = fileList;
-};
 </script>
