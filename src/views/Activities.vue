@@ -178,7 +178,7 @@ const searchActivitiesParams = ref({
 
 const searchActivitiesName = ref(
 	useFetch({
-		url: "/api/activity/search",
+		url: "/api/activity",
 		params: searchActivitiesParams,
 	})
 );
