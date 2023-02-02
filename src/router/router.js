@@ -34,21 +34,6 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	if (to.path === "/login") {
-		if (userStore.getters.user === null) {
-			userStore.dispatch("getUser").then(() => {
-				if (userStore.getters.isLoggedIn) {
-					next("/");
-				}
-			});
-		} else {
-			if (userStore.getters.isLoggedIn) {
-				next("/");
-			}
-		}
-		return;
-	}
-
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
 		if (userStore.getters.user === null) {
 			userStore.dispatch("getUser").then(() => {
@@ -74,14 +59,27 @@ router.beforeEach((to, from, next) => {
 				}
 				next();
 				return;
+			} else if (to.path !== "/login") {
+				next("/login");
+				return;
+			}
+		}
+	} else {
+		if (to.path === "/login") {
+			if (userStore.getters.user === null) {
+				userStore.dispatch("getUser").then(() => {
+					if (userStore.getters.isLoggedIn) {
+						next("/");
+						return;
+					}
+				});
 			} else {
-				if (to.path !== "/login") {
-					next("/login");
+				if (userStore.getters.isLoggedIn) {
+					next("/");
 					return;
 				}
 			}
 		}
-	} else {
 		next();
 	}
 });
