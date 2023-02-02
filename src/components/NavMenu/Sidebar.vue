@@ -6,22 +6,32 @@
 		:collapse="!isMobile ? false : isCollapse"
 		:active-text-color="colorsTheme.primary"
 	>
-		<el-menu-item
-			index="0"
-			class="flex justify-center items-center transition-none"
-		>
-			<button @click="handleCollapse">
-				<img
-					:src="isCollapse ? telkomselLogo : telkomsel"
-					alt="telkomsel"
-					:class="
-						isCollapse
-							? 'w-[100px] h-[40px] object-contain'
-							: 'w-[140px] h-[80px] object-contain'
-					"
-				/>
-			</button>
-		</el-menu-item>
+		<div class="flex md:flex-col justify-between">
+			<el-menu-item
+				index="0"
+				class="flex justify-center items-center transition-none"
+			>
+				<button @click="handleCollapse">
+					<img
+						:src="isCollapse ? telkomselLogo : telkomsel"
+						alt="telkomsel"
+						:class="
+							isCollapse
+								? 'w-[100px] h-[40px] object-contain'
+								: 'w-[140px] h-[80px] object-contain'
+						"
+					/>
+				</button>
+			</el-menu-item>
+			<el-menu-item index="5" class="flex pointer-events-none">
+				<div>
+					<i class="el-icon-user"></i>
+					<span class="text-sm text-gray-500">{{
+						stringUtil.toCapitalize(userStore.getters.role)
+					}}</span>
+				</div>
+			</el-menu-item>
+		</div>
 		<div v-if="!isMobile ? true : !isCollapse">
 			<el-menu-item index="1">
 				<router-link to="/">
@@ -47,13 +57,23 @@
 					</div>
 				</router-link>
 			</el-menu-item>
+			<hr />
+			<el-menu-item index="4">
+				<button @click="userStore.dispatch('logout')">
+					<div>
+						<i class="el-icon-d-arrow-left"></i>
+						<span slot="title"> Logout </span>
+					</div>
+				</button>
+			</el-menu-item>
 		</div>
 	</el-menu>
 </template>
 <script setup>
 import { ref } from "vue";
-import { colorsTheme } from "@/utils";
+import { colorsTheme, stringUtil } from "@/utils";
 import { useWindow, useRoute } from "@/composables";
+import { userStore } from "@/stores";
 import telkomsel from "@/assets/images/telkomsel.png";
 import telkomselLogo from "@/assets/images/telkomsel-logo.png";
 

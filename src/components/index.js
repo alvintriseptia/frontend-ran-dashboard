@@ -33,7 +33,8 @@ export { Table, ProjectTable, ActivityTable, ActivitySummaryTable };
 import Card from "./Layout/Card.vue";
 import LoadingSpinner from "./Layout/LoadingSpinner.vue";
 import APIResponseLayout from "./Layout/APIResponseLayout.vue";
-export { Card, LoadingSpinner, APIResponseLayout };
+import Form from "./Layout/Form.vue";
+export { Card, LoadingSpinner, APIResponseLayout, Form };
 
 // =================================================================================================================== //
 // List Item
