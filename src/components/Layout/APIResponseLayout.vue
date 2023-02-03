@@ -31,14 +31,16 @@ const props = defineProps({
 		type: String,
 		default: null,
 	},
-	refreshFunction: {
-		type: Function,
-		required: true,
-	},
 });
 
 // Check if the props is changed
 computed(() => props.loading);
 computed(() => props.data);
 computed(() => props.error);
+
+const emit = defineEmits(["refreshFunction"]);
+
+const refreshFunction = () => {
+	emit("refreshFunction");
+};
 </script>

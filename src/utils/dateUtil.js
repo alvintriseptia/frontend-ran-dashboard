@@ -1,9 +1,26 @@
 const convertDateToDDMMMYY = (date) => {
 	const d = new Date(date);
-	const day = d.getDate();
-	const month = d.toLocaleString("id-ID", { month: "short" });
-	const year = d.getFullYear().toString().substring(-2);
-	return `${day} ${month} ${year}`;
+	if (d instanceof Date && !isNaN(d)) {
+		const day = d.getDate();
+		const month = d.getMonth() + 1;
+		const year = d.getFullYear();
+		return `${day}/${month}/${year}`;
+	} else {
+		return "";
+	}
+};
+
+const convertDateToMMMDDYY = (date) => {
+	const d = new Date(date);
+	if (d instanceof Date && !isNaN(d)) {
+		const day = d.getDate();
+		// get month name
+		const month = d.toLocaleString("default", { month: "short" });
+		const year = d.getFullYear();
+		return `${month}, ${day} ${year}`;
+	} else {
+		return "";
+	}
 };
 
 const getWeekInYear = () => {
@@ -62,4 +79,5 @@ export default {
 	getTotalWeeks,
 	monthNames,
 	convertDateToDDMMMYY,
+	convertDateToMMMDDYY,
 };

@@ -17,14 +17,13 @@
 					<APIResponseLayout
 						:error="logActivities.error"
 						:loading="logActivities.loading"
-						:refreshFunction="logActivities.doFetch"
+						@refreshFunction="logActivities.doFetch"
 						:data="logActivities.data"
 					/>
 				</el-container>
 			</Card>
 			<Card
-				title="Weekly Log Activites"
-				:subtitle="'Week ' + dateUtil.getWeekInYear()"
+				title="Top 10 Recent Activities"
 				class="col-span-12 lg:col-span-3"
 				maxHeight="calc(100vh - 4rem - 2.5rem - 2.5rem - 2.5rem)"
 			>
@@ -38,12 +37,13 @@
 					:siteName="item.siteName"
 					:isDone="item.status.toLowerCase() === 'done'"
 					:activity="item.deskripsiActivity"
+					:updatedAt="item.updatedAt"
 					:isLastItem="index === logActivities.data.length - 1"
 				/>
 				<APIResponseLayout
 					:error="logActivities.error"
 					:loading="logActivities.loading"
-					:refreshFunction="logActivities.doFetch"
+					@refreshFunction="logActivities.doFetch"
 					:data="logActivities.data"
 				/>
 			</Card>
@@ -88,7 +88,6 @@ import {
 	APIResponseLayout,
 	Select,
 } from "@/components";
-import { dateUtil } from "@/utils";
 import { useFetch } from "@/composables";
 
 import {

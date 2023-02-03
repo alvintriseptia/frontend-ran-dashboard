@@ -4,13 +4,22 @@
 			:data="data"
 			:style="{ width: '100%', overflow: 'auto' }"
 			header-cell-class-name="header-color-activity"
+			@filter-change="filterHandler"
 		>
 			<el-table-column label="No" width="60">
 				<template #default="{ row, $index }">
 					{{ numberStart + $index }}
 				</template>
 			</el-table-column>
-			<el-table-column prop="status" label="Status" width="80">
+			<el-table-column
+				prop="status"
+				label="Status"
+				width="80"
+				column-key="status"
+				:filters="
+					filterData.status.map((item) => ({ text: item, value: item }))
+				"
+			>
 				<template #default="{ row }">
 					<PopOver
 						:status="row.status"
@@ -18,38 +27,141 @@
 					/>
 				</template>
 			</el-table-column>
-			<el-table-column prop="weekExecuted" label="Week Exec" width="80" />
-			<el-table-column prop="namaProgram" label="Program" width="200" />
-			<el-table-column prop="namaSubprogram" label="Sub Program" width="200" />
+			<el-table-column
+				prop="weekExecuted"
+				label="Week Exec"
+				width="100"
+				column-key="weekExecuted"
+				:filters="
+					filterData.weekExecuted.map((item) => ({ text: item, value: item }))
+				"
+			>
+				<template #default="{ row }">
+					<p class="text-center">
+						{{ row.weekExecuted }}
+					</p>
+				</template>
+			</el-table-column>
+			<el-table-column
+				prop="namaProgram"
+				label="Program"
+				width="200"
+				column-key="namaProgram"
+				:filters="
+					filterData.namaProgram.map((item) => ({ text: item, value: item }))
+				"
+			/>
+			<el-table-column
+				prop="namaSubprogram"
+				label="Sub Program"
+				width="200"
+				column-key="namaSubprogram"
+				:filters="
+					filterData.namaSubprogram.map((item) => ({ text: item, value: item }))
+				"
+			/>
 			<el-table-column
 				prop="deskripsiActivity"
 				label="Description Activity"
 				width="250"
+				column-key="deskripsiActivity"
+				:filters="
+					filterData.deskripsiActivity.map((item) => ({
+						text: item,
+						value: item,
+					}))
+				"
 			/>
 			<el-table-column
 				prop="additionalInfo"
 				label="Additional Information"
 				width="250"
+				column-key="additionalInfo"
+				:filters="
+					filterData.additionalInfo.map((item) => ({ text: item, value: item }))
+				"
 			/>
-			<el-table-column prop="siteID" label="Site ID" width="100" />
-			<el-table-column prop="siteName" label="Site Name" width="150" />
+			<el-table-column
+				prop="siteID"
+				label="Site ID"
+				width="100"
+				column-key="siteID"
+				:filters="
+					filterData.site.map((item) => ({ text: item.id, value: item.id }))
+				"
+			/>
+			<el-table-column
+				prop="siteName"
+				label="Site Name"
+				width="150"
+				column-key="siteName"
+				:filters="
+					filterData.site.map((item) => ({ text: item.name, value: item.name }))
+				"
+			/>
 			<!-- <el-table-column prop="kabupaten" label="Kabupaten" width="200" /> -->
-			<el-table-column prop="namaDO" label="DO" width="150" />
-			<el-table-column prop="namaNS" label="NS" width="150" />
-			<el-table-column prop="namaPIC" label="PIC" width="150" />
-			<el-table-column prop="targetQuartal" label="Target Q" width="60" />
+			<el-table-column
+				prop="namaDO"
+				label="DO"
+				width="150"
+				column-key="namaDO"
+				:filters="
+					filterData.namaDO.map((item) => ({ text: item, value: item }))
+				"
+			/>
+			<el-table-column
+				prop="namaNS"
+				label="NS"
+				width="150"
+				column-key="namaNS"
+				:filters="
+					filterData.namaNS.map((item) => ({ text: item, value: item }))
+				"
+			/>
+			<el-table-column
+				prop="namaPIC"
+				label="PIC"
+				width="150"
+				column-key="namaPIC"
+				:filters="
+					filterData.namaPIC.map((item) => ({ text: item, value: item }))
+				"
+			/>
+			<el-table-column
+				prop="targetQuartal"
+				label="Target Q"
+				width="80"
+				column-key="targetQuartal"
+				:filters="
+					filterData.targetQuartal.map((item) => ({ text: item, value: item }))
+				"
+			/>
 			<!-- <el-table-column prop="date" label="Date" width="100" /> -->
-			<el-table-column prop="remark" label="Remark" width="150" />
+			<el-table-column
+				prop="remark"
+				label="Remark"
+				width="150"
+				column-key="remark"
+				:filters="
+					filterData.remark.map((item) => ({ text: item, value: item }))
+				"
+			/>
 			<el-table-column
 				prop="budget"
 				label="Budget"
 				width="150"
 				v-if="userStore.getters.role === 'admin'"
+				column-key="budget"
+				:filters="
+					filterData.budget.map((item) => ({ text: item, value: item }))
+				"
 			/>
 			<el-table-column
 				label="Cost"
 				width="200"
 				v-if="userStore.getters.role === 'admin'"
+				column-key="cost"
+				:filters="filterData.cost.map((item) => ({ text: item, value: item }))"
 			>
 				<template #default="{ row }">
 					{{
@@ -97,14 +209,26 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
+	filterData: {
+		type: Object,
+		default: () => ({}),
+	},
 	numberStart: {
 		type: Number,
 		default: 1,
 	},
 });
 
+const emit = defineEmits(["onFilter"]);
+
 const data = computed(() => props.data);
+const filterData = computed(() => props.filterData);
 const numberStart = computed(() => props.numberStart);
+
+// Handle filter
+const filterHandler = (value) => {
+	emit("onFilter", value);
+};
 
 // Modal Activity
 const isShowModalActivity = ref(false);
@@ -179,8 +303,10 @@ const handleStatusUpdate = (row, status) => {
 
 	watch(data, (newData) => {
 		if (newData) {
-			row.status = status;
-			row.weekExecuted = parseInt(newData.weekExecuted);
+			row.status = status === "NY" ? "Not Yet" : "Done";
+			row.weekExecuted = newData.weekExecuted
+				? parseInt(newData.weekExecuted)
+				: "";
 		}
 	});
 };
