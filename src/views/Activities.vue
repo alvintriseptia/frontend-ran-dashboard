@@ -2,21 +2,21 @@
 	<Card title="Activites" :alert="alertCard">
 		<div>
 			<section class="flex gap-x-4 mb-6 justify-between items-center">
-				<RemoteSearchSelect
+				<!-- <RemoteSearchSelect
 					:options="unref(searchActivitiesName.data)"
 					placeholder="Cari activities"
 					@onChange="handleSearchActivitiesName"
 					@onUpdate="handleUpdateActivitiesName"
-				/>
+				/> -->
 				<div class="flex gap-x-4 items-center">
-					<el-date-picker
+					<!-- <el-date-picker
 						v-model="dateRange"
 						type="monthrange"
 						start-placeholder="Start month"
 						end-placeholder="End month"
 						@change="handleDateRangeChange"
 					>
-					</el-date-picker>
+					</el-date-picker> -->
 					<!-- <OutlinedButton>Input Activity</OutlinedButton> -->
 					<OutlinedButton
 						v-if="userStore.getters.role === 'admin'"
@@ -45,15 +45,25 @@
 					<p class="text-xs ml-2">Rows per page</p>
 				</div>
 			</section>
-			<ActivityTable
-				v-if="activities.data"
-				:data="activities.data"
-				:numberStart="
-					activitiesParams.page * activitiesParams.limit -
-					activitiesParams.limit +
-					1
-				"
-			/>
+			<section class="min-h-[400px]">
+				<ActivityTable
+					v-if="activities.data"
+					:data="activities.data"
+					:filterData="activities.filterData"
+					:numberStart="
+						activitiesParams.page * activitiesParams.limit -
+						activitiesParams.limit +
+						1
+					"
+					@onFilter="handleFilterChange"
+				/>
+				<APIResponseLayout
+					v-else
+					:loading="activities.loading"
+					:error="activities.error"
+					:data="activities.data"
+				/>
+			</section>
 			<ImportActivity
 				v-if="userStore.getters.role === 'admin'"
 				:isShow="isShowImportActivities"
@@ -66,13 +76,13 @@
 <script setup>
 import {
 	OutlinedButton,
-	RemoteSearchSelect,
+	APIResponseLayout,
 	ActivityTable,
 	ImportActivity,
 	Card,
 	Select,
 } from "@/components";
-import { ref, unref } from "vue";
+import { ref } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
 
@@ -117,14 +127,27 @@ const closeImportActivities = (result) => {
 // =================== Activities ===================
 
 // Activities
+// ["status", "weekExecuted", "deskripsiActivity", "namaProgram", "namaSubprogram", "additionalInfo", "siteID", "siteName", "namaKabupaten", "namaDO", "namaNS", "namaPIC", "targetQuartal", "remark", "budget", "cost"]
 const activitiesParams = ref({
-	activityName: [],
-	startDate: "",
-	endDate: "",
+	status: [],
+	weekExecuted: [],
+	deskripsiActivity: [],
+	namaProgram: [],
+	namaSubprogram: [],
+	additionalInfo: [],
+	siteID: [],
+	siteName: [],
+	namaKabupaten: [],
+	namaDO: [],
+	namaNS: [],
+	namaPIC: [],
+	targetQuartal: [],
+	remark: [],
+	budget: [],
+	cost: [],
 	page: 1,
 	limit: 10,
 });
-const dateRange = ref([]);
 const limits = [
 	{
 		value: 10,
@@ -146,10 +169,17 @@ const limits = [
 
 const activities = ref(
 	useFetch({
-		url: "/api/activity-plan/all-activity",
+		url: "/api/activity",
 		params: activitiesParams,
 	})
 );
+
+// handle filter change
+const handleFilterChange = (filter) => {
+	if (filter) {
+		activitiesParams.value[Object.keys(filter)[0]] = Object.values(filter)[0];
+	}
+};
 
 // handle limit change
 const handleLimitChange = (val) => {
@@ -177,51 +207,51 @@ const handleCurrentChange = (val) => {
 	activitiesParams.value.page = val;
 };
 
-// handle date range
-const handleDateRangeChange = (dateRange) => {
-	if (dateRange) {
-		// add 1 day to start date and end date
-		// because by default date range will return 1 day before to fit BE requirement
-		const startDate = new Date(dateRange[0]);
-		startDate.setDate(startDate.getDate() + 1);
-		activitiesParams.value.startDate = startDate;
+// // handle date range
+// const handleDateRangeChange = (dateRange) => {
+// 	if (dateRange) {
+// 		// add 1 day to start date and end date
+// 		// because by default date range will return 1 day before to fit BE requirement
+// 		const startDate = new Date(dateRange[0]);
+// 		startDate.setDate(startDate.getDate() + 1);
+// 		activitiesParams.value.startDate = startDate;
 
-		const endDate = new Date(dateRange[1]);
-		endDate.setDate(endDate.getDate() + 1);
-		activitiesParams.value.endDate = endDate;
-	} else {
-		activitiesParams.value.startDate = "";
-		activitiesParams.value.endDate = "";
-	}
-};
+// 		const endDate = new Date(dateRange[1]);
+// 		endDate.setDate(endDate.getDate() + 1);
+// 		activitiesParams.value.endDate = endDate;
+// 	} else {
+// 		activitiesParams.value.startDate = "";
+// 		activitiesParams.value.endDate = "";
+// 	}
+// };
 
-// handle activities name update
-const handleUpdateActivitiesName = (val) => {
-	activitiesParams.value.activityName = val;
-};
+// // handle activities name update
+// const handleUpdateActivitiesName = (val) => {
+// 	activitiesParams.value.activityName = val;
+// };
 
 // =================== Search Activities ===================
 
 // Search activities name
-const searchActivitiesParams = ref({
-	activityName: "",
-});
+// const searchActivitiesParams = ref({
+// 	activityName: "",
+// });
 
-const searchActivitiesName = ref(
-	useFetch({
-		url: "/api/activity",
-		params: searchActivitiesParams,
-	})
-);
+// const searchActivitiesName = ref(
+// 	useFetch({
+// 		url: "/api/activity",
+// 		params: searchActivitiesParams,
+// 	})
+// );
 
-// handle search
-const handleSearchActivitiesName = (val) => {
-	if (val.length >= 1 && val.length <= 2) return;
+// // handle search
+// const handleSearchActivitiesName = (val) => {
+// 	if (val.length >= 1 && val.length <= 2) return;
 
-	if (val && val.length >= 3) {
-		searchActivitiesParams.value.activityName = val;
-	} else {
-		searchActivitiesParams.value.activityName = "";
-	}
-};
+// 	if (val && val.length >= 3) {
+// 		searchActivitiesParams.value.activityName = val;
+// 	} else {
+// 		searchActivitiesParams.value.activityName = "";
+// 	}
+// };
 </script>
