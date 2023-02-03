@@ -11,7 +11,6 @@ import {
 	LineElement,
 	LinearScale,
 	CategoryScale,
-	PointElement,
 } from "chart.js";
 import { Line as LineChartGenerator } from "vue-chartjs/legacy";
 
@@ -21,8 +20,7 @@ ChartJS.register(
 	Legend,
 	LineElement,
 	LinearScale,
-	CategoryScale,
-	PointElement
+	CategoryScale
 );
 
 const props = defineProps({

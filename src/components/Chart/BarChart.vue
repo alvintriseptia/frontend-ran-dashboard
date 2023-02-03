@@ -12,6 +12,9 @@ import {
 	BarElement,
 	CategoryScale,
 	LinearScale,
+	PointElement,
+	LineController,
+	LineElement,
 } from "chart.js";
 
 ChartJS.register(
@@ -20,7 +23,10 @@ ChartJS.register(
 	Legend,
 	BarElement,
 	CategoryScale,
-	LinearScale
+	LinearScale,
+	PointElement,
+	LineController,
+	LineElement
 );
 
 const props = defineProps({
