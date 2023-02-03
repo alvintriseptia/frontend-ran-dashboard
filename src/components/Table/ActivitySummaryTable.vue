@@ -14,7 +14,7 @@
 			v-for="(item, index) in tableStructure"
 			:key="index"
 			:label="convertLabel(item)"
-			:min-width="item == 'title' ? '400' : '150'"
+			:min-width="item == 'title' ? '300' : '100'"
 		>
 			<template #default="{ row }">
 				{{

@@ -10,8 +10,6 @@ import VueRouter from "vue-router";
 import locale from "element-ui/lib/locale/lang/id";
 
 axios.defaults.baseURL = "http://localhost:8080";
-// axios.defaults.headers.common["Access-Control-Allow-Origin"] =
-// 	"http://localhost:8080";
 axios.defaults.withCredentials = true;
 
 Vue.use(VueRouter);

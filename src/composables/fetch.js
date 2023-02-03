@@ -27,13 +27,12 @@ export function useFetch({
 				data: unref(body),
 			})
 				.then((res) => {
-					console.log(res.data);
+					// console.log(res.data);
 					data.value = res.data.data;
 
 					// if status error
 					if (res.data.status === "error") {
 						if (res.data.message === "Unauthorized") {
-							console.log("Unauthorized");
 							window.location.replace("/login");
 						}
 						error.value = res.data.message;
@@ -49,7 +48,6 @@ export function useFetch({
 				})
 				.catch((err) => {
 					if (err.response.data.message === "Unauthorized") {
-						console.log("Unauthorized");
 						window.location.replace("/login");
 					}
 					error.value = err.message;

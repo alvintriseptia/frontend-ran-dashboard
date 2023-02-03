@@ -66,11 +66,23 @@ export default {
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
-					userStore.dispatch("login", this.ruleForm).then((res) => {
-						if (res) {
-							window.location.replace("/");
-						}
-					});
+					userStore
+						.dispatch("login", this.ruleForm)
+						.then((res) => {
+							if (res) {
+								this.$router.push({ name: "dashboard" });
+							}
+							this.$notify.success({
+								title: "Success",
+								message: "Login Successful",
+							});
+						})
+						.catch((err) => {
+							this.$notify.error({
+								title: "Error",
+								message: err.response.data.message,
+							});
+						});
 				} else {
 					this.$notify.error({
 						title: "Error",

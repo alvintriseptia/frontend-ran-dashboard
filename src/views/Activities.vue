@@ -87,7 +87,7 @@ const showImportActivities = () => {
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
 	if (result !== null) {
-		console.log(result);
+		// console.log(result);
 		if (result.isRefresh) {
 			const title = result.data[1]
 				? "Import Activities Success"

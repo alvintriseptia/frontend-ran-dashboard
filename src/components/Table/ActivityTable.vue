@@ -179,8 +179,10 @@ const handleStatusUpdate = (row, status) => {
 
 	watch(data, (newData) => {
 		if (newData) {
-			row.status = status;
-			row.weekExecuted = parseInt(newData.weekExecuted);
+			row.status = status === "NY" ? "Not Yet" : "Done";
+			row.weekExecuted = newData.weekExecuted
+				? parseInt(newData.weekExecuted)
+				: "";
 		}
 	});
 };

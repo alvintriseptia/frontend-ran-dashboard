@@ -11,7 +11,7 @@
 		}"
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
-		v-model="loading"
+		v-loading="loading"
 	>
 		<el-table-column label="NO" :width="50">
 			<template #default="{ row, $index }">

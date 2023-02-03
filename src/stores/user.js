@@ -27,26 +27,14 @@ export const userStore = new Store({
 					.then((response) => {
 						if (response.data.status === "success") {
 							commit("setUser", response.data.data);
-							Notification.success({
-								title: "Success",
-								message: "Login Successful",
-							});
 							resolve(response);
 						} else {
 							commit("setUser", null);
-							Notification.error({
-								title: "Error",
-								message: response.data.message,
-							});
 							reject(response);
 						}
 					})
 					.catch((error) => {
 						commit("setUser", null);
-						Notification.error({
-							title: "Error",
-							message: "Login Failed",
-						});
 						reject(error);
 					});
 			});
@@ -57,27 +45,12 @@ export const userStore = new Store({
 					.post("/api/auth/login-guest")
 					.then((response) => {
 						if (response.data.status === "success") {
-							commit("setUser", response.data.data);
-							Notification.success({
-								title: "Success",
-								message: "Login Successful",
-							});
 							resolve(response);
 						} else {
-							commit("setUser", null);
-							Notification.error({
-								title: "Error",
-								message: response.data.message,
-							});
 							reject(response);
 						}
 					})
 					.catch((error) => {
-						commit("setUser", null);
-						Notification.error({
-							title: "Error",
-							message: "Login Failed",
-						});
 						reject(error);
 					});
 			});
@@ -113,7 +86,7 @@ export const userStore = new Store({
 					});
 				}
 			} catch (error) {
-				console.log(error);
+				// console.log(error);
 				Notification.error({
 					title: "Error",
 					message: "Logout Failed",
