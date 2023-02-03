@@ -13,6 +13,7 @@ export function useFetch({
 	const error = ref(null);
 	const totalData = ref(null);
 	const totalPage = ref(null);
+	const filterData = ref(null);
 
 	function doFetch() {
 		if (url || (method !== "GET" && body !== null)) {
@@ -27,9 +28,6 @@ export function useFetch({
 				data: unref(body),
 			})
 				.then((res) => {
-					// console.log(res.data);
-					data.value = res.data.data;
-
 					// if status error
 					if (res.data.status === "error") {
 						if (res.data.message === "Unauthorized") {
@@ -37,11 +35,15 @@ export function useFetch({
 						}
 						error.value = res.data.message;
 					} else {
+						data.value = res.data.data;
 						if (res.data.totalData) {
 							totalData.value = res.data.totalData;
 						}
 						if (res.data.totalPage) {
 							totalPage.value = res.data.totalPage;
+						}
+						if (res.data.filters) {
+							filterData.value = res.data.filters;
 						}
 						error.value = null;
 					}
@@ -60,7 +62,7 @@ export function useFetch({
 		}
 	}
 
-	if (isRef(url) || isRef(params) || isRef(headers) || isRef(body)) {
+	if (url || isRef(params) || isRef(headers) || isRef(body)) {
 		// setup reactive re-fetch if input URL is a ref
 		watchEffect(doFetch);
 	} else {
@@ -69,5 +71,5 @@ export function useFetch({
 		doFetch();
 	}
 
-	return { data, error, loading, doFetch, totalData, totalPage };
+	return { data, error, loading, doFetch, totalData, totalPage, filterData };
 }
