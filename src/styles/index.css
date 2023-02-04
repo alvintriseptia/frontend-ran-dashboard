@@ -44,3 +44,15 @@ body {
 .el-button--primary {
 	color: #ed1c24;
 }
+
+.el-button--info {
+	color: #ff7723;
+}
+
+.el-button--success {
+	color: #16a34a;
+}
+
+.el-button--warning {
+	color: #ff7723;
+}

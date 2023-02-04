@@ -15,14 +15,19 @@
 					{{ desc }}
 				</p>
 			</el-alert>
-			<h2
-				class="text-xl font-bold"
-				:class="{
-					'mt-4': alert.title,
-				}"
-			>
-				{{ title }}
-			</h2>
+			<div class="flex justify-between items-center">
+				<h2
+					class="text-xl font-bold"
+					:class="{
+						'mt-4': alert.title,
+					}"
+				>
+					{{ title }}
+				</h2>
+				<div>
+					<slot name="header" />
+				</div>
+			</div>
 
 			<p v-if="subtitle" class="text-sm text-gray-500">
 				{{ subtitle }}

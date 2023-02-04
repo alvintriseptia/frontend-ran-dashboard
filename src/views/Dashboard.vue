@@ -218,6 +218,7 @@ onMounted(() => {
 				label: "All Subprogram",
 				value: "",
 			});
+			activitySummaryParams.value.subprogram = subProgramOptions.value[0].value;
 		}
 	});
 });

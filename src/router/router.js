@@ -26,6 +26,12 @@ const routes = [
 		component: views.Activities,
 		meta: { requiresAuth: true },
 	},
+	{
+		path: "/settings",
+		name: "settings",
+		component: views.Settings,
+		meta: { requiresAuth: true },
+	},
 ];
 
 const router = new VueRouter({
@@ -35,53 +41,64 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
+		// check if store not have user data
+		if (userStore.getters.user === null) {
+			userStore.dispatch("getUser").then(() => {
+				userCheckRequireAuth(to, from, next);
+			});
+		} else {
+			// store already has user data
+			userCheckRequireAuth(to, from, next);
+		}
+	} else {
+		userCheckGeneral(to, from, next);
+	}
+});
+
+function userCheckRequireAuth(to, from, next) {
+	if (userStore.getters.isLoggedIn) {
+		// if user is logged in and tries to access login page, redirect to dashboard
+		if (to.path === "/login") {
+			next("/");
+			return;
+		}
+
+		//	if user is not admin and tries to access settings page, redirect to dashboard
+		if (to.path === "/settings" && userStore.getters.role !== "admin") {
+			next("/");
+			return;
+		}
+
+		// else
+		next();
+		return;
+	} else {
+		// if user is not logged in and tries to access any page other than login, redirect to login page
+		if (to.path !== "/login") {
+			next("/login");
+			return;
+		}
+	}
+}
+
+function userCheckGeneral(to, from, next) {
+	// if user is logged in and tries to access any page other than login, redirect to login page
+	if (to.path === "/login") {
 		if (userStore.getters.user === null) {
 			userStore.dispatch("getUser").then(() => {
 				if (userStore.getters.isLoggedIn) {
-					if (to.path === "/login") {
-						next("/");
-						return;
-					}
-					next();
+					next("/");
 					return;
-				} else {
-					if (to.path !== "/login") {
-						next("/login");
-						return;
-					}
 				}
 			});
 		} else {
 			if (userStore.getters.isLoggedIn) {
-				if (to.path === "/login") {
-					next("/");
-					return;
-				}
-				next();
-				return;
-			} else if (to.path !== "/login") {
-				next("/login");
+				next("/");
 				return;
 			}
 		}
-	} else {
-		if (to.path === "/login") {
-			if (userStore.getters.user === null) {
-				userStore.dispatch("getUser").then(() => {
-					if (userStore.getters.isLoggedIn) {
-						next("/");
-						return;
-					}
-				});
-			} else {
-				if (userStore.getters.isLoggedIn) {
-					next("/");
-					return;
-				}
-			}
-		}
-		next();
 	}
-});
+	next();
+}
 
 export default router;

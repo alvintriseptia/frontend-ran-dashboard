@@ -26,7 +26,7 @@
 		<el-tag
 			slot="reference"
 			size="small"
-			:type="status === 'Done' ? 'success' : 'info'"
+			:type="status === 'Done' ? 'success' : 'warning'"
 			:style="{
 				cursor: 'pointer',
 			}"
@@ -38,7 +38,7 @@
 
 <script>
 export default {
-	name: "PopOver",
+	name: "PopOverStatus",
 	data() {
 		return {
 			visible: false,

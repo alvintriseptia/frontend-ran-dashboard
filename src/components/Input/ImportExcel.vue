@@ -1,11 +1,11 @@
 <template>
 	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
+		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40 import-activity"
 		:class="isShow ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">Import Activities</h2>
-			<OutlinedButton size="sm" @onClick="emit('closeImportActivities')"
+			<h2 class="text-lg lg:text-xl font-bold">{{ title }}</h2>
+			<OutlinedButton size="sm" @onClick="emit('closeImportExcel')"
 				>&#10006;</OutlinedButton
 			>
 		</div>
@@ -65,9 +65,17 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	title: {
+		type: String,
+		required: true,
+	},
+	url: {
+		type: String,
+		required: true,
+	},
 });
 
-const emit = defineEmits(["closeImportActivities"]);
+const emit = defineEmits(["closeImportExcel"]);
 
 const isShow = computed(() => props.isShow);
 
@@ -88,7 +96,7 @@ const handleImport = () => {
 
 	// console.log(activityStatusParams);
 	const { data, loading, error } = useFetch({
-		url: "/api/activity-plan/upload",
+		url: props.url,
 		method: "POST",
 		body,
 	});
@@ -96,7 +104,7 @@ const handleImport = () => {
 	watch(data, (newData) => {
 		if (newData) {
 			Loading.service().close();
-			emit("closeImportActivities", {
+			emit("closeImportExcel", {
 				isRefresh: newData[0] !== null,
 				data: newData,
 			});

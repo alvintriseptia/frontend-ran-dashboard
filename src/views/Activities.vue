@@ -58,10 +58,12 @@
 				:isShow="isShowInputActivities"
 				@closeInputActivities="closeInputActivities"
 			/>
-			<ImportActivity
+			<ImportExcel
 				v-if="userStore.getters.role === 'admin'"
 				:isShow="isShowImportActivities"
-				@closeImportActivities="closeImportActivities"
+				title="Import Activities"
+				url="/api/activity-plan/upload"
+				@closeImportExcel="closeImportActivities"
 			/>
 		</div>
 	</Card>
@@ -72,7 +74,7 @@ import {
 	OutlinedButton,
 	APIResponseLayout,
 	ActivityTable,
-	ImportActivity,
+	ImportExcel,
 	InputActivity,
 	Card,
 	Select,
@@ -223,8 +225,7 @@ const handleFilterChange = (filter) => {
 
 // handle sort change
 const handleSortChange = (sort) => {
-	console.log(sort);
-	if (sort) {
+	if (sort.order) {
 		activitiesParams.value = {
 			...activitiesParams.value,
 			sortBy: sort.order === "ascending" ? "ASC" : "DESC",

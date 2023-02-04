@@ -23,7 +23,7 @@
 				sortable="custom"
 			>
 				<template #default="{ row }">
-					<PopOver
+					<PopOverStatus
 						:status="row.status"
 						@onUpdate="(status) => handleStatusUpdate(row, status)"
 					/>
@@ -182,7 +182,12 @@
 				width="200"
 				v-if="userStore.getters.role === 'admin'"
 				column-key="cost"
-				:filters="filterData.cost.map((item) => ({ text: item, value: item }))"
+				:filters="
+					filterData.cost.map((item) => ({
+						text: numberFormat.currencyFormat(item),
+						value: item,
+					}))
+				"
 				sortable="custom"
 			>
 				<template #default="{ row }">
@@ -219,7 +224,7 @@
 
 <script setup>
 // Import data
-import { PopOver, ModalActivity } from "@/components";
+import { PopOverStatus, ModalActivity } from "@/components";
 import { numberFormat } from "@/utils";
 import { computed, watch, ref } from "vue";
 import { useFetch } from "@/composables";

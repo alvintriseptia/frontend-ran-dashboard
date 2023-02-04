@@ -4,8 +4,8 @@
 		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">Input Activities</h2>
-			<OutlinedButton size="sm" @onClick="$emit('closeInputActivities')"
+			<h2 class="text-lg lg:text-xl font-bold">{{ title }}</h2>
+			<OutlinedButton size="sm" @onClick="$emit('closeInput')"
 				>&#10006;</OutlinedButton
 			>
 		</div>
@@ -15,41 +15,67 @@
 			ref="ruleForm"
 			label-position="top"
 		>
-			<el-form-item
-				label="Activity"
-				:label-width="formLabelWidth"
-				prop="deskripsiActivity"
-			>
+			<el-form-item label="Site ID" :label-width="formLabelWidth" prop="siteID">
 				<SearchSelect
-					v-model="ruleForm.deskripsiActivity"
-					:options="activityOptions"
+					v-model="ruleForm.siteID"
+					:options="siteOptions"
 					:isMultiple="false"
-					placeholder="Select Activity"
-					@onUpdate="onUpdateActivity"
+					:allowCreate="true"
+					placeholder="Select or Create a Site"
+					@onUpdate="onUpdateSite"
 					:setDefault="false"
 				/>
 			</el-form-item>
-			<el-form-item label="Remark" :label-width="formLabelWidth" prop="remark">
-				<el-input v-model="ruleForm.remark" autocomplete="off"></el-input>
+			<el-form-item
+				label="Site Name"
+				:label-width="formLabelWidth"
+				prop="Site Name"
+			>
+				<SearchSelect
+					v-model="ruleForm.siteID"
+					:options="siteOptions"
+					:isMultiple="false"
+					:allowCreate="true"
+					placeholder="Select or Create a Site"
+					@onUpdate="onUpdateSite"
+					:setDefault="false"
+				/>
 			</el-form-item>
 			<el-form-item
-				label="Target Quartal"
+				label="NS Department"
 				:label-width="formLabelWidth"
-				prop="targetQuartal"
+				prop="namaNS"
 			>
-				<el-select
-					v-model="ruleForm.targetQuartal"
-					placeholder="Select Quartal"
-				>
-					<el-option
-						v-for="item in quarterOptions"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					></el-option>
-				</el-select>
+				<SearchSelect
+					v-model="ruleForm.siteID"
+					:options="siteOptions"
+					:isMultiple="false"
+					:allowCreate="true"
+					placeholder="Select or Create a Site"
+					@onUpdate="onUpdateSite"
+					:setDefault="false"
+				/>
 			</el-form-item>
-			<el-form-item label="Site" :label-width="formLabelWidth" prop="siteID">
+			<el-form-item
+				label="DO Sub-Department"
+				:label-width="formLabelWidth"
+				prop="namaDO"
+			>
+				<SearchSelect
+					v-model="ruleForm.siteID"
+					:options="siteOptions"
+					:isMultiple="false"
+					:allowCreate="true"
+					placeholder="Select or Create a Site"
+					@onUpdate="onUpdateSite"
+					:setDefault="false"
+				/>
+			</el-form-item>
+			<el-form-item
+				label="Kabupaten"
+				:label-width="formLabelWidth"
+				prop="namaKabupaten"
+			>
 				<SearchSelect
 					v-model="ruleForm.siteID"
 					:options="siteOptions"
@@ -74,81 +100,38 @@ export default {
 	data() {
 		return {
 			ruleForm: {
-				deskripsiActivity: "",
 				siteID: "",
+				siteName: "",
 				namaDO: "",
 				namaNS: "",
 				namaKabupaten: "",
-				targetQuartal: "",
-				remark: "",
 			},
 			rules: {
-				deskripsiActivity: [
-					{
-						required: true,
-						message: "Please input deskripsi activity",
-						trigger: "blur",
-					},
-				],
 				siteID: [
 					{ required: true, message: "Please input site ID", trigger: "blur" },
 				],
-				targetQuartal: [
+				siteName: [
 					{
 						required: true,
-						message: "Please input target quartal",
+						message: "Please input site name",
 						trigger: "blur",
 					},
 				],
-				remark: [
-					{ required: true, message: "Please input remark", trigger: "blur" },
+				namaDO: [
+					{ required: true, message: "Please input DO name", trigger: "blur" },
+				],
+				namaNS: [
+					{ required: true, message: "Please input NS name", trigger: "blur" },
+				],
+				namaKabupaten: [
+					{
+						required: true,
+						message: "Please input kabupaten name",
+						trigger: "blur",
+					},
 				],
 			},
-			quarterOptions: [
-				{
-					value: "All",
-					label: "All",
-				},
-				{
-					value: "Q1",
-					label: "Q1",
-				},
-				{
-					value: "Q2",
-					label: "Q2",
-				},
-				{
-					value: "Q3",
-					label: "Q3",
-				},
-				{
-					value: "Q4",
-					label: "Q4",
-				},
-			],
 			formLabelWidth: "120px",
-			activityOptions: [
-				{
-					value: "Activity 1",
-					label: "Activity 1",
-				},
-				{
-					value: "Activity 2",
-					label: "Activity 2",
-				},
-				{
-					value: "Activity 3",
-					label: "Activity 3",
-				},
-				{
-					value: "Activity 4",
-					label: "Activity 4",
-				},
-				{
-					value: "Activity 5",
-					label: "Activity 5",
-				},
-			],
 			siteOptions: [
 				{
 					value: "Site 1",
@@ -173,11 +156,15 @@ export default {
 			],
 		};
 	},
-	emits: ["closeInputActivities"],
+	emits: ["closeInput"],
 	props: {
 		isShow: {
 			type: Boolean,
 			default: false,
+		},
+		title: {
+			type: String,
+			default: "",
 		},
 	},
 	computed: {
