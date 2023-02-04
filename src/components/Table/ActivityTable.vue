@@ -182,7 +182,12 @@
 				width="200"
 				v-if="userStore.getters.role === 'admin'"
 				column-key="cost"
-				:filters="filterData.cost.map((item) => ({ text: item, value: item }))"
+				:filters="
+					filterData.cost.map((item) => ({
+						text: numberFormat.currencyFormat(item),
+						value: item,
+					}))
+				"
 				sortable="custom"
 			>
 				<template #default="{ row }">

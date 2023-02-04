@@ -223,8 +223,7 @@ const handleFilterChange = (filter) => {
 
 // handle sort change
 const handleSortChange = (sort) => {
-	console.log(sort);
-	if (sort) {
+	if (sort.order) {
 		activitiesParams.value = {
 			...activitiesParams.value,
 			sortBy: sort.order === "ascending" ? "ASC" : "DESC",
