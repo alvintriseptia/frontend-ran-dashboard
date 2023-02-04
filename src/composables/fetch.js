@@ -49,11 +49,17 @@ export function useFetch({
 					}
 				})
 				.catch((err) => {
-					if (err.response.data.message === "Unauthorized") {
-						window.location.replace("/login");
+					if (!err.response) {
+						// network error
+						error.value = "Error: Network Error";
+					} else {
+						if (err.response.data.message === "Unauthorized") {
+							window.location.replace("/login");
+						}
+						error.value = err.message;
 					}
-					error.value = err.message;
-					// reset state..
+
+					// reset data state..
 					data.value = null;
 				})
 				.finally(() => {

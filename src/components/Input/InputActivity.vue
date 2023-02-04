@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto"
-		:class="isShow ? 'right-0' : '-right-full'"
+		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
 			<h2 class="text-lg lg:text-xl font-bold">Input Activities</h2>
@@ -9,12 +9,38 @@
 				>&#10006;</OutlinedButton
 			>
 		</div>
-		<el-form :model="form" label-position="top">
-			<el-form-item label="Remark" :label-width="formLabelWidth">
-				<el-input v-model="form.remark" autocomplete="off"></el-input>
+		<el-form
+			:model="ruleForm"
+			:rules="rules"
+			ref="ruleForm"
+			label-position="top"
+		>
+			<el-form-item
+				label="Activity"
+				:label-width="formLabelWidth"
+				prop="deskripsiActivity"
+			>
+				<SearchSelect
+					v-model="ruleForm.deskripsiActivity"
+					:options="activityOptions"
+					:isMultiple="false"
+					placeholder="Select Activity"
+					@onUpdate="onUpdateActivity"
+					:setDefault="false"
+				/>
 			</el-form-item>
-			<el-form-item label="Target Quartal" :label-width="formLabelWidth">
-				<el-select v-model="form.targetQuartal" placeholder="Select Quartal">
+			<el-form-item label="Remark" :label-width="formLabelWidth" prop="remark">
+				<el-input v-model="ruleForm.remark" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item
+				label="Target Quartal"
+				:label-width="formLabelWidth"
+				prop="targetQuartal"
+			>
+				<el-select
+					v-model="ruleForm.targetQuartal"
+					placeholder="Select Quartal"
+				>
 					<el-option
 						v-for="item in quarterOptions"
 						:key="item.value"
@@ -23,52 +49,165 @@
 					></el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="Site" :label-width="formLabelWidth" prop="siteID">
+				<SearchSelect
+					v-model="ruleForm.siteID"
+					:options="siteOptions"
+					:isMultiple="false"
+					:allowCreate="true"
+					placeholder="Select or Create a Site"
+					@onUpdate="onUpdateSite"
+					:setDefault="false"
+				/>
+			</el-form-item>
+			<div class="mt-8">
+				<Button @onClick="onSubmit('ruleForm')"> Input Data </Button>
+			</div>
 		</el-form>
-		<section class="mt-4">
-			<Button @onClick="onSubmit">Input Data</Button>
-		</section>
 	</div>
 </template>
 
-<script setup>
-import { OutlinedButton, Button } from "@/components";
-import { computed, ref } from "vue";
+<script>
+import { OutlinedButton, Button, SearchSelect } from "@/components";
 
-const form = ref({});
-const formLabelWidth = "120px";
-const quarterOptions = [
-	{
-		value: "All",
-		label: "All",
+export default {
+	data() {
+		return {
+			ruleForm: {
+				deskripsiActivity: "",
+				siteID: "",
+				namaDO: "",
+				namaNS: "",
+				namaKabupaten: "",
+				targetQuartal: "",
+				remark: "",
+			},
+			rules: {
+				deskripsiActivity: [
+					{
+						required: true,
+						message: "Please input deskripsi activity",
+						trigger: "blur",
+					},
+				],
+				siteID: [
+					{ required: true, message: "Please input site ID", trigger: "blur" },
+				],
+				targetQuartal: [
+					{
+						required: true,
+						message: "Please input target quartal",
+						trigger: "blur",
+					},
+				],
+				remark: [
+					{ required: true, message: "Please input remark", trigger: "blur" },
+				],
+			},
+			quarterOptions: [
+				{
+					value: "All",
+					label: "All",
+				},
+				{
+					value: "Q1",
+					label: "Q1",
+				},
+				{
+					value: "Q2",
+					label: "Q2",
+				},
+				{
+					value: "Q3",
+					label: "Q3",
+				},
+				{
+					value: "Q4",
+					label: "Q4",
+				},
+			],
+			formLabelWidth: "120px",
+			activityOptions: [
+				{
+					value: "Activity 1",
+					label: "Activity 1",
+				},
+				{
+					value: "Activity 2",
+					label: "Activity 2",
+				},
+				{
+					value: "Activity 3",
+					label: "Activity 3",
+				},
+				{
+					value: "Activity 4",
+					label: "Activity 4",
+				},
+				{
+					value: "Activity 5",
+					label: "Activity 5",
+				},
+			],
+			siteOptions: [
+				{
+					value: "Site 1",
+					label: "Site 1",
+				},
+				{
+					value: "Site 2",
+					label: "Site 2",
+				},
+				{
+					value: "Site 3",
+					label: "Site 3",
+				},
+				{
+					value: "Site 4",
+					label: "Site 4",
+				},
+				{
+					value: "Site 5",
+					label: "Site 5",
+				},
+			],
+		};
 	},
-	{
-		value: "Q1",
-		label: "Q1",
+	emits: ["closeInputActivities"],
+	props: {
+		isShow: {
+			type: Boolean,
+			default: false,
+		},
 	},
-	{
-		value: "Q2",
-		label: "Q2",
+	computed: {
+		isShowInput() {
+			return this.isShow;
+		},
 	},
-	{
-		value: "Q3",
-		label: "Q3",
+	methods: {
+		onSubmit(formName) {
+			console.log(this.ruleForm);
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					console.log("submitted");
+				} else {
+					console.log("error submit!!");
+					return false;
+				}
+			});
+		},
+		onUpdateSite(value) {
+			this.ruleForm.siteID = value;
+		},
+		onUpdateActivity(value) {
+			this.ruleForm.deskripsiActivity = value;
+		},
 	},
-	{
-		value: "Q4",
-		label: "Q4",
+	components: {
+		OutlinedButton,
+		Button,
+		SearchSelect,
 	},
-];
-const emit = defineEmits(["onSubmit", "onCancel"]);
-const props = defineProps({
-	isShow: {
-		type: Boolean,
-		default: false,
-	},
-});
-
-function onSubmit() {
-	emit("onSubmit", form.value);
-}
-
-const isShow = computed(() => props.isShow);
+};
 </script>
