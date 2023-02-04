@@ -4,6 +4,7 @@
 		:multiple="isMultiple"
 		filterable
 		remote
+		v-bind:allow-create="allowCreate"
 		reserve-keyword
 		:placeholder="placeholder"
 		remote-show-suffix
@@ -49,6 +50,14 @@ const props = defineProps({
 		type: Function,
 		default: () => {},
 	},
+	allowCreate: {
+		type: Boolean,
+		default: false,
+	},
+	setDefault: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 // Define emits
@@ -63,7 +72,9 @@ onMounted(() => {
 		() => {
 			if (list.value.length > 0) {
 				options.value = list.value;
-				value.value = list.value[0].value;
+				if (props.setDefault) {
+					value.value = list.value[0].value;
+				}
 			}
 		},
 		{ immediate: true }

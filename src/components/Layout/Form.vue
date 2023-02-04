@@ -1,6 +1,7 @@
 <template>
 	<section
 		class="p-4 border border-gray-200 rounded-lg bg-white overflow-auto flex flex-col gap-y-6 min-w-[300px]"
+		v-loading="loading"
 	>
 		<div>
 			<div class="flex gap-x-2 items-center mb-2">
@@ -60,12 +61,14 @@ export default {
 					{ required: true, message: "Please input password", trigger: "blur" },
 				],
 			},
+			loading: false,
 		};
 	},
 	methods: {
 		submitForm(formName) {
 			this.$refs[formName].validate((valid) => {
 				if (valid) {
+					this.loading = true;
 					userStore
 						.dispatch("login", this.ruleForm)
 						.then((res) => {
@@ -78,11 +81,19 @@ export default {
 							});
 						})
 						.catch((err) => {
-							this.$notify.error({
-								title: "Error",
-								message: err.response.data.message,
-							});
+							if (!err.response) {
+								this.$notify.error({
+									title: "Error",
+									message: err.message,
+								});
+							} else {
+								this.$notify.error({
+									title: "Error",
+									message: err.response.data.message,
+								});
+							}
 						});
+					this.loading = false;
 				} else {
 					this.$notify.error({
 						title: "Error",
@@ -93,11 +104,28 @@ export default {
 			});
 		},
 		loginGuest() {
-			userStore.dispatch("loginGuest").then((res) => {
-				if (res) {
-					this.$router.push({ name: "dashboard" });
-				}
-			});
+			this.loading = true;
+			userStore
+				.dispatch("loginGuest")
+				.then((res) => {
+					if (res) {
+						this.$router.push({ name: "dashboard" });
+					}
+				})
+				.catch((err) => {
+					if (!err.response) {
+						this.$notify.error({
+							title: "Error",
+							message: err.message,
+						});
+					} else {
+						this.$notify.error({
+							title: "Error",
+							message: err.response.data.message,
+						});
+					}
+				});
+			this.loading = false;
 		},
 	},
 	components: {

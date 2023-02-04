@@ -5,6 +5,7 @@
 			:style="{ width: '100%', overflow: 'auto' }"
 			header-cell-class-name="header-color-activity"
 			@filter-change="filterHandler"
+			@sort-change="sortHandler"
 		>
 			<el-table-column label="No" width="60">
 				<template #default="{ row, $index }">
@@ -19,6 +20,7 @@
 				:filters="
 					filterData.status.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			>
 				<template #default="{ row }">
 					<PopOver
@@ -30,11 +32,12 @@
 			<el-table-column
 				prop="weekExecuted"
 				label="Week Exec"
-				width="100"
+				width="120"
 				column-key="weekExecuted"
 				:filters="
 					filterData.weekExecuted.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			>
 				<template #default="{ row }">
 					<p class="text-center">
@@ -50,6 +53,7 @@
 				:filters="
 					filterData.namaProgram.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="namaSubprogram"
@@ -59,6 +63,7 @@
 				:filters="
 					filterData.namaSubprogram.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="deskripsiActivity"
@@ -71,6 +76,7 @@
 						value: item,
 					}))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="additionalInfo"
@@ -80,6 +86,7 @@
 				:filters="
 					filterData.additionalInfo.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="siteID"
@@ -89,6 +96,7 @@
 				:filters="
 					filterData.site.map((item) => ({ text: item.id, value: item.id }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="siteName"
@@ -98,6 +106,7 @@
 				:filters="
 					filterData.site.map((item) => ({ text: item.name, value: item.name }))
 				"
+				sortable="custom"
 			/>
 			<!-- <el-table-column prop="kabupaten" label="Kabupaten" width="200" /> -->
 			<el-table-column
@@ -108,6 +117,7 @@
 				:filters="
 					filterData.namaDO.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="namaNS"
@@ -117,6 +127,7 @@
 				:filters="
 					filterData.namaNS.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="namaPIC"
@@ -126,17 +137,24 @@
 				:filters="
 					filterData.namaPIC.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="targetQuartal"
 				label="Target Q"
-				width="80"
+				width="100"
 				column-key="targetQuartal"
 				:filters="
 					filterData.targetQuartal.map((item) => ({ text: item, value: item }))
 				"
-			/>
-			<!-- <el-table-column prop="date" label="Date" width="100" /> -->
+				sortable="custom"
+			>
+				<template #default="{ row }">
+					<p class="text-center">
+						{{ row.targetQuartal }}
+					</p>
+				</template>
+			</el-table-column>
 			<el-table-column
 				prop="remark"
 				label="Remark"
@@ -145,6 +163,7 @@
 				:filters="
 					filterData.remark.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				prop="budget"
@@ -155,6 +174,7 @@
 				:filters="
 					filterData.budget.map((item) => ({ text: item, value: item }))
 				"
+				sortable="custom"
 			/>
 			<el-table-column
 				label="Cost"
@@ -162,6 +182,7 @@
 				v-if="userStore.getters.role === 'admin'"
 				column-key="cost"
 				:filters="filterData.cost.map((item) => ({ text: item, value: item }))"
+				sortable="custom"
 			>
 				<template #default="{ row }">
 					{{
@@ -219,7 +240,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(["onFilter"]);
+const emit = defineEmits(["onFilter", "onSort"]);
 
 const data = computed(() => props.data);
 const filterData = computed(() => props.filterData);
@@ -228,6 +249,11 @@ const numberStart = computed(() => props.numberStart);
 // Handle filter
 const filterHandler = (value) => {
 	emit("onFilter", value);
+};
+
+// handle sort
+const sortHandler = (value) => {
+	emit("onSort", value);
 };
 
 // Modal Activity
