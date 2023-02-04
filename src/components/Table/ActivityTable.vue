@@ -142,14 +142,19 @@
 			<el-table-column
 				prop="targetQuartal"
 				label="Target Q"
-				width="80"
+				width="100"
 				column-key="targetQuartal"
 				:filters="
 					filterData.targetQuartal.map((item) => ({ text: item, value: item }))
 				"
 				sortable="custom"
-			/>
-			<!-- <el-table-column prop="date" label="Date" width="100" /> -->
+			>
+				<template #default="{ row }">
+					<p class="text-center">
+						{{ row.targetQuartal }}
+					</p>
+				</template>
+			</el-table-column>
 			<el-table-column
 				prop="remark"
 				label="Remark"
