@@ -23,7 +23,7 @@
 				sortable="custom"
 			>
 				<template #default="{ row }">
-					<PopOver
+					<PopOverStatus
 						:status="row.status"
 						@onUpdate="(status) => handleStatusUpdate(row, status)"
 					/>
@@ -224,7 +224,7 @@
 
 <script setup>
 // Import data
-import { PopOver, ModalActivity } from "@/components";
+import { PopOverStatus, ModalActivity } from "@/components";
 import { numberFormat } from "@/utils";
 import { computed, watch, ref } from "vue";
 import { useFetch } from "@/composables";
