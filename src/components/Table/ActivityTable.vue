@@ -177,6 +177,7 @@
 				sortable="custom"
 			/>
 			<el-table-column
+				prop="cost"
 				label="Cost"
 				width="200"
 				v-if="userStore.getters.role === 'admin'"
