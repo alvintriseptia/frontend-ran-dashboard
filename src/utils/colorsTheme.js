@@ -8,6 +8,15 @@ const dark = "#333";
 const white = "#fff";
 const yellow = "#FFD700";
 
+const getPastelColor = (index) => {
+	const startNumber = (index % 10) * 40;
+	const totalColors = 40 * (index + 1);
+
+	const randomNumber = Math.random() * totalColors + startNumber;
+
+	return "hsl(" + randomNumber + ", 80%, 65%)";
+};
+
 export default {
 	primary,
 	orange,
@@ -18,4 +27,5 @@ export default {
 	white,
 	yellow,
 	lightGray,
+	getPastelColor,
 };
