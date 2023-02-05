@@ -37,6 +37,7 @@
 				<ActivityTable
 					v-if="activities.data"
 					:data="activities.data"
+					:loading="activities.loading"
 					:filterData="activities.filterData"
 					:numberStart="
 						activitiesParams.page * activitiesParams.limit -
@@ -82,6 +83,7 @@ import {
 import { ref } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
+import { Notification } from "element-ui";
 
 // Menu Import Activities
 const isShowImportActivities = ref(false);
@@ -96,7 +98,7 @@ const showImportActivities = () => {
 
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
-	if (result !== null) {
+	if (result) {
 		// console.log(result);
 		if (result.isRefresh) {
 			const title = result.data[1]
@@ -136,32 +138,14 @@ const showInputActivities = () => {
 
 const closeInputActivities = (result) => {
 	isShowInputActivities.value = false;
-	// if (result !== null) {
-	// 	console.log(result);
-	// 	if (result.isRefresh) {
-	// 		const title = result.data[1]
-	// 			? "Input Activities Success"
-	// 			: "Some activities success inputted, but the other is not inputted";
-	// 		alertCard.value = {
-	// 			type: result.data[1] ? "success" : "warning",
-	// 			title: title,
-	// 			description: result.data[1],
-	// 		};
-	// 		activitiesParams.value = {
-	// 			...activitiesParams.value,
-	// 			page: 1,
-	// 		};
-	// 	} else if (result.data[1]) {
-	// 		alertCard.value = {
-	// 			type: "warning",
-	// 			title:
-	// 				"Some activities success inputted, but the other is not inputted",
-	// 			description: result.data[1],
-	// 		};
-	// 	}
-	// } else {
-	// 	alertCard.value = null;
-	// }
+	if (result) {
+		console.log(result);
+		activities.value.data = [result, ...activities.value.data];
+		Notification.success({
+			title: "Success",
+			message: "Activity has been updated",
+		});
+	}
 };
 
 // =================== Activities ===================

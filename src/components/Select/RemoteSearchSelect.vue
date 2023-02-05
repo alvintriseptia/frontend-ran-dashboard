@@ -45,6 +45,14 @@ const props = defineProps({
 		type: Boolean,
 		default: true,
 	},
+	labelOption: {
+		type: String,
+		required: true,
+	},
+	valueOption: {
+		type: String,
+		required: true,
+	},
 	onUpdate: {
 		type: Function,
 		default: () => {},
@@ -63,9 +71,13 @@ onMounted(() => {
 	options.value = computed(() => {
 		return props.options
 			? props.options.map((item) => {
+					const label = props.labelOption
+						.split(",")
+						.map((e) => item[e])
+						.join(" - ");
 					return {
-						value: item.deskripsiActivity,
-						label: item.deskripsiActivity,
+						value: item[props.valueOption],
+						label: label,
 					};
 			  })
 			: [];

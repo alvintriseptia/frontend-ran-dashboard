@@ -6,6 +6,7 @@
 			header-cell-class-name="header-color-activity"
 			@filter-change="filterHandler"
 			@sort-change="sortHandler"
+			v-loading="loading"
 		>
 			<el-table-column label="No" width="60">
 				<template #default="{ row, $index }">
@@ -244,6 +245,10 @@ const props = defineProps({
 		type: Number,
 		default: 1,
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const emit = defineEmits(["onFilter", "onSort"]);
@@ -251,6 +256,7 @@ const emit = defineEmits(["onFilter", "onSort"]);
 const data = computed(() => props.data);
 const filterData = computed(() => props.filterData);
 const numberStart = computed(() => props.numberStart);
+const loading = computed(() => props.loading);
 
 // Handle filter
 const filterHandler = (value) => {
@@ -277,7 +283,6 @@ const closeModalActivity = () => {
 
 // Handle Update Activity
 const handleUpdateActivity = (form) => {
-	console.log(form);
 	const body = new FormData();
 	body.append("activityId", form.activityId);
 	body.append("siteId", form.siteId);
@@ -305,6 +310,7 @@ const handleUpdateActivity = (form) => {
 
 	watch(error, (newError) => {
 		if (newError) {
+			console.log(newError);
 			Notification.error({
 				title: "Error",
 				message: "Failed to update activity",
