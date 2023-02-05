@@ -13,17 +13,23 @@
 		<el-table-column
 			v-for="(item, index) in tableStructure"
 			:key="index"
-			:label="convertLabel(item)"
 			:min-width="item == 'title' ? '300' : '100'"
 		>
+			<template #header="{ row }">
+				<div class="text-center">
+					{{ convertLabel(item) }}
+				</div>
+			</template>
 			<template #default="{ row }">
-				{{
-					typeof row[item] === "object"
-						? row[item].done + row[item].notYet !== 0
-							? `${row[item].done} / ${row[item].notYet + row[item].done}`
-							: ""
-						: row[item]
-				}}
+				<div :class="{ 'text-center': typeof row[item] === 'object' }">
+					{{
+						typeof row[item] === "object"
+							? row[item].done + row[item].notYet !== 0
+								? `${row[item].done} / ${row[item].notYet + row[item].done}`
+								: ""
+							: row[item]
+					}}
+				</div>
 			</template>
 		</el-table-column>
 	</el-table>
@@ -60,7 +66,7 @@ const tableData = computed(() => {
 // cellClassChecker will check the current cell to be highlighted
 function cellClassChecker({ row }) {
 	if (row.title == "Grand Total") {
-		return "p-0 bg-gray-200  text-gray-500";
+		return "p-0 bg-gray-200  text-gray-500 font-medium";
 	}
 	return "p-0 text-gray-500";
 }

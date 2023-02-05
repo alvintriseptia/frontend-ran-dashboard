@@ -133,7 +133,6 @@ function handleSelectionChange(val) {
 }
 
 function handleRemove(row, index) {
-	console.log(row);
 	emit("onRemove", { row, index });
 }
 

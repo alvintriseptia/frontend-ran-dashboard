@@ -86,13 +86,10 @@ const chartOptions = {
 		datalabels: {
 			color: "black",
 			labels: {
-				title: {
-					font: {
-						weight: "bold",
+				index: {
+					formatter: function (value, ctx) {
+						return value === 0 ? "" : value;
 					},
-				},
-				value: {
-					color: "black",
 				},
 			},
 		},
