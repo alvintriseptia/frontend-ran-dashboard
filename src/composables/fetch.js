@@ -56,7 +56,7 @@ export function useFetch({
 						if (err.response.data.message === "Unauthorized") {
 							window.location.replace("/login");
 						}
-						error.value = err.message;
+						error.value = err.response.data.message;
 					}
 
 					// reset data state..

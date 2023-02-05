@@ -1,5 +1,9 @@
 <template>
-	<Bar :chart-data="chartData" :chart-options="chartOptions" />
+	<Bar
+		class="min-h-[400px]"
+		:chart-data="chartData"
+		:chart-options="chartOptions"
+	/>
 </template>
 
 <script setup>
