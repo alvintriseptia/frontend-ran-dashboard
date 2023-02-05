@@ -64,6 +64,7 @@ export function useFetch({
 				})
 				.finally(() => {
 					loading.value = false;
+					console.log(url);
 				});
 		}
 	}

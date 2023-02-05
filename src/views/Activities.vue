@@ -139,11 +139,10 @@ const showInputActivities = () => {
 const closeInputActivities = (result) => {
 	isShowInputActivities.value = false;
 	if (result) {
-		console.log(result);
 		activities.value.data = [result, ...activities.value.data];
 		Notification.success({
 			title: "Success",
-			message: "Activity has been updated",
+			message: "Activity has been added",
 		});
 	}
 };

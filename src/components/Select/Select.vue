@@ -4,6 +4,7 @@
 		filterable
 		:placeholder="placeholder"
 		@change="handleChange"
+		autocomplete="off"
 	>
 		<el-option
 			v-for="item in options"
@@ -15,7 +16,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps({
 	options: {
@@ -41,11 +42,18 @@ const options = computed(() => props.options);
 const value = ref("");
 
 onMounted(() => {
-	if (props.defaultValue) {
-		value.value = props.defaultValue;
-	} else {
-		value.value = props.options[0].value;
-	}
+	watch(
+		() => props.defaultValue,
+		(newVal) => {
+			if (newVal) {
+				value.value = newVal;
+			} else {
+				if (options.value.length > 0) {
+					value.value = options.value[0].value;
+				}
+			}
+		}
+	);
 });
 
 const emit = defineEmits(["onChange"]);

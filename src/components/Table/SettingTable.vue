@@ -5,6 +5,8 @@
 		:style="{ width: '100%', overflow: 'auto' }"
 		header-cell-class-name="header-color-activity"
 		@selection-change="handleSelectionChange"
+		@sort-change="sortHandler"
+		v-loading="loading"
 	>
 		<el-table-column type="selection" />
 		<el-table-column label="No" width="59">
@@ -17,49 +19,54 @@
 
 		<!-- NS Column -->
 		<el-table-column
-			prop="namaNS"
-			label="NS"
+			prop="label"
+			label="NS Department"
 			min-width="180"
 			v-if="type === 'ns'"
 		/>
 
 		<!-- DO Column -->
 		<el-table-column
-			prop="namaDO"
-			label="DO"
+			prop="label"
+			label="DO Sub-Department"
 			min-width="180"
 			v-if="type === 'do'"
 		/>
 
 		<!-- Site Column -->
 		<el-table-column
-			prop="id"
+			prop="siteID"
 			label="Site ID"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
-			prop="name"
+			prop="siteName"
 			label="Site Name"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaNS"
 			label="NS/Department"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaDO"
 			label="DO/Sup-Department"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaKabupaten"
 			label="Kabupaten"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 
@@ -74,7 +81,7 @@
 					<!-- If type is NS or DO -->
 					<PopOverInput
 						v-if="type === 'ns' || type === 'do'"
-						:text="type === 'ns' ? row.namaNS : row.namaDO"
+						:text="row.label"
 						@onUpdate="(status) => handleStatusUpdate(row, status)"
 					/>
 					<!-- If type is Site -->
@@ -115,10 +122,15 @@ const props = defineProps({
 		type: String,
 		default: "site",
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const data = computed(() => props.data);
 const numberStart = computed(() => props.numberStart);
+const loading = computed(() => props.loading);
 
 const emit = defineEmits(["onUpdate", "onRemove", "onEdit"]);
 const multipleSelection = ref([]);
@@ -138,5 +150,9 @@ function handleRemove(row, index) {
 
 function handleEdit(row, index) {
 	emit("onEdit", { row, index });
+}
+
+function sortHandler(value) {
+	emit("onSort", value);
 }
 </script>

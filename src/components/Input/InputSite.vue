@@ -4,7 +4,9 @@
 		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">{{ title }}</h2>
+			<h2 class="text-lg lg:text-xl font-bold">
+				{{ type === "input" ? "Input Site" : "Edit Site" }}
+			</h2>
 			<OutlinedButton size="sm" @onClick="$emit('closeInput')"
 				>&#10006;</OutlinedButton
 			>
@@ -12,63 +14,42 @@
 		<el-form
 			:model="ruleForm"
 			:rules="rules"
-			ref="ruleForm"
+			ref="ruleFormRef"
 			label-position="top"
 		>
 			<el-form-item label="Site ID" :label-width="formLabelWidth" prop="siteID">
-				<SearchSelect
-					v-model="ruleForm.siteID"
-					:options="siteOptions"
-					:isMultiple="false"
-					:allowCreate="true"
-					placeholder="Select or Create a Site"
-					@onUpdate="onUpdateSite"
-					:setDefault="false"
-				/>
+				<el-input v-model="ruleForm.siteID" autocomplete="off"></el-input>
 			</el-form-item>
 			<el-form-item
 				label="Site Name"
 				:label-width="formLabelWidth"
-				prop="Site Name"
+				prop="siteName"
 			>
-				<SearchSelect
-					v-model="ruleForm.siteID"
-					:options="siteOptions"
-					:isMultiple="false"
-					:allowCreate="true"
-					placeholder="Select or Create a Site"
-					@onUpdate="onUpdateSite"
-					:setDefault="false"
-				/>
+				<el-input v-model="ruleForm.siteName" autocomplete="off"></el-input>
 			</el-form-item>
 			<el-form-item
 				label="NS Department"
 				:label-width="formLabelWidth"
 				prop="namaNS"
 			>
-				<SearchSelect
-					v-model="ruleForm.siteID"
-					:options="siteOptions"
-					:isMultiple="false"
-					:allowCreate="true"
-					placeholder="Select or Create a Site"
-					@onUpdate="onUpdateSite"
-					:setDefault="false"
+				<Select
+					v-model="ruleForm.namaNS"
+					:options="nsDepartmentOptions"
+					placeholder="Select NS Department"
+					@onChange="onUpdateNS"
+					:defaultValue="ruleForm.namaNS"
 				/>
 			</el-form-item>
 			<el-form-item
 				label="DO Sub-Department"
 				:label-width="formLabelWidth"
 				prop="namaDO"
-			>
-				<SearchSelect
-					v-model="ruleForm.siteID"
-					:options="siteOptions"
-					:isMultiple="false"
-					:allowCreate="true"
-					placeholder="Select or Create a Site"
-					@onUpdate="onUpdateSite"
-					:setDefault="false"
+				><Select
+					v-model="ruleForm.namaDO"
+					:options="doSubDepartmentOptions"
+					placeholder="Select DO Sub-Department"
+					@onChange="onUpdateDO"
+					:defaultValue="ruleForm.namaDO"
 				/>
 			</el-form-item>
 			<el-form-item
@@ -76,125 +57,167 @@
 				:label-width="formLabelWidth"
 				prop="namaKabupaten"
 			>
-				<SearchSelect
-					v-model="ruleForm.siteID"
-					:options="siteOptions"
+				<Select
+					v-model="ruleForm.namaKabupaten"
+					:options="kabupatenOptions"
 					:isMultiple="false"
-					:allowCreate="true"
-					placeholder="Select or Create a Site"
-					@onUpdate="onUpdateSite"
-					:setDefault="false"
+					placeholder="Select Kabupaten"
+					@onChange="onUpdateKabupaten"
+					:defaultValue="ruleForm.namaKabupaten"
 				/>
 			</el-form-item>
 			<div class="mt-8">
-				<Button @onClick="onSubmit('ruleForm')"> Input Data </Button>
+				<Button @onClick="onSubmit()"> Input Data </Button>
 			</div>
 		</el-form>
 	</div>
 </template>
 
-<script>
-import { OutlinedButton, Button, SearchSelect } from "@/components";
+<script setup>
+import { OutlinedButton, Button, Select } from "@/components";
+import { computed, onMounted, ref, watch } from "vue";
+import { useFetch } from "@/composables";
+import { Notification } from "element-ui";
 
-export default {
-	data() {
-		return {
-			ruleForm: {
-				siteID: "",
-				siteName: "",
-				namaDO: "",
-				namaNS: "",
-				namaKabupaten: "",
-			},
-			rules: {
-				siteID: [
-					{ required: true, message: "Please input site ID", trigger: "blur" },
-				],
-				siteName: [
-					{
-						required: true,
-						message: "Please input site name",
-						trigger: "blur",
-					},
-				],
-				namaDO: [
-					{ required: true, message: "Please input DO name", trigger: "blur" },
-				],
-				namaNS: [
-					{ required: true, message: "Please input NS name", trigger: "blur" },
-				],
-				namaKabupaten: [
-					{
-						required: true,
-						message: "Please input kabupaten name",
-						trigger: "blur",
-					},
-				],
-			},
-			formLabelWidth: "120px",
-			siteOptions: [
-				{
-					value: "Site 1",
-					label: "Site 1",
-				},
-				{
-					value: "Site 2",
-					label: "Site 2",
-				},
-				{
-					value: "Site 3",
-					label: "Site 3",
-				},
-				{
-					value: "Site 4",
-					label: "Site 4",
-				},
-				{
-					value: "Site 5",
-					label: "Site 5",
-				},
-			],
-		};
+// define Emits
+const emit = defineEmits(["closeInput"]);
+
+// define Props
+const props = defineProps({
+	isShow: {
+		type: Boolean,
+		default: false,
 	},
-	emits: ["closeInput"],
-	props: {
-		isShow: {
-			type: Boolean,
-			default: false,
-		},
-		title: {
-			type: String,
-			default: "",
-		},
+	type: {
+		type: String,
+		default: "input",
 	},
-	computed: {
-		isShowInput() {
-			return this.isShow;
-		},
+	currentData: {
+		type: Object,
+		required: true,
 	},
-	methods: {
-		onSubmit(formName) {
-			console.log(this.ruleForm);
-			this.$refs[formName].validate((valid) => {
-				if (valid) {
-					console.log("submitted");
-				} else {
-					console.log("error submit!!");
-					return false;
+	nsDepartmentOptions: {
+		type: Array,
+		required: true,
+	},
+	doSubDepartmentOptions: {
+		type: Array,
+		required: true,
+	},
+	kabupatenOptions: {
+		type: Array,
+		required: true,
+	},
+});
+const isShowInput = computed(() => props.isShow);
+
+// Form
+const ruleForm = ref({
+	siteID: "",
+	siteName: "",
+	namaDO: "",
+	namaNS: "",
+	namaKabupaten: "",
+});
+
+// watch props currentData
+watch(
+	() => props.currentData,
+	(newVal) => {
+		if (newVal) {
+			ruleForm.value = {
+				siteID: newVal.siteID,
+				siteName: newVal.siteName,
+				namaDO: newVal.doID,
+				namaNS: newVal.nsID,
+				namaKabupaten: newVal.kabupatenID,
+			};
+
+			console.log(ruleForm.value);
+		}
+	}
+);
+
+// Rule Form Ref
+const ruleFormRef = ref(null);
+const formLabelWidth = "120px";
+
+// Form Rules
+const rules = {
+	siteID: [
+		{ required: true, message: "Please input site ID", trigger: "blur" },
+	],
+	siteName: [
+		{
+			required: true,
+			message: "Please input site name",
+			trigger: "blur",
+		},
+	],
+	namaDO: [
+		{ required: true, message: "Please input DO name", trigger: "blur" },
+	],
+	namaNS: [
+		{ required: true, message: "Please input NS name", trigger: "blur" },
+	],
+	namaKabupaten: [
+		{
+			required: true,
+			message: "Please input kabupaten name",
+			trigger: "blur",
+		},
+	],
+};
+
+function onUpdateNS(value) {
+	ruleForm.value.namaNS = value;
+	ruleFormRef.value.model.namaNS = value;
+}
+function onUpdateDO(value) {
+	ruleForm.value.namaDO = value;
+	ruleFormRef.value.model.namaDO = value;
+}
+
+function onUpdateKabupaten(value) {
+	ruleForm.value.namaKabupaten = value;
+	ruleFormRef.value.model.namaKabupaten = value;
+}
+
+function onSubmit() {
+	ruleFormRef.value.validate((valid) => {
+		if (valid) {
+			const body = new FormData();
+			body.append("id", ruleForm.value.siteID);
+			body.append("name", ruleForm.value.siteName);
+			body.append("ns", ruleForm.value.namaNS);
+			body.append("do", ruleForm.value.namaDO);
+			body.append("kabupaten", ruleForm.value.namaKabupaten);
+
+			// console.log(activityStatusParams);
+			const { data, error } = useFetch({
+				url: "/api/site",
+				method: type === "input" ? "POST" : "PUT",
+				body,
+			});
+
+			watch(data, (newData) => {
+				if (newData) {
+					emit("closeInput", newData);
 				}
 			});
-		},
-		onUpdateSite(value) {
-			this.ruleForm.siteID = value;
-		},
-		onUpdateActivity(value) {
-			this.ruleForm.deskripsiActivity = value;
-		},
-	},
-	components: {
-		OutlinedButton,
-		Button,
-		SearchSelect,
-	},
-};
+
+			watch(error, (newError) => {
+				if (newError) {
+					console.log(newError);
+					Notification.error({
+						title: "Error",
+						message: newError,
+					});
+				}
+			});
+		} else {
+			return false;
+		}
+	});
+}
 </script>
