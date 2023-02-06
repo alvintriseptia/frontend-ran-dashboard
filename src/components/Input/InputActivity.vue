@@ -318,7 +318,6 @@ function onSubmit() {
 
 			watch(error, (newError) => {
 				if (newError) {
-					console.log(newError);
 					Notification.error({
 						title: "Error",
 						message: newError,

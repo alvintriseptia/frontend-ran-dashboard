@@ -82,7 +82,7 @@
 					<PopOverInput
 						v-if="type === 'ns' || type === 'do'"
 						:text="row.label"
-						@onUpdate="(status) => handleStatusUpdate(row, status)"
+						@onUpdate="(text) => handleStatusUpdate(row, text, $index)"
 					/>
 					<!-- If type is Site -->
 					<el-button
@@ -132,20 +132,20 @@ const data = computed(() => props.data);
 const numberStart = computed(() => props.numberStart);
 const loading = computed(() => props.loading);
 
-const emit = defineEmits(["onUpdate", "onRemove", "onEdit"]);
+const emit = defineEmits(["onSelect", "onUpdate", "onRemove", "onEdit"]);
 const multipleSelection = ref([]);
 const multipleTable = ref(null);
 
 function handleSelectionChange(val) {
 	multipleSelection.value = val;
-	emit("onUpdate", {
+	emit("onSelect", {
 		multipleSelection: multipleSelection.value,
 		type: props.type,
 	});
 }
 
 function handleRemove(row, index) {
-	emit("onRemove", { row, index });
+	emit("onRemove", { row, index, type: props.type });
 }
 
 function handleEdit(row, index) {
@@ -154,5 +154,16 @@ function handleEdit(row, index) {
 
 function sortHandler(value) {
 	emit("onSort", value);
+}
+
+function handleStatusUpdate(row, text, index) {
+	if (row.label === text) return;
+	emit("onUpdate", {
+		row: {
+			...row,
+			label: text,
+		},
+		index,
+	});
 }
 </script>

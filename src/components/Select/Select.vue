@@ -42,14 +42,22 @@ const options = computed(() => props.options);
 const value = ref("");
 
 onMounted(() => {
+	if (props.defaultValue) {
+		if (options.length > 0) {
+			value.value = options[0].value;
+		} else {
+			value.value = props.defaultValue;
+		}
+	}
+
 	watch(
 		() => props.defaultValue,
 		(newVal) => {
 			if (newVal) {
 				value.value = newVal;
 			} else {
-				if (options.value.length > 0) {
-					value.value = options.value[0].value;
+				if (options.length > 0) {
+					value.value = options[0].value;
 				}
 			}
 		}

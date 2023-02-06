@@ -110,6 +110,7 @@ const props = defineProps({
 	},
 });
 const isShowInput = computed(() => props.isShow);
+const type = computed(() => props.type);
 
 // Form
 const ruleForm = ref({
@@ -119,12 +120,15 @@ const ruleForm = ref({
 	namaNS: "",
 	namaKabupaten: "",
 });
+const siteID = ref("");
 
 // watch props currentData
 watch(
 	() => props.currentData,
 	(newVal) => {
 		if (newVal) {
+			console.log(newVal);
+			siteID.value = newVal.siteID;
 			ruleForm.value = {
 				siteID: newVal.siteID,
 				siteName: newVal.siteName,
@@ -132,8 +136,6 @@ watch(
 				namaNS: newVal.nsID,
 				namaKabupaten: newVal.kabupatenID,
 			};
-
-			console.log(ruleForm.value);
 		}
 	}
 );
@@ -187,7 +189,12 @@ function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
 		if (valid) {
 			const body = new FormData();
-			body.append("id", ruleForm.value.siteID);
+			if (type === "input") {
+				body.append("id", ruleForm.value.siteID);
+			} else {
+				body.append("id", siteID.value);
+				body.append("newId", ruleForm.value.siteID);
+			}
 			body.append("name", ruleForm.value.siteName);
 			body.append("ns", ruleForm.value.namaNS);
 			body.append("do", ruleForm.value.namaDO);
@@ -195,14 +202,14 @@ function onSubmit() {
 
 			// console.log(activityStatusParams);
 			const { data, error } = useFetch({
-				url: "/api/site",
+				url: type === "input" ? "/api/site" : `/api/site/${siteID.value}`,
 				method: type === "input" ? "POST" : "PUT",
 				body,
 			});
 
 			watch(data, (newData) => {
 				if (newData) {
-					emit("closeInput", newData);
+					emit("closeInput", { ...newData, type });
 				}
 			});
 

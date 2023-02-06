@@ -28,6 +28,7 @@
 							:options="limits"
 							@onChange="handleLimitChange"
 							placeholder="Rows per page"
+							defaultValue="10"
 						/>
 					</div>
 					<p class="text-xs ml-2">Rows per page</p>

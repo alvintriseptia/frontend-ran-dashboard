@@ -53,7 +53,7 @@
 						</section>
 						<section>
 							<SettingTable
-								@onUpdate="handleRemoveButton"
+								@onSelect="handleRemoveButton"
 								:data="sites.data"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
@@ -78,10 +78,11 @@
 						>
 						<section class="mt-2">
 							<SettingTable
-								@onUpdate="handleRemoveButton"
+								@onSelect="handleRemoveButton"
 								:data="nsDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
+								@onUpdate="handleUpdateNS"
 								type="ns"
 							/>
 
@@ -128,10 +129,11 @@
 						>
 						<section class="mt-2">
 							<SettingTable
-								@onUpdate="handleRemoveButton"
+								@onSelect="handleRemoveButton"
 								:data="doSubDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
+								@onUpdate="handleUpdateDO"
 								type="do"
 							/>
 
@@ -178,8 +180,8 @@
 		<ModalConfirmation
 			title="Confirmation"
 			:isModalVisible="isShowModalConfirmation"
+			@onSubmit="handleConfirmRemove"
 			@onCancel="handleCancelRemove"
-			@onConfirm="handleConfirmRemove"
 		/>
 
 		<InputSite
@@ -338,19 +340,44 @@ const showInput = (type) => {
 const closeInput = (result) => {
 	isShowInput.value = false;
 	if (result) {
-		sites.value.data = [result, ...sites.value.data];
-		Notification.success({
-			title: "Success",
-			message: "Site has been added",
-		});
+		if (result.type === "input") {
+			sites.value.data = [result, ...sites.value.data];
+
+			Notification.success({
+				title: "Success",
+				message: "Site has been added",
+			});
+		} else {
+			Notification.success({
+				title: "Success",
+				message: `Site ${
+					sites.value.data[indexSite.value].siteID
+				} has been updated`,
+			});
+
+			sites.value.data[indexSite.value].siteID = result.siteID;
+			sites.value.data[indexSite.value].siteName = result.siteName;
+			sites.value.data[indexSite.value].nsID = result.nsID;
+			sites.value.data[indexSite.value].namaNS = result.namaNS;
+			sites.value.data[indexSite.value].doID = result.doID;
+			sites.value.data[indexSite.value].namaDO = result.namaDO;
+			sites.value.data[indexSite.value].kabupatenID = result.kabupatenID;
+			sites.value.data[indexSite.value].namaKabupaten = result.namaKabupaten;
+		}
+
+		//reset state
+		currentData.value = {};
+		indexSite.value = null;
 	}
 };
 
 // Form
 const currentData = ref({});
+const indexSite = ref(null);
 const handleEdit = (data) => {
 	if (data.row.siteID) {
 		currentData.value = data.row;
+		indexSite.value = data.index;
 		showInput("edit");
 	}
 };
@@ -435,6 +462,11 @@ const onSubmit = (formName) => {
 							label: newData.nama,
 						};
 						nsDepartmentOptions.value = [...nsDepartmentOptions.value, data];
+
+						// reset form
+						formNSRef.value.resetField();
+						formNS.value.namaNS = "";
+
 						showInputTableNS();
 						Notification.success({
 							title: "Success",
@@ -445,7 +477,6 @@ const onSubmit = (formName) => {
 
 				watch(error, (newError) => {
 					if (newError) {
-						console.log(newError);
 						Notification.error({
 							title: "Error",
 							message: newError,
@@ -479,6 +510,11 @@ const onSubmit = (formName) => {
 								...doSubDepartmentOptions.value,
 								data,
 							];
+
+							// reset form
+							formDORef.value.resetField();
+							formDO.value.namaDO = "";
+
 							showInputTableDO();
 							Notification.success({
 								title: "Success",
@@ -523,12 +559,19 @@ const handleRemoveButton = (data) => {
 const isShowModalConfirmation = ref(false);
 const row = ref(null);
 const index = ref(null);
+const type = ref(null);
 
 const handleShowModalConfirmation = (data) => {
-	isShowModalConfirmation.value = true;
 	if (data) {
 		row.value = data.row;
 		index.value = data.index;
+		type.value = data.type;
+		isShowModalConfirmation.value = true;
+	} else {
+		Nofitication.error({
+			title: "Error",
+			message: "Please try again",
+		});
 	}
 };
 
@@ -538,6 +581,59 @@ const handleCancelRemove = () => {
 
 const handleConfirmRemove = () => {
 	isShowModalConfirmation.value = false;
+	let url = "";
+	if (type.value === "site") {
+		url = "/api/site/" + row.value.siteID;
+	} else if (type.value === "ns") {
+		url = "/api/ns-departemen/" + row.value.value;
+	} else if (type.value === "do") {
+		url = "/api/do-subdepartemen/" + row.value.value;
+	}
+
+	const { status, error } = useFetch({
+		url: url,
+		method: "DELETE",
+	});
+
+	watch(status, (newStatus) => {
+		if (newStatus === "success") {
+			if (type.value === "site") {
+				sites.value.data.splice(index.value, 1);
+			} else if (type.value === "ns") {
+				nsDepartmentOptions.value.splice(index.value, 1);
+			} else if (type.value === "do") {
+				doSubDepartmentOptions.value.splice(index.value, 1);
+			}
+
+			let message = "";
+			if (type.value === "site") {
+				message = `Site ${row.value.siteID} has been deleted`;
+			} else if (type.value === "ns") {
+				message = `NS ${row.value.label} has been deleted`;
+			} else if (type.value === "do") {
+				message = `DO ${row.value.label} has been deleted`;
+			}
+
+			// reset modal
+			row.value = null;
+			index.value = null;
+			type.value = null;
+
+			Notification.success({
+				title: "Success",
+				message: message,
+			});
+		}
+	});
+
+	watch(error, (newError) => {
+		if (newError) {
+			Notification.error({
+				title: "Error",
+				message: newError,
+			});
+		}
+	});
 };
 
 // ==========================
@@ -594,4 +690,71 @@ onMounted(() => {
 		}
 	});
 });
+
+// Handle Update
+const handleUpdateNS = (result) => {
+	if (result) {
+		const body = new FormData();
+		body.append("name", result.row.label);
+		const { data, error } = useFetch({
+			url: "/api/ns-departemen/" + result.row.value,
+			method: "PUT",
+			body,
+		});
+
+		watch(data, (newData) => {
+			if (newData) {
+				Notification.success({
+					title: "Success",
+					message: `NS ${
+						nsDepartmentOptions.value[result.index].label
+					} has been updated`,
+				});
+				nsDepartmentOptions.value[result.index].label = newData.nama;
+			}
+		});
+
+		watch(error, (newError) => {
+			if (newError) {
+				Notification.error({
+					title: "Error",
+					message: newError,
+				});
+			}
+		});
+	}
+};
+
+const handleUpdateDO = (result) => {
+	if (result) {
+		const body = new FormData();
+		body.append("name", result.row.label);
+		const { data, error } = useFetch({
+			url: "/api/do-subdepartemen/" + result.row.value,
+			method: "PUT",
+			body,
+		});
+
+		watch(data, (newData) => {
+			if (newData) {
+				Notification.success({
+					title: "Success",
+					message: `DO ${
+						doSubDepartmentOptions.value[result.index].label
+					} has been updated`,
+				});
+				doSubDepartmentOptions.value[result.index].label = newData.nama;
+			}
+		});
+
+		watch(error, (newError) => {
+			if (newError) {
+				Notification.error({
+					title: "Error",
+					message: newError,
+				});
+			}
+		});
+	}
+};
 </script>
