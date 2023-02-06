@@ -11,6 +11,7 @@ export function useFetch({
 	const loading = ref(true);
 	const data = ref(null);
 	const error = ref(null);
+	const status = ref(null);
 	const totalData = ref(null);
 	const totalPage = ref(null);
 	const filterData = ref(null);
@@ -28,6 +29,8 @@ export function useFetch({
 				data: unref(body),
 			})
 				.then((res) => {
+					status.value = res.data.status;
+
 					// if status error
 					if (res.data.status === "error") {
 						if (res.data.message === "Unauthorized") {
@@ -64,6 +67,7 @@ export function useFetch({
 				})
 				.finally(() => {
 					loading.value = false;
+					console.log(url);
 				});
 		}
 	}
@@ -77,5 +81,14 @@ export function useFetch({
 		doFetch();
 	}
 
-	return { data, error, loading, doFetch, totalData, totalPage, filterData };
+	return {
+		data,
+		status,
+		error,
+		loading,
+		doFetch,
+		totalData,
+		totalPage,
+		filterData,
+	};
 }

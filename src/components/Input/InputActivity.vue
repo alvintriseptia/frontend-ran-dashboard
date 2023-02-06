@@ -288,66 +288,45 @@ function handleUpdateSite(value) {
 
 // methods
 function onSubmit() {
-	emit("closeInputActivities", {
-		status: "Not Yet",
-		weekExecuted: null,
-		namaProgram: "Power System",
-		namaSubprogram: "Short Back Up Battery Time",
-		deskripsiActivity: "Activation BBLTI Feature",
-		additionalInfo: null,
-		siteID: "SMG291",
-		siteName: "Lebdosari",
-		namaKabupaten: "KOTA SEMARANG",
-		namaDO: "SEMARANG",
-		namaNS: "SEMARANG",
-		namaPIC: "RTPO",
-		targetQuartal: "Q1",
-		remark: "",
-		updatedAt: "0000-00-00 00:00:00",
-		activityID: "4",
-		budget: null,
-		cost: "0",
+	ruleFormRef.value.validate((valid) => {
+		if (valid) {
+			const body = new FormData();
+			body.append(
+				"activityId",
+				parseInt(formInputActivity.value.deskripsiActivity)
+			);
+			body.append("siteId", formInputActivity.value.siteID);
+			body.append("targetQuartal", formInputActivity.value.targetQuartal);
+			body.append("remark", formInputActivity.value.remark);
+			body.append("done", parseInt(formInputActivity.value.status));
+			if (parseInt(formInputActivity.value.status) === 1) {
+				body.append("weekExecuted", formInputActivity.value.weekExecuted);
+			}
+
+			// console.log(activityStatusParams);
+			const { data, error } = useFetch({
+				url: "/api/activity-plan",
+				method: "POST",
+				body,
+			});
+
+			watch(data, (newData) => {
+				if (newData) {
+					emit("closeInputActivities", newData);
+				}
+			});
+
+			watch(error, (newError) => {
+				if (newError) {
+					Notification.error({
+						title: "Error",
+						message: newError,
+					});
+				}
+			});
+		} else {
+			return false;
+		}
 	});
-	// ruleFormRef.value.validate((valid) => {
-	// 	if (valid) {
-	// 		const body = new FormData();
-	// 		body.append(
-	// 			"activityId",
-	// 			parseInt(formInputActivity.value.deskripsiActivity)
-	// 		);
-	// 		body.append("siteId", formInputActivity.value.siteID);
-	// 		body.append("targetQuartal", formInputActivity.value.targetQuartal);
-	// 		body.append("remark", formInputActivity.value.remark);
-	// 		body.append("done", parseInt(formInputActivity.value.status));
-	// 		if (parseInt(formInputActivity.value.status) === 1) {
-	// 			body.append("weekExecuted", formInputActivity.value.weekExecuted);
-	// 		}
-
-	// 		// console.log(activityStatusParams);
-	// 		const { data, error } = useFetch({
-	// 			url: "/api/activity-plan",
-	// 			method: "POST",
-	// 			body,
-	// 		});
-
-	// 		watch(data, (newData) => {
-	// 			if (newData) {
-	// 				emit("closeInputActivities", newData);
-	// 			}
-	// 		});
-
-	// 		watch(error, (newError) => {
-	// 			if (newError) {
-	// 				console.log(newError);
-	// 				Notification.error({
-	// 					title: "Error",
-	// 					message: newError,
-	// 				});
-	// 			}
-	// 		});
-	// 	} else {
-	// 		return false;
-	// 	}
-	// });
 }
 </script>

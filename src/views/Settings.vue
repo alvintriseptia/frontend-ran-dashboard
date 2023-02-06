@@ -14,7 +14,7 @@
 						</template>
 
 						<section class="my-4 flex items-center justify-between">
-							<div>
+							<div class="flex items-center">
 								<Button
 									@onClick="handleShowModalConfirmation"
 									:disabled="removeButtonDisabled === 'site' ? false : true"
@@ -22,36 +22,45 @@
 									size="sm"
 									>Delete</Button
 								>
-							</div>
-							<div class="flex items-center">
 								<el-pagination
-									:page-size="10"
+									:page-size="sitesParams.limit"
 									:pager-count="5"
 									layout="prev, pager, next"
-									:total="100"
-									@current-change="() => {}"
+									:total="sites.totalData"
+									@current-change="handleCurrentChange"
 								>
 								</el-pagination>
 								<div class="flex items-center">
 									<div class="max-w-[80px]">
 										<Select
 											:options="limits"
-											@onChange="() => {}"
+											@onChange="handleLimitChange"
 											placeholder="Rows per page"
+											defaultValue="10"
 										/>
 									</div>
 									<p class="text-xs ml-2">Rows per page</p>
 								</div>
 							</div>
+							<RemoteSearchSelect
+								:options="unref(searchSites.data)"
+								placeholder="Select Site"
+								@onChange="handleSearchSites"
+								@onUpdate="handleUpdateSite"
+								labelOption="id,name"
+								valueOption="id"
+							/>
 						</section>
 						<section>
 							<SettingTable
-								@onUpdate="handleRemoveButton"
-								:data="siteData"
+								@onSelect="handleRemoveButton"
+								:data="sites.data"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
 								@onEdit="handleEdit"
 								type="site"
+								:loading="sites.loading"
+								@onSort="handleSitesSortChange"
 							/>
 						</section> </Card
 				></transition>
@@ -69,10 +78,11 @@
 						>
 						<section class="mt-2">
 							<SettingTable
-								@onUpdate="handleRemoveButton"
-								:data="nsData"
+								@onSelect="handleRemoveButton"
+								:data="nsDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
+								@onUpdate="handleUpdateNS"
 								type="ns"
 							/>
 
@@ -87,7 +97,7 @@
 								v-show="isShowInputTableNS"
 								:model="formNS"
 								:rules="rulesNS"
-								ref="formNS"
+								ref="formNSRef"
 								label-position="top"
 								class="mt-4 flex"
 							>
@@ -119,10 +129,11 @@
 						>
 						<section class="mt-2">
 							<SettingTable
-								@onUpdate="handleRemoveButton"
-								:data="doData"
+								@onSelect="handleRemoveButton"
+								:data="doSubDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
+								@onUpdate="handleUpdateDO"
 								type="do"
 							/>
 
@@ -137,7 +148,7 @@
 								v-show="isShowInputTableDO"
 								:model="formDO"
 								:rules="rulesDO"
-								ref="formDO"
+								ref="formDORef"
 								label-position="top"
 								class="mt-4 flex"
 							>
@@ -169,14 +180,18 @@
 		<ModalConfirmation
 			title="Confirmation"
 			:isModalVisible="isShowModalConfirmation"
+			@onSubmit="handleConfirmRemove"
 			@onCancel="handleCancelRemove"
-			@onConfirm="handleConfirmRemove"
 		/>
 
 		<InputSite
 			:isShow="isShowInput"
 			@closeInput="closeInput"
-			:title="isEdit ? 'Edit Site' : 'Input Site'"
+			:type="isEdit ? 'edit' : 'input'"
+			:currentData="currentData"
+			:nsDepartmentOptions="nsDepartmentOptions"
+			:doSubDepartmentOptions="doSubDepartmentOptions"
+			:kabupatenOptions="kabupatenOptions"
 		/>
 	</div>
 </template>
@@ -190,8 +205,12 @@ import {
 	ImportExcel,
 	ModalConfirmation,
 	InputSite,
+	RemoteSearchSelect,
+	Select,
 } from "@/components";
-import { ref } from "vue";
+import { ref, unref, onMounted, watch } from "vue";
+import { Notification } from "element-ui";
+import { useFetch } from "@/composables";
 
 // Tabs
 const activeName = ref("site");
@@ -200,30 +219,62 @@ const handleTabClick = (tab) => {
 };
 
 // Sites
-const siteData = [
-	{
-		id: "SMG006",
-		name: "Tembalang Semarang",
-		namaNS: "Semarang",
-		namaDO: "Semarang",
-		namaKabupaten: "Kota Semarang",
-	},
+const sitesParams = ref({
+	sitesID: [],
+	sortBy: null,
+	orderBy: null,
+	page: 1,
+	limit: 10,
+});
+const sites = ref(
+	useFetch({
+		url: "/api/site",
+		params: sitesParams,
+	})
+);
 
-	{
-		id: "SMG008",
-		name: "Banyumanik Semarang",
-		namaNS: "Semarang",
-		namaDO: "Semarang",
-		namaKabupaten: "Kota Semarang",
-	},
-	{
-		id: "SMG009",
-		name: "Semarang",
-		namaNS: "Semarang",
-		namaDO: "Semarang",
-		namaKabupaten: "Kota Semarang",
-	},
-];
+// handle sort change
+const handleSitesSortChange = (sort) => {
+	if (sort.order) {
+		sitesParams.value = {
+			...sitesParams.value,
+			sortBy: sort.order === "ascending" ? "ASC" : "DESC",
+			orderBy: sort.prop,
+		};
+	} else {
+		sitesParams.value = {
+			...sitesParams.value,
+			sortBy: null,
+			orderBy: null,
+		};
+	}
+};
+
+// handle limit change
+const handleLimitChange = (val) => {
+	// get current page
+	const currentPage = Math.ceil(
+		(sitesParams.value.page * sitesParams.value.limit) / val
+	);
+	if (currentPage > sites.value.totalPage) {
+		sitesParams.value = {
+			...sitesParams.value,
+			limit: val,
+			page: sites.value.totalPage,
+		};
+	} else {
+		sitesParams.value = {
+			...sitesParams.value,
+			limit: val,
+			page: currentPage,
+		};
+	}
+};
+
+// handle pagination
+const handleCurrentChange = (val) => {
+	sitesParams.value.page = val;
+};
 
 const limits = [
 	{
@@ -244,46 +295,34 @@ const limits = [
 	},
 ];
 
-// NS
-const nsData = [
-	{
-		namaNS: "Semarang",
-	},
+// search params
+const searchSiteParams = ref({
+	site: "",
+});
 
-	{
-		namaNS: "Semarang",
-	},
-	{
-		namaNS: "Semarang",
-	},
-];
+// fetch first data
+const searchSites = ref(
+	useFetch({
+		url: "/api/site/search",
+		params: searchSiteParams,
+	})
+);
 
-// DO
-const doData = [
-	{
-		namaDO: "Semarang",
-	},
+// handle search
+const handleSearchSites = (val) => {
+	if (val.length >= 1 && val.length <= 2) return;
 
-	{
-		namaDO: "Semarang",
-	},
-	{
-		namaDO: "Semarang",
-	},
-];
-
-// Menu Import Sites
-const isShowImportSites = ref(false);
-const showImportSites = () => {
-	if (isShowImportSites) {
-		isShowImportSites.value = false;
+	if (val && val.length >= 3) {
+		searchSiteParams.value.site = val;
+	} else {
+		searchSiteParams.value.site = "";
 	}
-	isShowImportSites.value = true;
 };
 
-const closeImportSites = () => {
-	isShowImportSites.value = false;
-};
+// handle on update
+function handleUpdateSite(value) {
+	sitesParams.value.sitesID = value;
+}
 
 // Menu Input
 const isShowInput = ref(false);
@@ -298,9 +337,65 @@ const showInput = (type) => {
 	}
 };
 
-const closeInput = () => {
+const closeInput = (result) => {
 	isShowInput.value = false;
+	if (result) {
+		if (result.type === "input") {
+			sites.value.data = [result, ...sites.value.data];
+
+			Notification.success({
+				title: "Success",
+				message: "Site has been added",
+			});
+		} else {
+			Notification.success({
+				title: "Success",
+				message: `Site ${
+					sites.value.data[indexSite.value].siteID
+				} has been updated`,
+			});
+
+			sites.value.data[indexSite.value].siteID = result.siteID;
+			sites.value.data[indexSite.value].siteName = result.siteName;
+			sites.value.data[indexSite.value].nsID = result.nsID;
+			sites.value.data[indexSite.value].namaNS = result.namaNS;
+			sites.value.data[indexSite.value].doID = result.doID;
+			sites.value.data[indexSite.value].namaDO = result.namaDO;
+			sites.value.data[indexSite.value].kabupatenID = result.kabupatenID;
+			sites.value.data[indexSite.value].namaKabupaten = result.namaKabupaten;
+		}
+
+		//reset state
+		currentData.value = {};
+		indexSite.value = null;
+	}
 };
+
+// Form
+const currentData = ref({});
+const indexSite = ref(null);
+const handleEdit = (data) => {
+	if (data.row.siteID) {
+		currentData.value = data.row;
+		indexSite.value = data.index;
+		showInput("edit");
+	}
+};
+
+// Menu Import Sites
+const isShowImportSites = ref(false);
+const showImportSites = () => {
+	if (isShowImportSites) {
+		isShowImportSites.value = false;
+	}
+	isShowImportSites.value = true;
+};
+
+const closeImportSites = () => {
+	isShowImportSites.value = false;
+};
+
+// ==========================
 
 // Menu Input Table NS
 const isShowInputTableNS = ref(false);
@@ -311,6 +406,8 @@ const showInputTableNS = () => {
 const formNS = ref({
 	namaNS: "",
 });
+
+const formNSRef = ref(null);
 
 const rulesNS = ref({
 	namaNS: [
@@ -332,6 +429,8 @@ const formDO = ref({
 	namaDO: "",
 });
 
+const formDORef = ref(null);
+
 const rulesDO = ref({
 	namaDO: [
 		{
@@ -345,20 +444,97 @@ const rulesDO = ref({
 // Onsubmit Form
 const onSubmit = (formName) => {
 	if (formName === "formNS")
-		formNS.value.validate((valid) => {
+		formNSRef.value.validate((valid) => {
 			if (valid) {
-				console.log("submit!");
+				const body = new FormData();
+				body.append("name", formNS.value.namaNS);
+
+				const { data, error } = useFetch({
+					url: "/api/ns-departemen",
+					method: "POST",
+					body,
+				});
+
+				watch(data, (newData) => {
+					if (newData) {
+						const data = {
+							value: newData.id,
+							label: newData.nama,
+						};
+						nsDepartmentOptions.value = [...nsDepartmentOptions.value, data];
+
+						// reset form
+						formNSRef.value.resetField();
+						formNS.value.namaNS = "";
+
+						showInputTableNS();
+						Notification.success({
+							title: "Success",
+							message: "NS Department has been added",
+						});
+					}
+				});
+
+				watch(error, (newError) => {
+					if (newError) {
+						Notification.error({
+							title: "Error",
+							message: newError,
+						});
+					}
+				});
 			} else {
-				console.log("error submit!!");
 				return false;
 			}
 		});
 	else {
-		formDO.value.validate((valid) => {
+		formDORef.value.validate((valid) => {
 			if (valid) {
-				console.log("submit!");
+				if (valid) {
+					const body = new FormData();
+					body.append("name", formDO.value.namaDO);
+
+					const { data, error } = useFetch({
+						url: "/api/do-subdepartemen",
+						method: "POST",
+						body,
+					});
+
+					watch(data, (newData) => {
+						if (newData) {
+							const data = {
+								value: newData.id,
+								label: newData.nama,
+							};
+							doSubDepartmentOptions.value = [
+								...doSubDepartmentOptions.value,
+								data,
+							];
+
+							// reset form
+							formDORef.value.resetField();
+							formDO.value.namaDO = "";
+
+							showInputTableDO();
+							Notification.success({
+								title: "Success",
+								message: "DO Sub-Department has been added",
+							});
+						}
+					});
+
+					watch(error, (newError) => {
+						if (newError) {
+							Notification.error({
+								title: "Error",
+								message: newError,
+							});
+						}
+					});
+				} else {
+					return false;
+				}
 			} else {
-				console.log("error submit!!");
 				return false;
 			}
 		});
@@ -383,12 +559,19 @@ const handleRemoveButton = (data) => {
 const isShowModalConfirmation = ref(false);
 const row = ref(null);
 const index = ref(null);
+const type = ref(null);
 
 const handleShowModalConfirmation = (data) => {
-	isShowModalConfirmation.value = true;
 	if (data) {
 		row.value = data.row;
 		index.value = data.index;
+		type.value = data.type;
+		isShowModalConfirmation.value = true;
+	} else {
+		Nofitication.error({
+			title: "Error",
+			message: "Please try again",
+		});
 	}
 };
 
@@ -398,12 +581,180 @@ const handleCancelRemove = () => {
 
 const handleConfirmRemove = () => {
 	isShowModalConfirmation.value = false;
+	let url = "";
+	if (type.value === "site") {
+		url = "/api/site/" + row.value.siteID;
+	} else if (type.value === "ns") {
+		url = "/api/ns-departemen/" + row.value.value;
+	} else if (type.value === "do") {
+		url = "/api/do-subdepartemen/" + row.value.value;
+	}
+
+	const { status, error } = useFetch({
+		url: url,
+		method: "DELETE",
+	});
+
+	watch(status, (newStatus) => {
+		if (newStatus === "success") {
+			if (type.value === "site") {
+				sites.value.data.splice(index.value, 1);
+			} else if (type.value === "ns") {
+				nsDepartmentOptions.value.splice(index.value, 1);
+			} else if (type.value === "do") {
+				doSubDepartmentOptions.value.splice(index.value, 1);
+			}
+
+			let message = "";
+			if (type.value === "site") {
+				message = `Site ${row.value.siteID} has been deleted`;
+			} else if (type.value === "ns") {
+				message = `NS ${row.value.label} has been deleted`;
+			} else if (type.value === "do") {
+				message = `DO ${row.value.label} has been deleted`;
+			}
+
+			// reset modal
+			row.value = null;
+			index.value = null;
+			type.value = null;
+
+			Notification.success({
+				title: "Success",
+				message: message,
+			});
+		}
+	});
+
+	watch(error, (newError) => {
+		if (newError) {
+			Notification.error({
+				title: "Error",
+				message: newError,
+			});
+		}
+	});
 };
 
-// Form
-const handleEdit = (data) => {
-	if (data.row.id) {
-		showInput("edit");
+// ==========================
+
+// NS Department
+const nsDepartment = useFetch({
+	url: "/api/ns-departemen",
+});
+const nsDepartmentOptions = ref([]);
+
+// DO Sub-Department
+const doSubDepartment = useFetch({
+	url: "/api/do-subdepartemen",
+});
+const doSubDepartmentOptions = ref([]);
+
+// Kabupaten
+const kabupaten = useFetch({
+	url: "/api/kabupaten",
+});
+const kabupatenOptions = ref([]);
+
+onMounted(() => {
+	watch(nsDepartment.data, () => {
+		if (nsDepartment.data !== null && nsDepartment.data.value !== []) {
+			nsDepartmentOptions.value = nsDepartment.data.value.map((item) => {
+				return {
+					label: item.nama,
+					value: item.id,
+				};
+			});
+		}
+	});
+
+	watch(doSubDepartment.data, () => {
+		if (doSubDepartment.data !== null && doSubDepartment.data.value !== []) {
+			doSubDepartmentOptions.value = doSubDepartment.data.value.map((item) => {
+				return {
+					label: item.nama,
+					value: item.id,
+				};
+			});
+		}
+	});
+
+	watch(kabupaten.data, () => {
+		if (kabupaten.data !== null && kabupaten.data.value !== []) {
+			kabupatenOptions.value = kabupaten.data.value.map((item) => {
+				return {
+					label: item.nama,
+					value: item.id,
+				};
+			});
+		}
+	});
+});
+
+// Handle Update
+const handleUpdateNS = (result) => {
+	if (result) {
+		const body = new FormData();
+		body.append("name", result.row.label);
+		const { data, error } = useFetch({
+			url: "/api/ns-departemen/" + result.row.value,
+			method: "PUT",
+			body,
+		});
+
+		watch(data, (newData) => {
+			if (newData) {
+				Notification.success({
+					title: "Success",
+					message: `NS ${
+						nsDepartmentOptions.value[result.index].label
+					} has been updated`,
+				});
+				nsDepartmentOptions.value[result.index].label = newData.nama;
+			}
+		});
+
+		watch(error, (newError) => {
+			if (newError) {
+				Notification.error({
+					title: "Error",
+					message: newError,
+				});
+			}
+		});
+	}
+};
+
+const handleUpdateDO = (result) => {
+	if (result) {
+		const body = new FormData();
+		body.append("name", result.row.label);
+		const { data, error } = useFetch({
+			url: "/api/do-subdepartemen/" + result.row.value,
+			method: "PUT",
+			body,
+		});
+
+		watch(data, (newData) => {
+			if (newData) {
+				Notification.success({
+					title: "Success",
+					message: `DO ${
+						doSubDepartmentOptions.value[result.index].label
+					} has been updated`,
+				});
+				doSubDepartmentOptions.value[result.index].label = newData.nama;
+			}
+		});
+
+		watch(error, (newError) => {
+			if (newError) {
+				Notification.error({
+					title: "Error",
+					message: newError,
+				});
+			}
+		});
 	}
 };
 </script>

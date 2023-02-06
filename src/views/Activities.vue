@@ -28,6 +28,7 @@
 							:options="limits"
 							@onChange="handleLimitChange"
 							placeholder="Rows per page"
+							defaultValue="10"
 						/>
 					</div>
 					<p class="text-xs ml-2">Rows per page</p>
@@ -139,11 +140,10 @@ const showInputActivities = () => {
 const closeInputActivities = (result) => {
 	isShowInputActivities.value = false;
 	if (result) {
-		console.log(result);
 		activities.value.data = [result, ...activities.value.data];
 		Notification.success({
 			title: "Success",
-			message: "Activity has been updated",
+			message: "Activity has been added",
 		});
 	}
 };

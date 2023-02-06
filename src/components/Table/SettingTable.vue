@@ -5,6 +5,8 @@
 		:style="{ width: '100%', overflow: 'auto' }"
 		header-cell-class-name="header-color-activity"
 		@selection-change="handleSelectionChange"
+		@sort-change="sortHandler"
+		v-loading="loading"
 	>
 		<el-table-column type="selection" />
 		<el-table-column label="No" width="59">
@@ -17,49 +19,54 @@
 
 		<!-- NS Column -->
 		<el-table-column
-			prop="namaNS"
-			label="NS"
+			prop="label"
+			label="NS Department"
 			min-width="180"
 			v-if="type === 'ns'"
 		/>
 
 		<!-- DO Column -->
 		<el-table-column
-			prop="namaDO"
-			label="DO"
+			prop="label"
+			label="DO Sub-Department"
 			min-width="180"
 			v-if="type === 'do'"
 		/>
 
 		<!-- Site Column -->
 		<el-table-column
-			prop="id"
+			prop="siteID"
 			label="Site ID"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
-			prop="name"
+			prop="siteName"
 			label="Site Name"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaNS"
 			label="NS/Department"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaDO"
 			label="DO/Sup-Department"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 		<el-table-column
 			prop="namaKabupaten"
 			label="Kabupaten"
 			min-width="180"
+			sortable="custom"
 			v-if="type === 'site'"
 		/>
 
@@ -74,8 +81,8 @@
 					<!-- If type is NS or DO -->
 					<PopOverInput
 						v-if="type === 'ns' || type === 'do'"
-						:text="type === 'ns' ? row.namaNS : row.namaDO"
-						@onUpdate="(status) => handleStatusUpdate(row, status)"
+						:text="row.label"
+						@onUpdate="(text) => handleStatusUpdate(row, text, $index)"
 					/>
 					<!-- If type is Site -->
 					<el-button
@@ -115,28 +122,48 @@ const props = defineProps({
 		type: String,
 		default: "site",
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const data = computed(() => props.data);
 const numberStart = computed(() => props.numberStart);
+const loading = computed(() => props.loading);
 
-const emit = defineEmits(["onUpdate", "onRemove", "onEdit"]);
+const emit = defineEmits(["onSelect", "onUpdate", "onRemove", "onEdit"]);
 const multipleSelection = ref([]);
 const multipleTable = ref(null);
 
 function handleSelectionChange(val) {
 	multipleSelection.value = val;
-	emit("onUpdate", {
+	emit("onSelect", {
 		multipleSelection: multipleSelection.value,
 		type: props.type,
 	});
 }
 
 function handleRemove(row, index) {
-	emit("onRemove", { row, index });
+	emit("onRemove", { row, index, type: props.type });
 }
 
 function handleEdit(row, index) {
 	emit("onEdit", { row, index });
+}
+
+function sortHandler(value) {
+	emit("onSort", value);
+}
+
+function handleStatusUpdate(row, text, index) {
+	if (row.label === text) return;
+	emit("onUpdate", {
+		row: {
+			...row,
+			label: text,
+		},
+		index,
+	});
 }
 </script>
