@@ -24,7 +24,7 @@
 		<section class="mb-6">
 			<h3 class="font-medium mb-1">Template</h3>
 			<OutlinedButton>
-				<a href="/Activity Template.xlsx" download>Download Template</a>
+				<a :href="urlTemplate" download>Download Template</a>
 			</OutlinedButton>
 		</section>
 		<section>
@@ -73,6 +73,10 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
+	urlTemplate: {
+		type: String,
+		required: true,
+	},
 });
 
 const emit = defineEmits(["closeImportExcel"]);
@@ -116,7 +120,7 @@ const handleImport = () => {
 			Loading.service().close();
 			Notification.error({
 				title: "Error",
-				message: newError.message,
+				message: newError,
 			});
 		}
 	});

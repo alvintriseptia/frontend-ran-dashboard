@@ -43,11 +43,7 @@ const value = ref("");
 
 onMounted(() => {
 	if (props.defaultValue) {
-		if (options.length > 0) {
-			value.value = options[0].value;
-		} else {
-			value.value = props.defaultValue;
-		}
+		value.value = props.defaultValue;
 	}
 
 	watch(
@@ -55,10 +51,8 @@ onMounted(() => {
 		(newVal) => {
 			if (newVal) {
 				value.value = newVal;
-			} else {
-				if (options.length > 0) {
-					value.value = options[0].value;
-				}
+			} else if (newVal === "") {
+				value.value = "";
 			}
 		}
 	);

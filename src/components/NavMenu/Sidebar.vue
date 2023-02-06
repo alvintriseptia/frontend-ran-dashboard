@@ -58,10 +58,10 @@
 				</router-link>
 			</el-menu-item>
 			<el-menu-item index="4" v-if="userStore.getters.role === 'admin'">
-				<router-link to="/settings">
+				<router-link to="/sites">
 					<div>
 						<i class="el-icon-setting"></i>
-						<span slot="title"> Settings </span>
+						<span slot="title"> Sites </span>
 					</div>
 				</router-link>
 			</el-menu-item>
@@ -100,7 +100,7 @@ function getDefaultActiveIndex(currentPath) {
 		return "2";
 	} else if (currentPath.includes("/activities")) {
 		return "3";
-	} else if (currentPath.includes("/settings")) {
+	} else if (currentPath.includes("/sites")) {
 		return "4";
 	}
 	return "1";

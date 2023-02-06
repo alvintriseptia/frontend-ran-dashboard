@@ -1,73 +1,74 @@
 <template>
 	<Card title="Activites" :alert="alertCard">
-		<div>
-			<section class="flex gap-x-4 mb-6 items-center">
-				<OutlinedButton
-					v-if="userStore.getters.role === 'admin'"
-					@onClick="showInputActivities"
-					>Input Activities</OutlinedButton
-				>
-				<OutlinedButton
-					v-if="userStore.getters.role === 'admin'"
-					@onClick="showImportActivities"
-					>Import Activities</OutlinedButton
-				>
-			</section>
-			<section class="my-4 flex items-center">
-				<el-pagination
-					:page-size="activitiesParams.limit"
-					:pager-count="5"
-					layout="prev, pager, next"
-					:total="activities.totalData"
-					@current-change="handleCurrentChange"
-				>
-				</el-pagination>
-				<div class="flex items-center">
-					<div class="max-w-[80px]">
-						<Select
-							:options="limits"
-							@onChange="handleLimitChange"
-							placeholder="Rows per page"
-							defaultValue="10"
-						/>
-					</div>
-					<p class="text-xs ml-2">Rows per page</p>
+		<template #header>
+			<OutlinedButton
+				v-if="userStore.getters.role === 'admin'"
+				@onClick="showInputActivities"
+				class="mr-4"
+				>Input Activities</OutlinedButton
+			>
+			<OutlinedButton
+				v-if="userStore.getters.role === 'admin'"
+				@onClick="showImportActivities"
+				>Import Activities</OutlinedButton
+			>
+		</template>
+
+		<section class="my-4 flex items-center">
+			<el-pagination
+				:page-size="activitiesParams.limit"
+				:pager-count="5"
+				layout="prev, pager, next"
+				:total="activities.totalData"
+				@current-change="handleCurrentChange"
+			>
+			</el-pagination>
+			<div class="flex items-center">
+				<div class="max-w-[80px]">
+					<Select
+						:options="limits"
+						@onChange="handleLimitChange"
+						placeholder="Rows per page"
+						defaultValue="10"
+					/>
 				</div>
-			</section>
-			<section class="min-h-[400px]">
-				<ActivityTable
-					v-if="activities.data"
-					:data="activities.data"
-					:loading="activities.loading"
-					:filterData="activities.filterData"
-					:numberStart="
-						activitiesParams.page * activitiesParams.limit -
-						activitiesParams.limit +
-						1
-					"
-					@onFilter="handleFilterChange"
-					@onSort="handleSortChange"
-				/>
-				<APIResponseLayout
-					v-else
-					:loading="activities.loading"
-					:error="activities.error"
-					:data="activities.data"
-				/>
-			</section>
-			<InputActivity
-				v-if="userStore.getters.role === 'admin'"
-				:isShow="isShowInputActivities"
-				@closeInputActivities="closeInputActivities"
+				<p class="text-xs ml-2">Rows per page</p>
+			</div>
+		</section>
+		<section class="min-h-[400px]">
+			<ActivityTable
+				v-if="activities.data"
+				:data="activities.data"
+				:loading="activities.loading"
+				:filterData="activities.filterData"
+				:numberStart="
+					activitiesParams.page * activitiesParams.limit -
+					activitiesParams.limit +
+					1
+				"
+				@onFilter="handleFilterChange"
+				@onSort="handleSortChange"
 			/>
-			<ImportExcel
-				v-if="userStore.getters.role === 'admin'"
-				:isShow="isShowImportActivities"
-				title="Import Activities"
-				url="/api/activity-plan/upload"
-				@closeImportExcel="closeImportActivities"
+			<APIResponseLayout
+				v-else
+				:loading="activities.loading"
+				:error="activities.error"
+				:data="activities.data"
 			/>
-		</div>
+		</section>
+		<InputActivity
+			v-if="userStore.getters.role === 'admin'"
+			:isShow="isShowInputActivities"
+			@closeInputActivities="closeInputActivities"
+		/>
+		<ImportExcel
+			v-if="userStore.getters.role === 'admin'"
+			:isShow="isShowImportActivities"
+			title="Import Activities"
+			url="/api/activity-plan/upload"
+			@closeImportExcel="closeImportActivities"
+			urlTemplate="/Activity Template.xlsx"
+		/>
 	</Card>
 </template>
 

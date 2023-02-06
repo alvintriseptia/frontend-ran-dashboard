@@ -7,7 +7,7 @@
 			<h2 class="text-lg lg:text-xl font-bold">
 				{{ type === "input" ? "Input Site" : "Edit Site" }}
 			</h2>
-			<OutlinedButton size="sm" @onClick="$emit('closeInput')"
+			<OutlinedButton size="sm" @onClick="handleCloseInput"
 				>&#10006;</OutlinedButton
 			>
 		</div>
@@ -106,6 +106,10 @@ import { Notification } from "element-ui";
 // define Emits
 const emit = defineEmits(["closeInput"]);
 
+const handleCloseInput = () => {
+	emit("closeInput");
+};
+
 // define Props
 const props = defineProps({
 	isShow: {
@@ -172,14 +176,26 @@ onMounted(() => {
 					});
 				}
 
-				siteID.value = newVal.siteID;
-				ruleForm.value = {
-					siteID: newVal.siteID,
-					siteName: newVal.siteName,
-					namaDO: newVal.doID,
-					namaNS: newVal.nsID,
-					namaKabupaten: newVal.kabupatenID,
-				};
+				if (newVal.siteID) {
+					siteID.value = newVal.siteID;
+					ruleForm.value = {
+						siteID: newVal.siteID,
+						siteName: newVal.siteName,
+						namaDO: newVal.doID,
+						namaNS: newVal.nsID,
+						namaKabupaten: newVal.kabupatenID,
+					};
+				} else {
+					ruleForm.value = {
+						siteID: "",
+						siteName: "",
+						namaDO: "",
+						namaNS: "",
+						namaKabupaten: "",
+					};
+					siteCount.value = 0;
+					siteID.value = "";
+				}
 			}
 		}
 	);
