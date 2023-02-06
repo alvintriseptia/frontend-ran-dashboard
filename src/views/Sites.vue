@@ -1,179 +1,69 @@
 <template>
 	<div>
-		<el-tabs v-model="activeName" @tab-click="handleTabClick">
-			<el-tab-pane label="Site Setting" name="site">
-				<transition name="el-fade-in-linear">
-					<Card
-						title="Site Setting"
-						v-show="activeName === 'site'"
-						:alert="alertCard"
+		<transition name="el-fade-in-linear">
+			<Card title="Sites" :alert="alertCard">
+				<template #header>
+					<OutlinedButton @onClick="showInput('input')" class="mr-4"
+						>Input Site</OutlinedButton
 					>
-						<template #header>
-							<OutlinedButton @onClick="showInput('input')" class="mr-4"
-								>Input Site</OutlinedButton
-							>
-							<OutlinedButton @onClick="showImportSites"
-								>Import Sites</OutlinedButton
-							>
-						</template>
+					<OutlinedButton @onClick="showImportSites"
+						>Import Sites</OutlinedButton
+					>
+				</template>
 
-						<section class="my-4 flex items-center justify-between">
-							<div class="flex items-center">
-								<Button
+				<section class="my-4 flex items-center justify-between">
+					<div class="flex items-center">
+						<!-- <Button
 									@onClick="handleShowModalConfirmation"
 									:disabled="removeButtonDisabled === 'site' ? false : true"
 									type="primary"
 									size="sm"
 									>Delete</Button
-								>
-								<el-pagination
-									:page-size="sitesParams.limit"
-									:pager-count="5"
-									layout="prev, pager, next"
-									:total="sites.totalData"
-									@current-change="handleCurrentChange"
-								>
-								</el-pagination>
-								<div class="flex items-center">
-									<div class="max-w-[80px]">
-										<Select
-											:options="limits"
-											@onChange="handleLimitChange"
-											placeholder="Rows per page"
-											defaultValue="10"
-										/>
-									</div>
-									<p class="text-xs ml-2">Rows per page</p>
-								</div>
+								> -->
+						<el-pagination
+							:page-size="sitesParams.limit"
+							:pager-count="5"
+							layout="prev, pager, next"
+							:total="sites.totalData"
+							@current-change="handleCurrentChange"
+						>
+						</el-pagination>
+						<div class="flex items-center">
+							<div class="max-w-[80px]">
+								<Select
+									:options="limits"
+									@onChange="handleLimitChange"
+									placeholder="Rows per page"
+									defaultValue="10"
+								/>
 							</div>
-							<RemoteSearchSelect
-								:options="unref(searchSites.data)"
-								placeholder="Select Site"
-								@onChange="handleSearchSites"
-								@onUpdate="handleUpdateSite"
-								labelOption="id,name"
-								valueOption="id"
-							/>
-						</section>
-						<section>
-							<SettingTable
-								@onSelect="handleRemoveButton"
-								:data="sites.data"
-								@onRemove="handleShowModalConfirmation"
-								@onEdit="handleEdit"
-								type="site"
-								:loading="sites.loading"
-								@onSort="handleSitesSortChange"
-								:numberStart="
-									sitesParams.page * sitesParams.limit - sitesParams.limit + 1
-								"
-							/>
-						</section> </Card
-				></transition>
-			</el-tab-pane>
-
-			<el-tab-pane label="NS Department Setting" name="ns">
-				<transition name="el-fade-in-linear">
-					<Card title="NS Department Setting" v-show="activeName === 'ns'">
-						<Button
-							@onClick="handleShowModalConfirmation"
-							:disabled="removeButtonDisabled === 'ns' ? false : true"
-							type="primary"
-							size="sm"
-							>Delete</Button
-						>
-						<section class="mt-2">
-							<SettingTable
-								@onSelect="handleRemoveButton"
-								:data="nsDepartmentOptions"
-								:numberStart="1"
-								@onRemove="handleShowModalConfirmation"
-								@onUpdate="handleShowModalConfirmation"
-								type="ns"
-							/>
-
-							<el-button
-								@click="showInputTableNS"
-								:icon="isShowInputTableNS ? 'el-icon-arrow-up' : 'el-icon-plus'"
-								type="primary"
-								class="w-full"
-							></el-button>
-
-							<el-form
-								v-show="isShowInputTableNS"
-								:model="formNS"
-								:rules="rulesNS"
-								ref="formNSRef"
-								label-position="top"
-								class="mt-4 flex"
-							>
-								<el-form-item label="" prop="namaNS" class="w-full">
-									<el-input
-										v-model="formNS.namaNS"
-										autocomplete="off"
-										placeholder="Input NS Department"
-									></el-input>
-								</el-form-item>
-								<div class="w-32">
-									<Button @onClick="onSubmit('formNS')"> Input Data </Button>
-								</div>
-							</el-form>
-						</section>
-					</Card>
-				</transition>
-			</el-tab-pane>
-
-			<el-tab-pane label="DO Sub-Department Setting" name="do">
-				<transition name="el-fade-in-linear">
-					<Card title="DO Sub-Department Setting" v-show="activeName === 'do'">
-						<Button
-							@onClick="handleShowModalConfirmation"
-							:disabled="removeButtonDisabled === 'do' ? false : true"
-							type="primary"
-							size="sm"
-							>Delete</Button
-						>
-						<section class="mt-2">
-							<SettingTable
-								@onSelect="handleRemoveButton"
-								:data="doSubDepartmentOptions"
-								:numberStart="1"
-								@onRemove="handleShowModalConfirmation"
-								@onUpdate="handleShowModalConfirmation"
-								type="do"
-							/>
-
-							<el-button
-								@click="showInputTableDO"
-								:icon="isShowInputTableDO ? 'el-icon-arrow-up' : 'el-icon-plus'"
-								type="primary"
-								class="w-full"
-							></el-button>
-
-							<el-form
-								v-show="isShowInputTableDO"
-								:model="formDO"
-								:rules="rulesDO"
-								ref="formDORef"
-								label-position="top"
-								class="mt-4 flex"
-							>
-								<el-form-item label="" prop="namaDO" class="w-full">
-									<el-input
-										v-model="formDO.namaDO"
-										autocomplete="off"
-										placeholder="Input DO Sub-Department"
-									></el-input>
-								</el-form-item>
-								<div class="w-32">
-									<Button @onClick="onSubmit('formDO')"> Input Data </Button>
-								</div>
-							</el-form>
-						</section>
-					</Card>
-				</transition>
-			</el-tab-pane>
-		</el-tabs>
+							<p class="text-xs ml-2">Rows per page</p>
+						</div>
+					</div>
+					<RemoteSearchSelect
+						:options="unref(searchSites.data)"
+						placeholder="Select Site"
+						@onChange="handleSearchSites"
+						@onUpdate="handleUpdateSite"
+						labelOption="id,name"
+						valueOption="id"
+					/>
+				</section>
+				<section>
+					<SiteTable
+						@onSelect="handleRemoveButton"
+						:data="sites.data"
+						@onRemove="handleShowModalConfirmation"
+						@onEdit="handleEdit"
+						type="site"
+						:loading="sites.loading"
+						@onSort="handleSitesSortChange"
+						:numberStart="
+							sitesParams.page * sitesParams.limit - sitesParams.limit + 1
+						"
+					/>
+				</section> </Card
+		></transition>
 
 		<!-- Dialog -->
 		<ImportExcel
@@ -181,6 +71,7 @@
 			title="Import Sites"
 			url="/api/site/upload"
 			@closeImportExcel="closeImportSites"
+			urlTemplate="Site Template.xlsx"
 		/>
 
 		<ModalConfirmation
@@ -206,7 +97,7 @@
 
 <script setup>
 import {
-	SettingTable,
+	SiteTable,
 	Card,
 	OutlinedButton,
 	Button,
@@ -219,12 +110,6 @@ import {
 import { ref, unref, onMounted, watch } from "vue";
 import { Notification } from "element-ui";
 import { useFetch } from "@/composables";
-
-// Tabs
-const activeName = ref("site");
-const handleTabClick = (tab) => {
-	activeName.value = tab.name;
-};
 
 // Sites
 const sitesParams = ref({
@@ -341,6 +226,8 @@ const showInput = (type) => {
 	} else {
 		isEdit.value = false;
 		isShowInput.value = true;
+		currentData.value = {};
+		indexSite.value = null;
 	}
 };
 

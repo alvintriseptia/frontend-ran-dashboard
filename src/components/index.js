@@ -25,14 +25,8 @@ import Table from "./Table/Table.vue";
 import ProjectTable from "./Table/ProjectTable.vue";
 import ActivityTable from "./Table/ActivityTable.vue";
 import ActivitySummaryTable from "./Table/ActivitySummaryTable.vue";
-import SettingTable from "./Table/SettingTable.vue";
-export {
-	Table,
-	ProjectTable,
-	ActivityTable,
-	ActivitySummaryTable,
-	SettingTable,
-};
+import SiteTable from "./Table/SiteTable.vue";
+export { Table, ProjectTable, ActivityTable, ActivitySummaryTable, SiteTable };
 
 // =================================================================================================================== //
 // Layout

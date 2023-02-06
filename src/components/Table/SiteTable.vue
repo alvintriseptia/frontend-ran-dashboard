@@ -4,11 +4,11 @@
 		:data="data"
 		:style="{ width: '100%', overflow: 'auto' }"
 		header-cell-class-name="header-color-activity"
-		@selection-change="handleSelectionChange"
 		@sort-change="sortHandler"
 		v-loading="loading"
 	>
-		<el-table-column type="selection" />
+		<!-- @selection-change="handleSelectionChange" -->
+		<!-- <el-table-column type="selection" /> -->
 		<el-table-column label="No" width="59">
 			<template #default="{ row, $index }">
 				<p class="text-center">

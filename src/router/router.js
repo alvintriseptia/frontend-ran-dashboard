@@ -34,9 +34,9 @@ const routes = [
 		props: true,
 	},
 	{
-		path: "/settings",
-		name: "settings",
-		component: views.Settings,
+		path: "/sites",
+		name: "sites",
+		component: views.Sites,
 		meta: { requiresAuth: true },
 	},
 ];
@@ -70,8 +70,8 @@ function userCheckRequireAuth(to, from, next) {
 			return;
 		}
 
-		//	if user is not admin and tries to access settings page, redirect to dashboard
-		if (to.path === "/settings" && userStore.getters.role !== "admin") {
+		//	if user is not admin and tries to access sites page, redirect to dashboard
+		if (to.path === "/sites" && userStore.getters.role !== "admin") {
 			next("/");
 			return;
 		}
