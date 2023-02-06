@@ -10,7 +10,7 @@ const yellow = "#FFD700";
 
 const getPastelColor = (index) => {
 	const startNumber = (index % 10) * 40;
-	const totalColors = 40 * (index + 1);
+	const totalColors = 40 * (index + 1.5);
 
 	const randomNumber = Math.random() * totalColors + startNumber;
 

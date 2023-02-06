@@ -17,7 +17,7 @@ export function useFetch({
 	const filterData = ref(null);
 
 	function doFetch() {
-		if (url || (method !== "GET" && body !== null)) {
+		if (unref(url) || (method !== "GET" && body !== null)) {
 			// set state loading before fetching..
 			loading.value = true;
 			// unref() unwraps potential refs
@@ -67,12 +67,11 @@ export function useFetch({
 				})
 				.finally(() => {
 					loading.value = false;
-					console.log(url);
 				});
 		}
 	}
 
-	if (url || isRef(params) || isRef(headers) || isRef(body)) {
+	if (isRef(params) || isRef(headers) || isRef(body)) {
 		// setup reactive re-fetch if input URL is a ref
 		watchEffect(doFetch);
 	} else {

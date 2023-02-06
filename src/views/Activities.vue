@@ -152,6 +152,13 @@ const closeInputActivities = (result) => {
 
 // Activities
 // ["status", "weekExecuted", "deskripsiActivity", "namaProgram", "namaSubprogram", "additionalInfo", "siteID", "siteName", "namaKabupaten", "namaDO", "namaNS", "namaPIC", "targetQuartal", "remark", "budget", "cost"]
+const props = defineProps({
+	siteId: {
+		type: String,
+		default: "",
+	},
+});
+
 const activitiesParams = ref({
 	status: [],
 	weekExecuted: [],
@@ -159,7 +166,7 @@ const activitiesParams = ref({
 	namaProgram: [],
 	namaSubprogram: [],
 	additionalInfo: [],
-	siteID: [],
+	siteID: props.siteId ? [props.siteId] : [],
 	siteName: [],
 	namaKabupaten: [],
 	namaDO: [],

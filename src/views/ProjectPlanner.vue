@@ -98,8 +98,9 @@ const chartOptions = {
 
 // create chart data by program
 const monthNames = dateUtil.monthNames.map((item) => item.substring(0, 3));
+const progressActivityUrl = ref(null);
 const progressActivity = useFetch({
-	url: "/api/activity-plan/program-progress-by-month",
+	url: progressActivityUrl,
 });
 const chartData = ref({});
 
@@ -113,7 +114,10 @@ const weekInMonths = ref([]);
 const totalWeeks = ref([]);
 
 // watch
-onMounted(() => {
+onMounted(async () => {
+	progressActivityUrl.value = "/api/activity-plan/program-progress-by-month";
+	progressActivity.doFetch();
+
 	watch(data, (newData) => {
 		if (newData) {
 			rows.value = newData.rows;

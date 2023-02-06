@@ -145,7 +145,7 @@ function handleSelectionChange(val) {
 }
 
 function handleRemove(row, index) {
-	emit("onRemove", { row, index, type: props.type });
+	emit("onRemove", { row, index, type: props.type, typeDialog: "delete" });
 }
 
 function handleEdit(row, index) {
@@ -164,6 +164,8 @@ function handleStatusUpdate(row, text, index) {
 			label: text,
 		},
 		index,
+		type: props.type,
+		typeDialog: "edit",
 	});
 }
 </script>

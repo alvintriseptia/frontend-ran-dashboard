@@ -27,6 +27,13 @@ const routes = [
 		meta: { requiresAuth: true },
 	},
 	{
+		path: "/activities/:siteId",
+		name: "activities-site",
+		component: views.Activities,
+		meta: { requiresAuth: true },
+		props: true,
+	},
+	{
 		path: "/settings",
 		name: "settings",
 		component: views.Settings,
