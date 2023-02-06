@@ -108,7 +108,7 @@
 
 <script setup>
 import { OutlinedButton, Button, RemoteSearchSelect } from "@/components";
-import { computed, ref, unref, watch } from "vue";
+import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
 
@@ -229,9 +229,10 @@ const searchActivityParams = ref({
 });
 
 // fetch first data
+const urlSearchActivity = ref(null);
 const searchActivities = ref(
 	useFetch({
-		url: "/api/activity/search",
+		url: urlSearchActivity,
 		params: searchActivityParams,
 	})
 );
@@ -261,9 +262,10 @@ const searchSiteParams = ref({
 });
 
 // fetch first data
+const urlSearchSite = ref(null);
 const searchSites = ref(
 	useFetch({
-		url: "/api/site/search",
+		url: urlSearchSite,
 		params: searchSiteParams,
 	})
 );
@@ -278,6 +280,14 @@ const handleSearchSites = (val) => {
 		searchSiteParams.value.site = "";
 	}
 };
+
+// onMounted
+onMounted(async () => {
+	urlSearchActivity.value = "/api/activity/search";
+	urlSearchSite.value = "/api/site/search";
+	searchActivities.value.doFetch();
+	searchSites.value.doFetch();
+});
 
 // handle on update
 function handleUpdateSite(value) {

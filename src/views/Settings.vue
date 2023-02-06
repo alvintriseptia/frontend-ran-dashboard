@@ -59,12 +59,14 @@
 							<SettingTable
 								@onSelect="handleRemoveButton"
 								:data="sites.data"
-								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
 								@onEdit="handleEdit"
 								type="site"
 								:loading="sites.loading"
 								@onSort="handleSitesSortChange"
+								:numberStart="
+									sitesParams.page * sitesParams.limit - sitesParams.limit + 1
+								"
 							/>
 						</section> </Card
 				></transition>
@@ -307,12 +309,11 @@ const searchSiteParams = ref({
 });
 
 // fetch first data
-const searchSites = ref(
-	useFetch({
-		url: "/api/site/search",
-		params: searchSiteParams,
-	})
-);
+const urlSearchSite = ref(null);
+const searchSites = useFetch({
+	url: urlSearchSite,
+	params: searchSiteParams,
+});
 
 // handle search
 const handleSearchSites = (val) => {
@@ -780,24 +781,36 @@ const handleDelete = () => {
 // ==========================
 
 // NS Department
+const urlNsDepartment = ref(null);
 const nsDepartment = useFetch({
-	url: "/api/ns-departemen",
+	url: urlNsDepartment,
 });
 const nsDepartmentOptions = ref([]);
 
 // DO Sub-Department
+const urlDoSubDepartment = ref(null);
 const doSubDepartment = useFetch({
-	url: "/api/do-subdepartemen",
+	url: urlDoSubDepartment,
 });
 const doSubDepartmentOptions = ref([]);
 
 // Kabupaten
+const urlKabupaten = ref(null);
 const kabupaten = useFetch({
-	url: "/api/kabupaten",
+	url: urlKabupaten,
 });
 const kabupatenOptions = ref([]);
 
-onMounted(() => {
+onMounted(async () => {
+	urlNsDepartment.value = "/api/ns-departemen";
+	urlDoSubDepartment.value = "/api/do-subdepartemen";
+	urlKabupaten.value = "/api/kabupaten";
+	urlSearchSite.value = "/api/site/search";
+	nsDepartment.doFetch();
+	doSubDepartment.doFetch();
+	kabupaten.doFetch();
+	searchSites.doFetch();
+
 	watch(nsDepartment.data, () => {
 		if (nsDepartment.data !== null && nsDepartment.data.value !== []) {
 			nsDepartmentOptions.value = nsDepartment.data.value.map((item) => {
