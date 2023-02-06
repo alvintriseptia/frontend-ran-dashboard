@@ -11,6 +11,28 @@
 				>&#10006;</OutlinedButton
 			>
 		</div>
+		<el-alert
+			v-if="siteCount > 0"
+			title="Warning!"
+			type="warning"
+			show-icon
+			@close="siteCount = 0"
+		>
+			<p>
+				There are <strong>{{ siteCount }}</strong> Plan Activity related to this
+				site.
+			</p>
+			<p class="mt-1 mb-2">
+				Please make sure you have reviewed all of them before you update this
+				site
+			</p>
+			<router-link
+				:to="{ name: 'activities-site', params: { siteId: siteID } }"
+				target="_blank"
+			>
+				<el-button type="warning" size="small">Review</el-button>
+			</router-link>
+		</el-alert>
 		<el-form
 			:model="ruleForm"
 			:rules="rules"
@@ -67,7 +89,9 @@
 				/>
 			</el-form-item>
 			<div class="mt-8">
-				<Button @onClick="onSubmit()"> Input Data </Button>
+				<Button @onClick="onSubmit()">
+					{{ type === "input" ? "Input" : "Update" }} Data
+				</Button>
 			</div>
 		</el-form>
 	</div>
@@ -121,24 +145,45 @@ const ruleForm = ref({
 	namaKabupaten: "",
 });
 const siteID = ref("");
+const siteCount = ref(0);
 
 // watch props currentData
-watch(
-	() => props.currentData,
-	(newVal) => {
-		if (newVal) {
-			console.log(newVal);
-			siteID.value = newVal.siteID;
-			ruleForm.value = {
-				siteID: newVal.siteID,
-				siteName: newVal.siteName,
-				namaDO: newVal.doID,
-				namaNS: newVal.nsID,
-				namaKabupaten: newVal.kabupatenID,
-			};
+onMounted(() => {
+	watch(
+		() => props.currentData,
+		(newVal) => {
+			if (newVal) {
+				if (type.value === "edit") {
+					const { data, error } = useFetch({
+						url: `/api/activity-plan/count-by-site-id/${newVal.siteID}`,
+					});
+					watch(data, (newData) => {
+						if (newData) {
+							siteCount.value = parseInt(newData);
+						}
+					});
+					watch(error, (newError) => {
+						if (newError) {
+							Notification.error({
+								title: "Error",
+								message: newError,
+							});
+						}
+					});
+				}
+
+				siteID.value = newVal.siteID;
+				ruleForm.value = {
+					siteID: newVal.siteID,
+					siteName: newVal.siteName,
+					namaDO: newVal.doID,
+					namaNS: newVal.nsID,
+					namaKabupaten: newVal.kabupatenID,
+				};
+			}
 		}
-	}
-);
+	);
+});
 
 // Rule Form Ref
 const ruleFormRef = ref(null);

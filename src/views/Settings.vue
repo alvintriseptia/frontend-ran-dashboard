@@ -3,7 +3,11 @@
 		<el-tabs v-model="activeName" @tab-click="handleTabClick">
 			<el-tab-pane label="Site Setting" name="site">
 				<transition name="el-fade-in-linear">
-					<Card title="Site Setting" v-show="activeName === 'site'">
+					<Card
+						title="Site Setting"
+						v-show="activeName === 'site'"
+						:alert="alertCard"
+					>
 						<template #header>
 							<OutlinedButton @onClick="showInput('input')" class="mr-4"
 								>Input Site</OutlinedButton
@@ -82,7 +86,7 @@
 								:data="nsDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
-								@onUpdate="handleUpdateNS"
+								@onUpdate="handleShowModalConfirmation"
 								type="ns"
 							/>
 
@@ -133,7 +137,7 @@
 								:data="doSubDepartmentOptions"
 								:numberStart="1"
 								@onRemove="handleShowModalConfirmation"
-								@onUpdate="handleUpdateDO"
+								@onUpdate="handleShowModalConfirmation"
 								type="do"
 							/>
 
@@ -173,15 +177,17 @@
 		<ImportExcel
 			:isShow="isShowImportSites"
 			title="Import Sites"
-			url="/api/sites/upload"
+			url="/api/site/upload"
 			@closeImportExcel="closeImportSites"
 		/>
 
 		<ModalConfirmation
 			title="Confirmation"
 			:isModalVisible="isShowModalConfirmation"
-			@onSubmit="handleConfirmRemove"
-			@onCancel="handleCancelRemove"
+			:message="messageDialog"
+			:description="descriptionDialog"
+			@onSubmit="handleConfirmModal"
+			@onCancel="handleCancelModal"
 		/>
 
 		<InputSite
@@ -384,6 +390,8 @@ const handleEdit = (data) => {
 
 // Menu Import Sites
 const isShowImportSites = ref(false);
+const alertCard = ref(null);
+
 const showImportSites = () => {
 	if (isShowImportSites) {
 		isShowImportSites.value = false;
@@ -391,8 +399,42 @@ const showImportSites = () => {
 	isShowImportSites.value = true;
 };
 
-const closeImportSites = () => {
+const closeImportSites = (result) => {
 	isShowImportSites.value = false;
+	if (result) {
+		// console.log(result);
+		if (result.isRefresh) {
+			const title = result.data[1]
+				? "Import Activities Success"
+				: "Some activities success imported, but the other is not imported";
+			alertCard.value = {
+				type: result.data[1] ? "success" : "warning",
+				title: title,
+				description: result.data[1],
+			};
+			if (sitesParams.value.page > 1) {
+				sitesParams.value = {
+					...sitesParams.value,
+					page: 1,
+				};
+			} else {
+				sites.value.doFetch();
+			}
+		} else if (result.data[1]) {
+			alertCard.value = {
+				type: "warning",
+				title:
+					"Some activities success imported, but the other is not imported",
+				description: result.data[1],
+			};
+		}
+
+		setTimeout(() => {
+			alertCard.value = null;
+		}, 5000);
+	} else {
+		alertCard.value = null;
+	}
 };
 
 // ==========================
@@ -560,13 +602,83 @@ const isShowModalConfirmation = ref(false);
 const row = ref(null);
 const index = ref(null);
 const type = ref(null);
+const typeDialog = ref(null);
+const messageDialog = ref(null);
+const descriptionDialog = ref(null);
+const deletedCount = ref(0);
 
-const handleShowModalConfirmation = (data) => {
-	if (data) {
-		row.value = data.row;
-		index.value = data.index;
-		type.value = data.type;
-		isShowModalConfirmation.value = true;
+const handleShowModalConfirmation = (result) => {
+	if (result) {
+		console.log(result);
+		row.value = result.row;
+		index.value = result.index;
+		type.value = result.type;
+		typeDialog.value = result.typeDialog;
+
+		if (typeDialog.value === "delete") {
+			console.log("delete...");
+
+			let url = "";
+
+			if (result.type === "site") {
+				messageDialog.value = "Are you sure want to delete this site?";
+				url = `/api/activity-plan/count-by-site-id/${result.row.siteID}`;
+			} else {
+				messageDialog.value = `Are you sure want to delete this ${result.type.toUpperCase()}?`;
+				url = `/api/site/count-by-${result.type}/${result.row.value}`;
+			}
+
+			const { data, error } = useFetch({
+				url,
+			});
+			watch(data, (newData) => {
+				if (newData) {
+					if (parseInt(newData) > 0) {
+						deletedCount.value = parseInt(newData);
+						if (result.type === "site") {
+							descriptionDialog.value = `There are ${newData} activity plans related to this site will be deleted.`;
+						} else {
+							descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be deleted.`;
+						}
+					} else {
+						deletedCount.value = 0;
+					}
+				}
+				isShowModalConfirmation.value = true;
+			});
+			watch(error, (newError) => {
+				if (newError) {
+					Notification.error({
+						title: "Error",
+						message: newError,
+					});
+				}
+			});
+		} else if (typeDialog.value === "edit") {
+			messageDialog.value = "Are you sure want to update this data?";
+			const { data, error } = useFetch({
+				url: `/api/site/count-by-${result.type}/${result.row.value}`,
+			});
+			watch(data, (newData) => {
+				if (newData) {
+					if (parseInt(newData) > 0) {
+						deletedCount.value = parseInt(newData);
+						descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be updated.`;
+					} else {
+						deletedCount.value = 0;
+					}
+				}
+				isShowModalConfirmation.value = true;
+			});
+			watch(error, (newError) => {
+				if (newError) {
+					Notification.error({
+						title: "Error",
+						message: newError,
+					});
+				}
+			});
+		}
 	} else {
 		Nofitication.error({
 			title: "Error",
@@ -575,11 +687,28 @@ const handleShowModalConfirmation = (data) => {
 	}
 };
 
-const handleCancelRemove = () => {
+const handleCancelModal = () => {
 	isShowModalConfirmation.value = false;
+	messageDialog.value = null;
+	descriptionDialog.value = null;
 };
 
-const handleConfirmRemove = () => {
+const handleConfirmModal = () => {
+	if (typeDialog.value === "delete") {
+		handleDelete();
+		isShowModalConfirmation.value = false;
+	} else if (typeDialog.value === "edit") {
+		if (type.value === "ns") {
+			handleUpdateNS({ row: row.value, index: index.value });
+			isShowModalConfirmation.value = false;
+		} else if (type.value === "do") {
+			handleUpdateDO({ row: row.value, index: index.value });
+			isShowModalConfirmation.value = false;
+		}
+	}
+};
+
+const handleDelete = () => {
 	isShowModalConfirmation.value = false;
 	let url = "";
 	if (type.value === "site") {
@@ -614,7 +743,19 @@ const handleConfirmRemove = () => {
 				message = `DO ${row.value.label} has been deleted`;
 			}
 
+			if (deletedCount.value > 0 && type.value !== "site") {
+				if (sitesParams.value.page > 1) {
+					sitesParams.value = {
+						...sitesParams.value,
+						page: 1,
+					};
+				} else {
+					sites.value.doFetch();
+				}
+			}
+
 			// reset modal
+			deletedCount.value = 0;
 			row.value = null;
 			index.value = null;
 			type.value = null;
@@ -711,6 +852,23 @@ const handleUpdateNS = (result) => {
 					} has been updated`,
 				});
 				nsDepartmentOptions.value[result.index].label = newData.nama;
+
+				if (deletedCount.value > 0 && type.value !== "site") {
+					if (sitesParams.value.page > 1) {
+						sitesParams.value = {
+							...sitesParams.value,
+							page: 1,
+						};
+					} else {
+						sites.value.doFetch();
+					}
+				}
+
+				// reset modal
+				deletedCount.value = 0;
+				row.value = null;
+				index.value = null;
+				type.value = null;
 			}
 		});
 
@@ -744,6 +902,23 @@ const handleUpdateDO = (result) => {
 					} has been updated`,
 				});
 				doSubDepartmentOptions.value[result.index].label = newData.nama;
+
+				if (deletedCount.value > 0 && type.value !== "site") {
+					if (sitesParams.value.page > 1) {
+						sitesParams.value = {
+							...sitesParams.value,
+							page: 1,
+						};
+					} else {
+						sites.value.doFetch();
+					}
+				}
+
+				// reset modal
+				deletedCount.value = 0;
+				row.value = null;
+				index.value = null;
+				type.value = null;
 			}
 		});
 
