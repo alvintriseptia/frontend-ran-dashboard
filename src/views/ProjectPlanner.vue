@@ -80,6 +80,9 @@ const chartOptions = {
 		},
 		y: {
 			stacked: true,
+			ticks: {
+				beginAtZero: true,
+			},
 		},
 	},
 	plugins: {
@@ -122,7 +125,7 @@ onMounted(async () => {
 		if (newData) {
 			rows.value = newData.rows;
 			weekInMonths.value = newData.weeksPerMonth;
-			if (newData.weeksInMonths && newData.weeksInMonths.length > 0) {
+			if (newData.weeksPerMonth && newData.weeksPerMonth.length > 0) {
 				let total = 0;
 				for (let i = 0; i < newData.weeksPerMonth.length; i++) {
 					total += newData.weeksPerMonth[i];

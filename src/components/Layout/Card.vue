@@ -15,7 +15,7 @@
 					{{ desc }}
 				</p>
 			</el-alert>
-			<div class="flex justify-between items-center">
+			<div class="flex justify-between gap-x-2 items-center">
 				<h2
 					class="text-xl font-bold"
 					:class="{

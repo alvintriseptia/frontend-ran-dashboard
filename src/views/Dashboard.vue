@@ -1,24 +1,43 @@
 <template>
 	<div>
-		<section class="grid grid-cols-12 gap-y-8 md:gap-8">
+		<section class="grid grid-cols-12 gap-y-8 md:gap-4">
 			<Card title="Programs Summary" class="col-span-12 lg:col-span-9">
+				<template #header
+					><el-tooltip
+						class="item"
+						effect="dark"
+						content="Reload"
+						placement="top-start"
+					>
+						<el-button
+							size="small"
+							@click="programSummary.doFetch"
+							icon="el-icon-refresh-right"
+							class="bg-red-500 text-white"
+							circle
+						></el-button>
+					</el-tooltip>
+				</template>
 				<el-container
 					class="flex flex-wrap gap-y-6 md:gap-6 justify-center items-center min-h-[400px]"
 				>
+					<APIResponseLayout
+						v-if="
+							programSummary.data === null || programSummary.data.length === 0
+						"
+						:error="programSummary.error"
+						:loading="programSummary.loading"
+						@refreshFunction="programSummary.doFetch"
+						:data="programSummary.data"
+					/>
 					<ProgramChart
-						v-if="programSummary.data"
+						v-else
 						v-for="(item, index) in programSummary.data"
 						:key="index"
 						:chart-id="index.toString()"
 						:programName="item.namaProgram"
 						:doneActivity="item.done"
 						:notYetActivity="item.notYet"
-					/>
-					<APIResponseLayout
-						:error="logActivities.error"
-						:loading="logActivities.loading"
-						@refreshFunction="logActivities.doFetch"
-						:data="logActivities.data"
 					/>
 				</el-container>
 			</Card>
@@ -27,8 +46,31 @@
 				class="col-span-12 lg:col-span-3"
 				maxHeight="calc(100vh - 4rem - 2.5rem - 2.5rem - 2.5rem)"
 			>
+				<template #header
+					><el-tooltip
+						class="item"
+						effect="dark"
+						content="Reload"
+						placement="top-start"
+					>
+						<el-button
+							size="small"
+							@click="logActivities.doFetch"
+							icon="el-icon-refresh-right"
+							circle
+							class="bg-red-500 text-white"
+						></el-button>
+					</el-tooltip>
+				</template>
+				<APIResponseLayout
+					v-if="logActivities.data === null || logActivities.data.length === 0"
+					:error="logActivities.error"
+					:loading="logActivities.loading"
+					@refreshFunction="logActivities.doFetch"
+					:data="logActivities.data"
+				/>
 				<ActivityItem
-					v-if="logActivities.data"
+					v-else
 					v-for="(item, index) in logActivities.data"
 					:key="index"
 					:program="item.namaProgram"
@@ -40,17 +82,27 @@
 					:updatedAt="item.updatedAt"
 					:isLastItem="index === logActivities.data.length - 1"
 				/>
-				<APIResponseLayout
-					:error="logActivities.error"
-					:loading="logActivities.loading"
-					@refreshFunction="logActivities.doFetch"
-					:data="logActivities.data"
-				/>
 			</Card>
 		</section>
 
 		<section class="my-10">
 			<Card title="Activities Summary">
+				<template #header
+					><el-tooltip
+						class="item"
+						effect="dark"
+						content="Reload"
+						placement="top-start"
+					>
+						<el-button
+							size="small"
+							@click="activitySummary.doFetch"
+							icon="el-icon-refresh-right"
+							circle
+							class="bg-red-500 text-white"
+						></el-button>
+					</el-tooltip>
+				</template>
 				<div class="flex gap-x-4 mb-6">
 					<SearchSelect
 						:options="programOptions"
@@ -70,7 +122,17 @@
 						@onChange="handleQuarterUpdate"
 					/>
 				</div>
-				<ActivitySummaryTable :data="activitySummary.data" />
+				<ActivitySummaryTable
+					v-if="activitySummary.data"
+					:data="activitySummary.data"
+				/>
+				<APIResponseLayout
+					v-else
+					:error="activitySummary.error"
+					:loading="activitySummary.loading"
+					@refreshFunction="activitySummary.doFetch"
+					:data="activitySummary.data"
+				/>
 			</Card>
 		</section>
 	</div>
@@ -78,7 +140,7 @@
 
 <script setup>
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, unref } from "vue";
 import {
 	ProgramChart,
 	Card,

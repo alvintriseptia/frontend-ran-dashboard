@@ -150,12 +150,12 @@ const statusOptions = [
 
 // Form Input
 const formInputActivity = ref({
-	deskripsiActivity: null,
-	siteID: null,
-	targetQuartal: null,
-	remark: null,
-	statusActivity: null,
-	weekExecuted: null,
+	deskripsiActivity: "",
+	siteID: "",
+	targetQuartal: "",
+	remark: "",
+	statusActivity: "",
+	weekExecuted: "",
 });
 
 const ruleFormRef = ref(null);
@@ -285,8 +285,6 @@ const handleSearchSites = (val) => {
 onMounted(async () => {
 	urlSearchActivity.value = "/api/activity/search";
 	urlSearchSite.value = "/api/site/search";
-	searchActivities.value.doFetch();
-	searchSites.value.doFetch();
 });
 
 // handle on update

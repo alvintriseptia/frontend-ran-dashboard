@@ -11,7 +11,9 @@
 			</template>
 		</el-result>
 	</div>
-	<el-empty description="Tidak ada data" v-else-if="!data"> </el-empty>
+	<div v-else-if="!data || data.length === 0">
+		<el-empty description="No Data"> </el-empty>
+	</div>
 </template>
 
 <script setup>
@@ -34,9 +36,9 @@ const props = defineProps({
 });
 
 // Check if the props is changed
-computed(() => props.loading);
-computed(() => props.data);
-computed(() => props.error);
+const loading = computed(() => props.loading);
+const data = computed(() => props.data);
+const error = computed(() => props.error);
 
 const emit = defineEmits(["refreshFunction"]);
 

@@ -103,24 +103,20 @@ const closeImportActivities = (result) => {
 	if (result) {
 		// console.log(result);
 		if (result.isRefresh) {
-			const title = result.data[1]
-				? "Import Activities Success"
-				: "Some activities success imported, but the other is not imported";
 			alertCard.value = {
-				type: result.data[1] ? "success" : "warning",
-				title: title,
-				description: result.data[1],
+				type: !result.message ? "success" : "warning",
+				title: result.data,
+				description: result.message,
 			};
 			activitiesParams.value = {
 				...activitiesParams.value,
 				page: 1,
 			};
-		} else if (result.data[1]) {
+		} else if (result.message) {
 			alertCard.value = {
 				type: "warning",
-				title:
-					"Some activities success imported, but the other is not imported",
-				description: result.data[1],
+				title: result.data,
+				description: result.message,
 			};
 		}
 	} else {
@@ -163,6 +159,7 @@ const props = defineProps({
 const activitiesParams = ref({
 	status: [],
 	weekExecuted: [],
+	dateExecuted: [],
 	deskripsiActivity: [],
 	namaProgram: [],
 	namaSubprogram: [],

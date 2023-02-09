@@ -6,6 +6,7 @@
 		header-cell-class-name="header-color-activity"
 		@sort-change="sortHandler"
 		v-loading="loading"
+		stripe
 	>
 		<!-- @selection-change="handleSelectionChange" -->
 		<!-- <el-table-column type="selection" /> -->
@@ -77,16 +78,8 @@
 			:width="type === 'site' ? 'auto' : '100'"
 		>
 			<template #default="{ row, $index }">
-				<div class="flex justify-center gap-x-2">
-					<!-- If type is NS or DO -->
-					<PopOverInput
-						v-if="type === 'ns' || type === 'do'"
-						:text="row.label"
-						@onUpdate="(text) => handleStatusUpdate(row, text, $index)"
-					/>
-					<!-- If type is Site -->
+				<div class="flex justify-center gap-x-2" v-if="row.siteID !== 'All'">
 					<el-button
-						v-else-if="type === 'site'"
 						@click="handleEdit(row, $index)"
 						type="warning"
 						icon="el-icon-edit"

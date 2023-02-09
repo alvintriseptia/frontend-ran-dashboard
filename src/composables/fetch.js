@@ -18,6 +18,7 @@ export function useFetch({
 
 	function doFetch() {
 		if (unref(url) || (method !== "GET" && body !== null)) {
+			console.log("fetching..." + unref(url));
 			// set state loading before fetching..
 			loading.value = true;
 			// unref() unwraps potential refs
@@ -29,14 +30,13 @@ export function useFetch({
 				data: unref(body),
 			})
 				.then((res) => {
-					status.value = res.data.status;
-
 					// if status error
 					if (res.data.status === "error") {
 						if (res.data.message === "Unauthorized") {
 							window.location.replace("/login");
 						}
 						error.value = res.data.message;
+						data.value = null;
 					} else {
 						data.value = res.data.data;
 						if (res.data.totalData) {
@@ -48,8 +48,15 @@ export function useFetch({
 						if (res.data.filters) {
 							filterData.value = res.data.filters;
 						}
-						error.value = null;
+
+						if (res.data.message) {
+							error.value = res.data.message;
+						} else {
+							error.value = null;
+						}
 					}
+
+					status.value = res.data.status;
 				})
 				.catch((err) => {
 					if (!err.response) {
@@ -64,6 +71,7 @@ export function useFetch({
 
 					// reset data state..
 					data.value = null;
+					status.value = "error";
 				})
 				.finally(() => {
 					loading.value = false;
