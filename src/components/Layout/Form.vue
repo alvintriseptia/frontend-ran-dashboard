@@ -4,7 +4,7 @@
 		v-loading="loading"
 	>
 		<div>
-			<div class="flex gap-x-2 items-center mb-2">
+			<div class="flex gap-x-2 items-center">
 				<img
 					src="@/assets/images/telkomsel-logo.png"
 					alt="telkomsel-logo"
@@ -12,13 +12,8 @@
 				/>
 				<h2 class="text-xl font-bold">Log in</h2>
 			</div>
-			<p class="text-sm text-gray-500">Choose your account to login</p>
 		</div>
-
-		<el-button type="primary" @click="loginGuest">Login as Guest</el-button>
-
 		<hr class="w-full" />
-
 		<div>
 			<el-form
 				:model="ruleForm"
