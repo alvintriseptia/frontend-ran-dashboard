@@ -54,6 +54,7 @@
 				:loading="activities.loading"
 				:error="activities.error"
 				:data="activities.data"
+				@refreshFunction="activities.doFetch"
 			/>
 		</section>
 		<InputActivity
