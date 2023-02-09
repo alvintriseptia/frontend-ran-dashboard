@@ -95,43 +95,35 @@ const handleRemove = (file, fileList) => {
 
 // Handle Import Activity
 const handleImport = () => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
 	const body = new FormData();
 	body.append("upfile", excelFile.value.raw);
 
 	// console.log(activityStatusParams);
-	const { data, loading, error } = useFetch({
+	const { data, status, error } = useFetch({
 		url: props.url,
 		method: "POST",
 		body,
 	});
 
-	watch(data, (newData) => {
-		if (newData) {
+	watch([data, status, error], ([newData, newStatus, newError]) => {
+		if (newStatus === "success" && newData) {
 			Loading.service().close();
 			emit("closeImportExcel", {
-				isRefresh: newData[0] !== null,
+				isRefresh: newData ? true : false,
 				data: newData,
+				message: error ? error : "",
 			});
-		}
-	});
-
-	watch(error, (newError) => {
-		if (newError) {
+		} else if (newStatus === "error" && newError) {
 			Loading.service().close();
 			Notification.error({
 				title: "Error",
 				message: newError,
-			});
-		}
-	});
-
-	watch(loading, (newLoading) => {
-		if (newLoading) {
-			Loading.service({
-				lock: true,
-				spinner: "el-icon-loading",
-				background: "rgba(0, 0, 0, 0.3)",
-				fullscreen: true,
 			});
 		} else {
 			Loading.service().close();

@@ -100,7 +100,6 @@ import {
 	SiteTable,
 	Card,
 	OutlinedButton,
-	Button,
 	ImportExcel,
 	ModalConfirmation,
 	InputSite,
@@ -292,28 +291,20 @@ const closeImportSites = (result) => {
 	if (result) {
 		// console.log(result);
 		if (result.isRefresh) {
-			const title = result.data[1]
-				? "Import Activities Success"
-				: "Some activities success imported, but the other is not imported";
 			alertCard.value = {
-				type: result.data[1] ? "success" : "warning",
-				title: title,
-				description: result.data[1],
+				type: !result.message ? "success" : "warning",
+				title: result.data,
+				description: result.message,
 			};
-			if (sitesParams.value.page > 1) {
-				sitesParams.value = {
-					...sitesParams.value,
-					page: 1,
-				};
-			} else {
-				sites.value.doFetch();
-			}
-		} else if (result.data[1]) {
+			sitesParams.value = {
+				...sitesParams.value,
+				page: 1,
+			};
+		} else if (result.message) {
 			alertCard.value = {
 				type: "warning",
-				title:
-					"Some activities success imported, but the other is not imported",
-				description: result.data[1],
+				title: result.data,
+				description: result.message,
 			};
 		}
 
@@ -326,151 +317,6 @@ const closeImportSites = (result) => {
 };
 
 // ==========================
-
-// Menu Input Table NS
-const isShowInputTableNS = ref(false);
-const showInputTableNS = () => {
-	isShowInputTableNS.value = !isShowInputTableNS.value;
-};
-
-const formNS = ref({
-	namaNS: "",
-});
-
-const formNSRef = ref(null);
-
-const rulesNS = ref({
-	namaNS: [
-		{
-			required: true,
-			message: "Please input NS Sub-Department",
-			trigger: "blur",
-		},
-	],
-});
-
-// Menu Input Table DO
-const isShowInputTableDO = ref(false);
-const showInputTableDO = () => {
-	isShowInputTableDO.value = !isShowInputTableDO.value;
-};
-
-const formDO = ref({
-	namaDO: "",
-});
-
-const formDORef = ref(null);
-
-const rulesDO = ref({
-	namaDO: [
-		{
-			required: true,
-			message: "Please input DO Sub-Department",
-			trigger: "blur",
-		},
-	],
-});
-
-// Onsubmit Form
-const onSubmit = (formName) => {
-	if (formName === "formNS")
-		formNSRef.value.validate((valid) => {
-			if (valid) {
-				const body = new FormData();
-				body.append("name", formNS.value.namaNS);
-
-				const { data, error } = useFetch({
-					url: "/api/ns-departemen",
-					method: "POST",
-					body,
-				});
-
-				watch(data, (newData) => {
-					if (newData) {
-						const data = {
-							value: newData.id,
-							label: newData.nama,
-						};
-						nsDepartmentOptions.value = [...nsDepartmentOptions.value, data];
-
-						// reset form
-						formNSRef.value.resetField();
-						formNS.value.namaNS = "";
-
-						showInputTableNS();
-						Notification.success({
-							title: "Success",
-							message: "NS Department has been added",
-						});
-					}
-				});
-
-				watch(error, (newError) => {
-					if (newError) {
-						Notification.error({
-							title: "Error",
-							message: newError,
-						});
-					}
-				});
-			} else {
-				return false;
-			}
-		});
-	else {
-		formDORef.value.validate((valid) => {
-			if (valid) {
-				if (valid) {
-					const body = new FormData();
-					body.append("name", formDO.value.namaDO);
-
-					const { data, error } = useFetch({
-						url: "/api/do-subdepartemen",
-						method: "POST",
-						body,
-					});
-
-					watch(data, (newData) => {
-						if (newData) {
-							const data = {
-								value: newData.id,
-								label: newData.nama,
-							};
-							doSubDepartmentOptions.value = [
-								...doSubDepartmentOptions.value,
-								data,
-							];
-
-							// reset form
-							formDORef.value.resetField();
-							formDO.value.namaDO = "";
-
-							showInputTableDO();
-							Notification.success({
-								title: "Success",
-								message: "DO Sub-Department has been added",
-							});
-						}
-					});
-
-					watch(error, (newError) => {
-						if (newError) {
-							Notification.error({
-								title: "Error",
-								message: newError,
-							});
-						}
-					});
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		});
-	}
-};
-
 // Delete Button
 const removeButtonDisabled = ref(null);
 const multipleSelection = ref([]);
@@ -508,13 +354,8 @@ const handleShowModalConfirmation = (result) => {
 
 			let url = "";
 
-			if (result.type === "site") {
-				messageDialog.value = "Are you sure want to delete this site?";
-				url = `/api/activity-plan/count-by-site-id/${result.row.siteID}`;
-			} else {
-				messageDialog.value = `Are you sure want to delete this ${result.type.toUpperCase()}?`;
-				url = `/api/site/count-by-${result.type}/${result.row.value}`;
-			}
+			messageDialog.value = "Are you sure want to delete this site?";
+			url = `/api/activity-plan/count-by-site-id/${result.row.siteID}`;
 
 			const { data, error } = useFetch({
 				url,
@@ -585,27 +426,12 @@ const handleConfirmModal = () => {
 	if (typeDialog.value === "delete") {
 		handleDelete();
 		isShowModalConfirmation.value = false;
-	} else if (typeDialog.value === "edit") {
-		if (type.value === "ns") {
-			handleUpdateNS({ row: row.value, index: index.value });
-			isShowModalConfirmation.value = false;
-		} else if (type.value === "do") {
-			handleUpdateDO({ row: row.value, index: index.value });
-			isShowModalConfirmation.value = false;
-		}
 	}
 };
 
 const handleDelete = () => {
 	isShowModalConfirmation.value = false;
-	let url = "";
-	if (type.value === "site") {
-		url = "/api/site/" + row.value.siteID;
-	} else if (type.value === "ns") {
-		url = "/api/ns-departemen/" + row.value.value;
-	} else if (type.value === "do") {
-		url = "/api/do-subdepartemen/" + row.value.value;
-	}
+	const url = "/api/site/" + row.value.siteID;
 
 	const { status, error } = useFetch({
 		url: url,
@@ -614,33 +440,9 @@ const handleDelete = () => {
 
 	watch(status, (newStatus) => {
 		if (newStatus === "success") {
-			if (type.value === "site") {
-				sites.value.data.splice(index.value, 1);
-			} else if (type.value === "ns") {
-				nsDepartmentOptions.value.splice(index.value, 1);
-			} else if (type.value === "do") {
-				doSubDepartmentOptions.value.splice(index.value, 1);
-			}
+			sites.value.data.splice(index.value, 1);
 
-			let message = "";
-			if (type.value === "site") {
-				message = `Site ${row.value.siteID} has been deleted`;
-			} else if (type.value === "ns") {
-				message = `NS ${row.value.label} has been deleted`;
-			} else if (type.value === "do") {
-				message = `DO ${row.value.label} has been deleted`;
-			}
-
-			if (deletedCount.value > 0 && type.value !== "site") {
-				if (sitesParams.value.page > 1) {
-					sitesParams.value = {
-						...sitesParams.value,
-						page: 1,
-					};
-				} else {
-					sites.value.doFetch();
-				}
-			}
+			const message = `Site ${row.value.siteID} has been deleted`;
 
 			// reset modal
 			deletedCount.value = 0;
@@ -696,7 +498,6 @@ onMounted(async () => {
 	nsDepartment.doFetch();
 	doSubDepartment.doFetch();
 	kabupaten.doFetch();
-	searchSites.doFetch();
 
 	watch(nsDepartment.data, () => {
 		if (nsDepartment.data !== null && nsDepartment.data.value !== []) {
@@ -731,105 +532,4 @@ onMounted(async () => {
 		}
 	});
 });
-
-// Handle Update
-const handleUpdateNS = (result) => {
-	if (result) {
-		const body = new FormData();
-		body.append("name", result.row.label);
-		const { data, error } = useFetch({
-			url: "/api/ns-departemen/" + result.row.value,
-			method: "PUT",
-			body,
-		});
-
-		watch(data, (newData) => {
-			if (newData) {
-				Notification.success({
-					title: "Success",
-					message: `NS ${
-						nsDepartmentOptions.value[result.index].label
-					} has been updated`,
-				});
-				nsDepartmentOptions.value[result.index].label = newData.nama;
-
-				if (deletedCount.value > 0 && type.value !== "site") {
-					if (sitesParams.value.page > 1) {
-						sitesParams.value = {
-							...sitesParams.value,
-							page: 1,
-						};
-					} else {
-						sites.value.doFetch();
-					}
-				}
-
-				// reset modal
-				deletedCount.value = 0;
-				row.value = null;
-				index.value = null;
-				type.value = null;
-			}
-		});
-
-		watch(error, (newError) => {
-			if (newError) {
-				Notification.error({
-					title: "Error",
-					message: newError,
-				});
-			}
-		});
-	}
-};
-
-const handleUpdateDO = (result) => {
-	if (result) {
-		const body = new FormData();
-		body.append("name", result.row.label);
-		const { data, error } = useFetch({
-			url: "/api/do-subdepartemen/" + result.row.value,
-			method: "PUT",
-			body,
-		});
-
-		watch(data, (newData) => {
-			if (newData) {
-				Notification.success({
-					title: "Success",
-					message: `DO ${
-						doSubDepartmentOptions.value[result.index].label
-					} has been updated`,
-				});
-				doSubDepartmentOptions.value[result.index].label = newData.nama;
-
-				if (deletedCount.value > 0 && type.value !== "site") {
-					if (sitesParams.value.page > 1) {
-						sitesParams.value = {
-							...sitesParams.value,
-							page: 1,
-						};
-					} else {
-						sites.value.doFetch();
-					}
-				}
-
-				// reset modal
-				deletedCount.value = 0;
-				row.value = null;
-				index.value = null;
-				type.value = null;
-			}
-		});
-
-		watch(error, (newError) => {
-			if (newError) {
-				Notification.error({
-					title: "Error",
-					message: newError,
-				});
-			}
-		});
-	}
-};
 </script>

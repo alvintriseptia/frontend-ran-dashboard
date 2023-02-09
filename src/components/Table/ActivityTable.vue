@@ -7,6 +7,7 @@
 			@filter-change="filterHandler"
 			@sort-change="sortHandler"
 			v-loading="loading"
+			stripe
 		>
 			<el-table-column label="No" width="60">
 				<template #default="{ row, $index }">
@@ -19,7 +20,7 @@
 				width="80"
 				column-key="status"
 				:filters="
-					filterData.status.map((item) => ({ text: item, value: item }))
+					filterData?.status.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			>
@@ -36,7 +37,10 @@
 				width="120"
 				column-key="weekExecuted"
 				:filters="
-					filterData.weekExecuted.map((item) => ({ text: item, value: item }))
+					filterData?.weekExecuted.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
 			>
@@ -47,12 +51,37 @@
 				</template>
 			</el-table-column>
 			<el-table-column
+				label="Date Exec"
+				width="120"
+				column-key="dateExecuted"
+				:filters="
+					filterData?.dateExecuted.map((item) => ({
+						text: item ? dateUtil.convertDateToMMMDDYY(item) : '',
+						value: item,
+					})) || []
+				"
+				sortable="custom"
+			>
+				<template #default="{ row }">
+					<p class="text-center">
+						{{
+							row.dateExecuted
+								? dateUtil.convertDateToMMMDDYY(row.dateExecuted)
+								: ""
+						}}
+					</p>
+				</template>
+			</el-table-column>
+			<el-table-column
 				prop="namaProgram"
 				label="Program"
 				width="200"
 				column-key="namaProgram"
 				:filters="
-					filterData.namaProgram.map((item) => ({ text: item, value: item }))
+					filterData?.namaProgram.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
 			/>
@@ -62,9 +91,13 @@
 				width="200"
 				column-key="namaSubprogram"
 				:filters="
-					filterData.namaSubprogram.map((item) => ({ text: item, value: item }))
+					filterData?.namaSubprogram.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
+				ref="namaSubprogram"
 			/>
 			<el-table-column
 				prop="deskripsiActivity"
@@ -72,10 +105,10 @@
 				width="250"
 				column-key="deskripsiActivity"
 				:filters="
-					filterData.deskripsiActivity.map((item) => ({
+					filterData?.deskripsiActivity.map((item) => ({
 						text: item,
 						value: item,
-					}))
+					})) || []
 				"
 				sortable="custom"
 			/>
@@ -85,7 +118,10 @@
 				width="250"
 				column-key="additionalInfo"
 				:filters="
-					filterData.additionalInfo.map((item) => ({ text: item, value: item }))
+					filterData?.additionalInfo.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
 			/>
@@ -95,7 +131,7 @@
 				width="100"
 				column-key="siteID"
 				:filters="
-					filterData.site.map((item) => ({ text: item.id, value: item.id }))
+					filterData?.siteID.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -105,7 +141,10 @@
 				width="150"
 				column-key="siteName"
 				:filters="
-					filterData.site.map((item) => ({ text: item.name, value: item.name }))
+					filterData?.siteName.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
 			/>
@@ -116,7 +155,7 @@
 				width="150"
 				column-key="namaDO"
 				:filters="
-					filterData.namaDO.map((item) => ({ text: item, value: item }))
+					filterData?.namaDO.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -126,7 +165,7 @@
 				width="150"
 				column-key="namaNS"
 				:filters="
-					filterData.namaNS.map((item) => ({ text: item, value: item }))
+					filterData?.namaNS.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -136,7 +175,7 @@
 				width="150"
 				column-key="namaPIC"
 				:filters="
-					filterData.namaPIC.map((item) => ({ text: item, value: item }))
+					filterData?.namaPIC.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -146,7 +185,10 @@
 				width="100"
 				column-key="targetQuartal"
 				:filters="
-					filterData.targetQuartal.map((item) => ({ text: item, value: item }))
+					filterData?.targetQuartal.map((item) => ({
+						text: item,
+						value: item,
+					})) || []
 				"
 				sortable="custom"
 			>
@@ -162,7 +204,7 @@
 				width="150"
 				column-key="remark"
 				:filters="
-					filterData.remark.map((item) => ({ text: item, value: item }))
+					filterData?.remark.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -173,7 +215,7 @@
 				v-if="userStore.getters.role === 'admin'"
 				column-key="budget"
 				:filters="
-					filterData.budget.map((item) => ({ text: item, value: item }))
+					filterData?.budget.map((item) => ({ text: item, value: item })) || []
 				"
 				sortable="custom"
 			/>
@@ -184,10 +226,10 @@
 				v-if="userStore.getters.role === 'admin'"
 				column-key="cost"
 				:filters="
-					filterData.cost.map((item) => ({
+					filterData?.cost.map((item) => ({
 						text: numberFormat.currencyFormat(item),
 						value: item,
-					}))
+					})) || []
 				"
 				sortable="custom"
 			>
@@ -226,9 +268,9 @@
 <script setup>
 // Import data
 import { PopOverStatus, ModalActivity } from "@/components";
-import { numberFormat } from "@/utils";
-import { computed, watch, ref } from "vue";
-import { useFetch } from "@/composables";
+import { numberFormat, dateUtil } from "@/utils";
+import { computed, watch, ref, onMounted } from "vue";
+import { useFetch, useWindow } from "@/composables";
 import { userStore } from "@/stores";
 import { Notification } from "element-ui";
 
@@ -249,6 +291,33 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+});
+
+const namaSubprogram = ref(null);
+const positionNamaSubprogram = ref({
+	x: 0,
+	y: 0,
+});
+const windowSize = useWindow();
+
+onMounted(() => {
+	if (namaSubprogram.value) {
+		const position = namaSubprogram.value.$el.getBoundingClientRect();
+		positionNamaSubprogram.value = {
+			x: position.x,
+			y: position.y,
+		};
+		console.log(positionNamaSubprogram.value);
+
+		watch(windowSize.windowWidth, (newSize) => {
+			const position = namaSubprogram.value.$el.getBoundingClientRect();
+			positionNamaSubprogram.value = {
+				x: position.x,
+				y: position.y,
+			};
+			console.log(positionNamaSubprogram.value);
+		});
+	}
 });
 
 const emit = defineEmits(["onFilter", "onSort"]);
