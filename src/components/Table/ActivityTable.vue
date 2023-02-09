@@ -414,6 +414,7 @@ const handleStatusUpdate = (row, status) => {
 			row.weekExecuted = newData.weekExecuted
 				? parseInt(newData.weekExecuted)
 				: "";
+			row.dateExecuted = newData.dateExecuted ? newData.dateExecuted : "";
 		}
 	});
 };
