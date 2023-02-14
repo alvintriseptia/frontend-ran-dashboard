@@ -32,7 +32,6 @@
 				action="/"
 				:auto-upload="false"
 				drag
-				:limit="1"
 				:on-change="handleChange"
 				:on-remove="handleRemove"
 				:file-list="files"
@@ -84,8 +83,9 @@ const emit = defineEmits(["closeImportExcel"]);
 const isShow = computed(() => props.isShow);
 
 const handleChange = (file, fileList) => {
+	console.log(fileList);
 	excelFile.value = file;
-	files.value = fileList;
+	files.value = [fileList[fileList.length - 1]];
 };
 
 const handleRemove = (file, fileList) => {

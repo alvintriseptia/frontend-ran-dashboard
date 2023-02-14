@@ -267,104 +267,6 @@
 			@onCancel="closeModalActivity"
 			@onSubmit="handleUpdateActivity"
 		/>
-
-		<div
-			class="el-table-filter absolute"
-			:style="{
-				transform: `translate(${positionNamaSubprogram.x}px, ${positionNamaSubprogram.y}px)`,
-			}"
-			style="transform-origin: center top; z-index: 2041"
-			x-placement="bottom-end"
-		>
-			<div class="el-table-filter__content">
-				<div class="el-scrollbar">
-					<div
-						class="el-table-filter__wrap el-scrollbar__wrap"
-						style="margin-bottom: -19px; margin-right: -19px"
-					>
-						<div class="el-scrollbar__view">
-							<div
-								role="group"
-								aria-label="checkbox-group"
-								class="el-checkbox-group el-table-filter__checkbox-group"
-							>
-								<label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="" /></span
-									><span class="el-checkbox__label"><!----></span></label
-								><label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="Q1" /></span
-									><span class="el-checkbox__label">Q1<!----></span></label
-								><label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="Q2" /></span
-									><span class="el-checkbox__label">Q2<!----></span></label
-								><label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="Q3" /></span
-									><span class="el-checkbox__label">Q3<!----></span></label
-								><label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="Q4" /></span
-									><span class="el-checkbox__label">Q4<!----></span></label
-								><label class="el-checkbox"
-									><span class="el-checkbox__input"
-										><span class="el-checkbox__inner"></span
-										><input
-											type="checkbox"
-											aria-hidden="false"
-											class="el-checkbox__original"
-											value="All" /></span
-									><span class="el-checkbox__label">All<!----></span></label
-								>
-							</div>
-						</div>
-					</div>
-					<div class="el-scrollbar__bar is-horizontal">
-						<div
-							class="el-scrollbar__thumb"
-							style="transform: translateX(0%)"
-						></div>
-					</div>
-					<div class="el-scrollbar__bar is-vertical">
-						<div
-							class="el-scrollbar__thumb"
-							style="transform: translateY(0%)"
-						></div>
-					</div>
-				</div>
-			</div>
-			<div class="el-table-filter__bottom">
-				<button disabled="disabled" class="is-disabled">Confirm</button
-				><button>Reset</button>
-			</div>
-		</div>
 	</section>
 </template>
 
@@ -380,7 +282,7 @@ import { numberFormat, dateUtil } from "@/utils";
 import { computed, watch, ref, onMounted } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
-import { Loading, Notification } from "element-ui";
+import { Notification } from "element-ui";
 
 const handleClickOutside = () => {
 	if (showFilter.value) {
