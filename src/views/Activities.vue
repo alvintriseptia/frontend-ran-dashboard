@@ -21,6 +21,7 @@
 				layout="prev, pager, next"
 				:total="activities.totalData"
 				@current-change="handleCurrentChange"
+				ref="pagination"
 			>
 			</el-pagination>
 			<div class="flex items-center">
@@ -37,7 +38,7 @@
 		</section>
 		<section class="min-h-[400px]">
 			<ActivityTable
-				v-if="activities.data && activities.data.length > 0"
+				v-if="activities.data"
 				:data="activities.data"
 				:loading="activities.loading"
 				:filterData="activities.filterData"
@@ -175,11 +176,14 @@ const activitiesParams = ref({
 	remark: [],
 	budget: [],
 	cost: [],
-	page: 1,
+	page: 900,
 	limit: 10,
 	sortBy: null,
 	orderBy: null,
 });
+
+const pagination = ref(null);
+
 const limits = [
 	{
 		value: 10,
@@ -208,9 +212,13 @@ const activities = ref(
 
 // handle filter change
 const handleFilterChange = (filter) => {
-	console.log(filter);
 	if (filter) {
-		activitiesParams.value[Object.keys(filter)[0]] = Object.values(filter)[0];
+		pagination.value.internalCurrentPage = 1;
+		activitiesParams.value = {
+			...activitiesParams.value,
+			[Object.keys(filter)[0]]: Object.values(filter)[0],
+			page: 1,
+		};
 	}
 };
 

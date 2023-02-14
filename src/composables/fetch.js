@@ -39,10 +39,10 @@ export function useFetch({
 						data.value = null;
 					} else {
 						data.value = res.data.data;
-						if (res.data.totalData) {
+						if (res.data.hasOwnProperty("totalData")) {
 							totalData.value = res.data.totalData;
 						}
-						if (res.data.totalPage) {
+						if (res.data.hasOwnProperty("totalPage")) {
 							totalPage.value = res.data.totalPage;
 						}
 						if (res.data.filters) {

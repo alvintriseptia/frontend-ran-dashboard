@@ -130,7 +130,11 @@
 				</tr>
 			</thead>
 
-			<tbody>
+			<div class="absolute left-1/2" v-if="!data || data.length === 0">
+				<el-empty description="No Data"> </el-empty>
+			</div>
+
+			<tbody v-if="data.length > 0">
 				<tr v-for="(row, index) in data" class="border-b">
 					<!-- Index Number -->
 					<td
@@ -402,6 +406,7 @@ onMounted(() => {
 const optionsData = ref([]);
 const optionsChecked = ref([]);
 const showFilter = ref("");
+const totalFilterData = ref(0);
 
 // program filter variable
 const programChecked = ref([]);
@@ -511,16 +516,6 @@ const handleCheckedChange = (value) => {
 			default:
 				break;
 		}
-
-		if (value.length < optionsChecked.value.length) {
-			optionsData.value.unshift(
-				...optionsChecked.value.filter((x) => !value.includes(x))
-			);
-		} else {
-			optionsData.value = optionsData.value.filter((item) =>
-				!value.includes(item) ? item : null
-			);
-		}
 	}
 };
 
@@ -621,13 +616,14 @@ const handleSubmitFilter = (column) => {
 };
 
 const handleShowFilter = (column) => {
-	console.log(column);
 	if (column.value === showFilter.value) {
 		showFilter.value = "";
 		optionsData.value = [];
 		optionsChecked.value = [];
+		totalFilterData.value = 0;
 	} else {
 		showFilter.value = column.value;
+		totalFilterData.value = filterData.value[column.value].length;
 
 		// set checked data
 		switch (showFilter.value) {
@@ -755,15 +751,15 @@ const anyCheckedValue = (column) => {
 // Pagination
 const disabledScroll = ref(false);
 const loadFilterData = () => {
-	if (showFilter.value) {
+	if (showFilter.value && !disabledScroll.value) {
 		if (
-			optionsData.value.length >=
-			filterData.value[showFilter.value].length - optionsChecked.value.length
+			optionsData.value.length + optionsChecked.value.length >=
+			filterData.value[showFilter.value].length
 		) {
 			disabledScroll.value = true;
 		} else {
 			let currentLength = 0;
-			const startIndex = optionsData.value.length;
+			const startIndex = optionsData.value.length + optionsChecked.value.length;
 			const endIndex = filterData.value[showFilter.value].length;
 			for (let i = startIndex; i < endIndex; i++) {
 				if (currentLength < 10) {
@@ -772,14 +768,29 @@ const loadFilterData = () => {
 					if (data && showFilter.value === "dateExecuted") {
 						data = dateUtil.convertDateToMMMDDYY(data);
 					} else if (data && showFilter.value === "cost") {
-						data = numberUtil.currencyFormat(data);
+						data = numberFormat.currencyFormat(data);
 					}
 
-					// check if data is not checked
-					const isNotChecked = !optionsChecked.value.includes(
-						filterData.value[showFilter.value][i]
-					);
-					if (isNotChecked) {
+					let isPushed = true;
+
+					// check if search filter is not empty
+					if (searchFilter.value) {
+						const regex = new RegExp(`^${searchFilter.value}`, "i");
+						isPushed =
+							regex.test(filterData.value[showFilter.value][i]) &&
+							!optionsChecked.value.includes(
+								filterData.value[showFilter.value][i]
+							) &&
+							!optionsData.value.includes(
+								filterData.value[showFilter.value][i]
+							);
+					} else {
+						isPushed = !optionsChecked.value.includes(
+							filterData.value[showFilter.value][i]
+						);
+					}
+
+					if (isPushed) {
 						optionsData.value.push(data);
 						currentLength++;
 					}
@@ -796,6 +807,7 @@ const isSearching = ref(false);
 
 const handleSearchFilter = (value) => {
 	if (showFilter.value && value.length < 2) {
+		disabledScroll.value = false;
 		setTimeout(() => {
 			isSearching.value = true;
 
@@ -818,6 +830,7 @@ const handleSearchFilter = (value) => {
 			isSearching.value = false;
 		}, 500);
 	} else if (showFilter.value && value && value.length >= 2) {
+		disabledScroll.value = false;
 		setTimeout(() => {
 			isSearching.value = true;
 			// regex that start with value
