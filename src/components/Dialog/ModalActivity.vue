@@ -6,8 +6,26 @@
 		@closed="() => {}"
 	>
 		<section class="mb-8">
-			<h4 class="font-semibold">Site ID : {{ row.siteID }}</h4>
-			<h4 class="font-semibold">Site Name : {{ row.siteName }}</h4>
+			<div class="flex gap-x-6">
+				<div>
+					<h4 class="font-semibold">Program</h4>
+					<h4 class="font-semibold">Sub Program</h4>
+					<h4 class="font-semibold">Site ID</h4>
+					<h4 class="font-semibold">Site Name</h4>
+				</div>
+				<div>
+					<h4 class="font-semibold">:</h4>
+					<h4 class="font-semibold">:</h4>
+					<h4 class="font-semibold">:</h4>
+					<h4 class="font-semibold">:</h4>
+				</div>
+				<div>
+					<h4 class="font-semibold">{{ row.namaProgram }}</h4>
+					<h4 class="font-semibold">{{ row.namaSubprogram }}</h4>
+					<h4 class="font-semibold">{{ row.siteID }}</h4>
+					<h4 class="font-semibold">{{ row.siteName }}</h4>
+				</div>
+			</div>
 			<p class="text-sm text-gray-500 mt-2">
 				{{ row.deskripsiActivity }}
 			</p>
@@ -29,7 +47,7 @@
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="onCancel">Cancel</el-button>
-			<el-button type="primary" @click="onSubmit">Submit</el-button>
+			<el-button type="primary" @click="onSubmit">Update</el-button>
 		</span>
 	</el-dialog>
 </template>

@@ -138,8 +138,9 @@ const showInputActivities = () => {
 
 const closeInputActivities = (result) => {
 	isShowInputActivities.value = false;
+	console.log(result);
 	if (result) {
-		activities.value.data = [result, ...activities.value.data];
+		activities.value.data.unshift(result);
 		Notification.success({
 			title: "Success",
 			message: "Activity has been added",
@@ -176,7 +177,7 @@ const activitiesParams = ref({
 	remark: [],
 	budget: [],
 	cost: [],
-	page: 900,
+	page: 1,
 	limit: 10,
 	sortBy: null,
 	orderBy: null,

@@ -156,7 +156,7 @@ onMounted(() => {
 	watch(
 		() => props.currentData,
 		(newVal) => {
-			if (newVal) {
+			if (newVal.siteID) {
 				if (type.value === "edit") {
 					const { data, error } = useFetch({
 						url: `/api/activity-plan/count-by-site-id/${newVal.siteID}`,

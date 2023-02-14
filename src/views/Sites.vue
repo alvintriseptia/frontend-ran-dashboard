@@ -13,13 +13,6 @@
 
 				<section class="my-4 flex items-center justify-between">
 					<div class="flex items-center">
-						<!-- <Button
-									@onClick="handleShowModalConfirmation"
-									:disabled="removeButtonDisabled === 'site' ? false : true"
-									type="primary"
-									size="sm"
-									>Delete</Button
-								> -->
 						<el-pagination
 							:page-size="sitesParams.limit"
 							:pager-count="5"
@@ -127,11 +120,11 @@ const sites = ref(
 
 // handle sort change
 const handleSitesSortChange = (sort) => {
-	if (sort.order) {
+	if (sort) {
 		sitesParams.value = {
 			...sitesParams.value,
-			sortBy: sort.order === "ascending" ? "ASC" : "DESC",
-			orderBy: sort.prop,
+			sortBy: sort.sortBy,
+			orderBy: sort.orderBy,
 		};
 	} else {
 		sitesParams.value = {
@@ -231,7 +224,6 @@ const showInput = (type) => {
 };
 
 const closeInput = (result) => {
-	console.log(result);
 	isShowInput.value = false;
 	if (result) {
 		if (result.type === "input") {

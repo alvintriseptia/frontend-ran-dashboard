@@ -963,20 +963,6 @@ const handleStatusUpdate = (row, result) => {
 		}
 	});
 };
-
-// handle render header
-const renderHeader = (h, { column, $index }) => {
-	return h(HeaderActivityTable, {
-		props: {
-			column,
-			$index,
-		},
-		on: {
-			onFilter: filterHandler,
-			onSort: sortHandler,
-		},
-	});
-};
 </script>
 
 <style>

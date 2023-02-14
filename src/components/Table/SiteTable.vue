@@ -1,106 +1,149 @@
 <template>
-	<el-table
-		ref="multipleTable"
-		:data="data"
-		:style="{ width: '100%', overflow: 'auto' }"
-		header-cell-class-name="header-color-activity"
-		@sort-change="sortHandler"
-		v-loading="loading"
-		stripe
-	>
-		<!-- @selection-change="handleSelectionChange" -->
-		<!-- <el-table-column type="selection" /> -->
-		<el-table-column label="No" width="59">
-			<template #default="{ row, $index }">
-				<p class="text-center">
-					{{ numberStart + $index }}
-				</p>
-			</template>
-		</el-table-column>
+	<section class="overflow-x-auto">
+		<table v-loading="loading">
+			<thead class="bg-gray-100 border-b">
+				<tr>
+					<th
+						v-for="(header, index) in tableHeader"
+						:key="header.value"
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
+						:class="{
+							'w-[10%]': header.value === 'siteID',
+							'w-[20%]': header.value !== 'siteID',
+							'w-[5%]': header.value === 'No',
+							'bg-gray-200': index % 2 === 0,
+						}"
+					>
+						<div class="flex items-center gap-x-2" v-if="header.value !== 'No'">
+							<div>
+								{{ header.label }}
+							</div>
+							<span class="flex flex-col">
+								<button
+									@click="sortHandler(header, 'ASC')"
+									class="el-icon-caret-top -mb-[1px]"
+									:class="{
+										'text-primary':
+											header.value === orderBy && sortBy === 'ASC',
+									}"
+								></button>
+								<button
+									@click="sortHandler(header, 'DESC')"
+									class="el-icon-caret-bottom -mt-[1px]"
+									:class="{
+										'text-primary':
+											header.value === orderBy && sortBy === 'DESC',
+									}"
+								></button>
+							</span>
+						</div>
 
-		<!-- NS Column -->
-		<el-table-column
-			prop="label"
-			label="NS Department"
-			min-width="180"
-			v-if="type === 'ns'"
-		/>
+						<div v-else>
+							{{ header.label }}
+						</div>
+					</th>
 
-		<!-- DO Column -->
-		<el-table-column
-			prop="label"
-			label="DO Sub-Department"
-			min-width="180"
-			v-if="type === 'do'"
-		/>
+					<!-- Action Column -->
+					<th
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px]"
+					>
+						Action
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(row, index) in data" class="border-b">
+					<!-- Index Number -->
+					<td
+						class="text-xs p-2 whitespace-nowrap text-gray-900 text-center border-r"
+					>
+						{{ numberFormat.digitFormat(index + numberStart) }}
+					</td>
 
-		<!-- Site Column -->
-		<el-table-column
-			prop="siteID"
-			label="Site ID"
-			min-width="180"
-			sortable="custom"
-			v-if="type === 'site'"
-		/>
-		<el-table-column
-			prop="siteName"
-			label="Site Name"
-			min-width="180"
-			sortable="custom"
-			v-if="type === 'site'"
-		/>
-		<el-table-column
-			prop="namaNS"
-			label="NS/Department"
-			min-width="180"
-			sortable="custom"
-			v-if="type === 'site'"
-		/>
-		<el-table-column
-			prop="namaDO"
-			label="DO/Sup-Department"
-			min-width="180"
-			sortable="custom"
-			v-if="type === 'site'"
-		/>
-		<el-table-column
-			prop="namaKabupaten"
-			label="Kabupaten"
-			min-width="180"
-			sortable="custom"
-			v-if="type === 'site'"
-		/>
+					<!-- Site ID -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteID }}
+					</td>
 
-		<!-- Action -->
-		<el-table-column
-			label="Action"
-			min-width="200"
-			:width="type === 'site' ? 'auto' : '100'"
-		>
-			<template #default="{ row, $index }">
-				<div class="flex justify-center gap-x-2" v-if="row.siteID !== 'All'">
-					<el-button
-						@click="handleEdit(row, $index)"
-						type="warning"
-						icon="el-icon-edit"
-						circle
-					></el-button>
+					<!-- Site Name -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteName }}
+					</td>
 
-					<el-button
-						@click="handleRemove(row, $index)"
-						type="primary"
-						icon="el-icon-delete"
-						circle
-					></el-button>
-				</div>
-			</template>
-		</el-table-column>
-	</el-table>
+					<!-- DO -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaDO }}
+					</td>
+
+					<!-- NS -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaNS }}
+					</td>
+
+					<!-- Kabupaten -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaKabupaten }}
+					</td>
+
+					<!-- Action -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap">
+						<div
+							class="flex justify-center gap-x-2"
+							v-if="row.siteID !== 'All'"
+						>
+							<el-button
+								@click="handleEdit(row, index)"
+								type="warning"
+								icon="el-icon-edit"
+								size="small"
+								circle
+							></el-button>
+
+							<el-button
+								@click="handleRemove(row, index)"
+								type="primary"
+								icon="el-icon-delete"
+								size="small"
+								circle
+							></el-button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
-import { PopOverInput } from "@/components";
+import { numberFormat } from "@/utils";
+
+const tableHeader = [
+	{
+		label: "No",
+		value: "No",
+	},
+	{
+		label: "Site ID",
+		value: "siteID",
+	},
+	{
+		label: "Site Name",
+		value: "siteName",
+	},
+	{
+		label: "NS/Department",
+		value: "namaNS",
+	},
+	{
+		label: "DO/Sub-Department",
+		value: "namaDO",
+	},
+	{
+		label: "Kabupaten",
+		value: "namaKabupaten",
+	},
+];
 
 const props = defineProps({
 	data: {
@@ -126,16 +169,6 @@ const numberStart = computed(() => props.numberStart);
 const loading = computed(() => props.loading);
 
 const emit = defineEmits(["onSelect", "onUpdate", "onRemove", "onEdit"]);
-const multipleSelection = ref([]);
-const multipleTable = ref(null);
-
-function handleSelectionChange(val) {
-	multipleSelection.value = val;
-	emit("onSelect", {
-		multipleSelection: multipleSelection.value,
-		type: props.type,
-	});
-}
 
 function handleRemove(row, index) {
 	emit("onRemove", { row, index, type: props.type, typeDialog: "delete" });
@@ -145,20 +178,22 @@ function handleEdit(row, index) {
 	emit("onEdit", { row, index });
 }
 
-function sortHandler(value) {
-	emit("onSort", value);
-}
+// handle sort
+const sortBy = ref("");
+const orderBy = ref("");
 
-function handleStatusUpdate(row, text, index) {
-	if (row.label === text) return;
-	emit("onUpdate", {
-		row: {
-			...row,
-			label: text,
-		},
-		index,
-		type: props.type,
-		typeDialog: "edit",
-	});
-}
+const sortHandler = (column, value) => {
+	if (column.value === orderBy.value && value === sortBy.value) {
+		// reset
+		sortBy.value = "";
+		orderBy.value = "";
+
+		emit("onSort", null);
+	} else {
+		sortBy.value = value;
+		orderBy.value = column.value;
+
+		emit("onSort", { orderBy: orderBy.value, sortBy: sortBy.value });
+	}
+};
 </script>
