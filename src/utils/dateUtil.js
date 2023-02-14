@@ -58,6 +58,15 @@ const getTotalWeeks = () => {
 	return weekInMonth.reduce((a, b) => a + b, 0);
 };
 
+const resetDateFormat = (date) => {
+	const d = new Date(date);
+	d.setDate(d.getDate() + 1);
+
+	// get date
+	const result = d.toISOString().split("T")[0];
+	return result;
+};
+
 const monthNames = [
 	"January",
 	"February",
@@ -80,4 +89,5 @@ export default {
 	monthNames,
 	convertDateToDDMMMYY,
 	convertDateToMMMDDYY,
+	resetDateFormat,
 };

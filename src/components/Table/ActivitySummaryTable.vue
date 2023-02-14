@@ -9,6 +9,7 @@
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
 		size="mini"
+		stripe
 	>
 		<el-table-column
 			v-for="(item, index) in tableStructure"

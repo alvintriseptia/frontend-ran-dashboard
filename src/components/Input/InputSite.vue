@@ -250,7 +250,7 @@ function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
 		if (valid) {
 			const body = new FormData();
-			if (type === "input") {
+			if (type.value === "input") {
 				body.append("id", ruleForm.value.siteID);
 			} else {
 				body.append("id", siteID.value);
@@ -263,8 +263,8 @@ function onSubmit() {
 
 			// console.log(activityStatusParams);
 			const { data, error } = useFetch({
-				url: type === "input" ? "/api/site" : `/api/site/${siteID.value}`,
-				method: type === "input" ? "POST" : "PUT",
+				url: type.value === "input" ? "/api/site" : `/api/site/${siteID.value}`,
+				method: type.value === "input" ? "POST" : "PUT",
 				body,
 			});
 

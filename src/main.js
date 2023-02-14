@@ -9,10 +9,12 @@ import App from "@/App.vue";
 import router from "@/router/router";
 import VueRouter from "vue-router";
 import locale from "element-ui/lib/locale/lang/en";
+import vClickOutside from "v-click-outside";
 
 axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.withCredentials = true;
 
+Vue.use(vClickOutside);
 Vue.use(vueDebounce);
 Vue.use(VueRouter);
 Vue.use(ElementUI, { locale });

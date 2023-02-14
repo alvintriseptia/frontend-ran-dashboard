@@ -39,7 +39,8 @@ export { Card, LoadingSpinner, APIResponseLayout, Form };
 // =================================================================================================================== //
 // List Item
 import ActivityItem from "./ListItem/ActivityItem.vue";
-export { ActivityItem };
+import HeaderActivityTable from "./ListItem/HeaderActivityTable.vue";
+export { ActivityItem, HeaderActivityTable };
 
 // =================================================================================================================== //
 // Input
