@@ -37,7 +37,7 @@
 		</section>
 		<section class="min-h-[400px]">
 			<ActivityTable
-				v-if="activities.data"
+				v-if="activities.data && activities.data.length > 0"
 				:data="activities.data"
 				:loading="activities.loading"
 				:filterData="activities.filterData"
@@ -54,6 +54,7 @@
 				:loading="activities.loading"
 				:error="activities.error"
 				:data="activities.data"
+				@refreshFunction="activities.doFetch"
 			/>
 		</section>
 		<InputActivity
@@ -207,18 +208,19 @@ const activities = ref(
 
 // handle filter change
 const handleFilterChange = (filter) => {
+	console.log(filter);
 	if (filter) {
 		activitiesParams.value[Object.keys(filter)[0]] = Object.values(filter)[0];
 	}
 };
 
 // handle sort change
-const handleSortChange = (sort) => {
-	if (sort.order) {
+const handleSortChange = (data) => {
+	if (data) {
 		activitiesParams.value = {
 			...activitiesParams.value,
-			sortBy: sort.order === "ascending" ? "ASC" : "DESC",
-			orderBy: sort.prop,
+			sortBy: data.sortBy,
+			orderBy: data.orderBy,
 		};
 	} else {
 		activitiesParams.value = {

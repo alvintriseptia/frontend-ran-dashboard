@@ -10,7 +10,6 @@
 		remote-show-suffix
 		:remote-method="remoteMethod"
 		:loading="loading"
-		class="w-[300px]"
 		@change="onChange"
 	>
 		<el-option

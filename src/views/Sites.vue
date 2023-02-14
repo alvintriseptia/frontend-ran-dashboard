@@ -231,6 +231,7 @@ const showInput = (type) => {
 };
 
 const closeInput = (result) => {
+	console.log(result);
 	isShowInput.value = false;
 	if (result) {
 		if (result.type === "input") {

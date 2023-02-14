@@ -1,249 +1,254 @@
 <template>
-	<section>
-		<el-table
-			:data="data"
-			:style="{ width: '100%', overflow: 'auto' }"
-			header-cell-class-name="header-color-activity"
-			@filter-change="filterHandler"
-			@sort-change="sortHandler"
-			v-loading="loading"
-			stripe
-		>
-			<el-table-column label="No" width="60">
-				<template #default="{ row, $index }">
-					{{ numberStart + $index }}
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="status"
-				label="Status"
-				width="80"
-				column-key="status"
-				:filters="
-					filterData?.status.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			>
-				<template #default="{ row }">
-					<PopOverStatus
-						:status="row.status"
-						@onUpdate="(status) => handleStatusUpdate(row, status)"
-					/>
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="weekExecuted"
-				label="Week Exec"
-				width="120"
-				column-key="weekExecuted"
-				:filters="
-					filterData?.weekExecuted.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			>
-				<template #default="{ row }">
-					<p class="text-center">
+	<section class="overflow-x-auto min-h-[400px]">
+		<table class="table-fixed" v-loading="loading">
+			<thead class="bg-gray-100 border-b">
+				<tr>
+					<th
+						v-for="(header, index) in tableHeader"
+						:key="header.value"
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
+						:class="{
+							'min-w-[150px]': header !== 'Deskripsi Activity',
+							'min-w-[250px]': header === 'Deskripsi Activity',
+							'min-w-[60px]': header === 'No',
+							'bg-gray-200': index % 2 === 0,
+						}"
+					>
+						<div
+							class="flex items-center justify-between gap-x-2"
+							v-if="header.value !== 'No'"
+						>
+							<div class="flex items-center gap-x-1">
+								<div
+									:class="{
+										'text-primary': anyCheckedValue(header),
+									}"
+								>
+									{{ header.label }}
+								</div>
+								<span class="flex flex-col">
+									<button
+										@click="sortHandler(header, 'ASC')"
+										class="el-icon-caret-top -mb-[1px]"
+										:class="{
+											'text-primary':
+												header.value === orderBy && sortBy === 'ASC',
+										}"
+									></button>
+									<button
+										@click="sortHandler(header, 'DESC')"
+										class="el-icon-caret-bottom -mt-[1px]"
+										:class="{
+											'text-primary':
+												header.value === orderBy && sortBy === 'DESC',
+										}"
+									></button>
+								</span>
+							</div>
+							<button
+								@click="handleShowFilter(header)"
+								class="el-icon-more"
+							></button>
+						</div>
+
+						<div v-else>
+							{{ header.label }}
+						</div>
+
+						<!-- Filter Section -->
+						<div
+							v-if="showFilter === header.value"
+							class="bg-white px-4 py-2 absolute left-0 z-50 top-12 h-[325px] w-[200px] shadow-sm shadow-primary/25 rounded-sm filter-container"
+							v-click-outside="handleClickOutside"
+						>
+							<el-input
+								size="small"
+								:placeholder="'Search ' + header.label"
+								v-model="searchFilter"
+								@input="handleSearchFilter"
+							>
+							</el-input>
+
+							<p class="text-gray-400 text-xs mt-4 mb-2">
+								{{ filterData[header.value].length }} {{ header.label }}
+							</p>
+							<div
+								class="h-[210px] w-full overflow-y-auto"
+								v-infinite-scroll="loadFilterData"
+								:infinite-scroll-disabled="disabledScroll"
+								infinite-scroll-distance="5"
+								:infinite-scroll-immediate="false"
+							>
+								<el-checkbox-group
+									v-model="optionsChecked"
+									class="flex flex-col gap-y-3"
+									@change="handleCheckedChange"
+								>
+									<el-checkbox
+										v-for="item in optionsChecked"
+										:label="item"
+										:key="item + 'checked'"
+									>
+										{{ item }}
+									</el-checkbox>
+									<hr v-if="optionsChecked.length > 0" />
+									<el-checkbox
+										v-if="!isSearching"
+										v-for="item in optionsData"
+										:label="item"
+										:key="item"
+									>
+										{{ item }}
+									</el-checkbox>
+									<LoadingSpinner v-else-if="isSearching" />
+								</el-checkbox-group>
+							</div>
+
+							<div class="flex justify-around bg-white py-2">
+								<button @click="handleResetFilter(header)">Reset</button>
+								<button
+									:disabled="optionsChecked.length === 0"
+									@click="handleSubmitFilter(header)"
+									:class="
+										optionsChecked.length === 0
+											? 'text-gray-400'
+											: 'text-primary'
+									"
+								>
+									Submit
+								</button>
+							</div>
+						</div>
+					</th>
+
+					<!-- Action Column -->
+					<th
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px]"
+					>
+						Action
+					</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr v-for="(row, index) in data" class="border-b">
+					<!-- Index Number -->
+					<td
+						class="text-xs p-2 whitespace-nowrap text-gray-900 text-center border-r"
+					>
+						{{ numberFormat.digitFormat(index + numberStart) }}
+					</td>
+
+					<!-- Status -->
+					<td
+						class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
+					>
+						<PopOverStatus
+							:status="row.status"
+							@onUpdate="(result) => handleStatusUpdate(row, result)"
+						/>
+					</td>
+
+					<!-- Week Executed -->
+					<td
+						class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
+					>
 						{{ row.weekExecuted }}
-					</p>
-				</template>
-			</el-table-column>
-			<el-table-column
-				label="Date Exec"
-				width="120"
-				column-key="dateExecuted"
-				:filters="
-					filterData?.dateExecuted.map((item) => ({
-						text: item ? dateUtil.convertDateToMMMDDYY(item) : '',
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			>
-				<template #default="{ row }">
-					<p class="text-center">
+					</td>
+
+					<!-- Date Executed -->
+					<td
+						class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
+					>
 						{{
 							row.dateExecuted
 								? dateUtil.convertDateToMMMDDYY(row.dateExecuted)
 								: ""
 						}}
-					</p>
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="namaProgram"
-				label="Program"
-				width="200"
-				column-key="namaProgram"
-				:filters="
-					filterData?.namaProgram.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="namaSubprogram"
-				label="Sub Program"
-				width="200"
-				column-key="namaSubprogram"
-				:filters="
-					filterData?.namaSubprogram.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-				ref="namaSubprogram"
-			/>
-			<el-table-column
-				prop="deskripsiActivity"
-				label="Description Activity"
-				width="250"
-				column-key="deskripsiActivity"
-				:filters="
-					filterData?.deskripsiActivity.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="additionalInfo"
-				label="Additional Information"
-				width="250"
-				column-key="additionalInfo"
-				:filters="
-					filterData?.additionalInfo.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="siteID"
-				label="Site ID"
-				width="100"
-				column-key="siteID"
-				:filters="
-					filterData?.siteID.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="siteName"
-				label="Site Name"
-				width="150"
-				column-key="siteName"
-				:filters="
-					filterData?.siteName.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			/>
-			<!-- <el-table-column prop="kabupaten" label="Kabupaten" width="200" /> -->
-			<el-table-column
-				prop="namaDO"
-				label="DO"
-				width="150"
-				column-key="namaDO"
-				:filters="
-					filterData?.namaDO.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="namaNS"
-				label="NS"
-				width="150"
-				column-key="namaNS"
-				:filters="
-					filterData?.namaNS.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="namaPIC"
-				label="PIC"
-				width="150"
-				column-key="namaPIC"
-				:filters="
-					filterData?.namaPIC.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="targetQuartal"
-				label="Target Q"
-				width="100"
-				column-key="targetQuartal"
-				:filters="
-					filterData?.targetQuartal.map((item) => ({
-						text: item,
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			>
-				<template #default="{ row }">
-					<p class="text-center">
+					</td>
+
+					<!-- Nama Program -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaProgram }}
+					</td>
+
+					<!-- Nama Subprogram -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaSubprogram }}
+					</td>
+
+					<!-- Deskripsi Activity -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.deskripsiActivity }}
+					</td>
+
+					<!-- Additional Info -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.additionalInfo }}
+					</td>
+
+					<!-- Site ID -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteID }}
+					</td>
+
+					<!-- Site Name -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteName }}
+					</td>
+
+					<!-- Kabupaten -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaKabupaten }}
+					</td>
+
+					<!-- DO -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaDO }}
+					</td>
+
+					<!-- NS -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaNS }}
+					</td>
+
+					<!-- PIC -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaPIC }}
+					</td>
+
+					<!-- Target Q -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
 						{{ row.targetQuartal }}
-					</p>
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="remark"
-				label="Remark"
-				width="150"
-				column-key="remark"
-				:filters="
-					filterData?.remark.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="budget"
-				label="Budget"
-				width="150"
-				v-if="userStore.getters.role === 'admin'"
-				column-key="budget"
-				:filters="
-					filterData?.budget.map((item) => ({ text: item, value: item })) || []
-				"
-				sortable="custom"
-			/>
-			<el-table-column
-				prop="cost"
-				label="Cost"
-				width="200"
-				v-if="userStore.getters.role === 'admin'"
-				column-key="cost"
-				:filters="
-					filterData?.cost.map((item) => ({
-						text: numberFormat.currencyFormat(item),
-						value: item,
-					})) || []
-				"
-				sortable="custom"
-			>
-				<template #default="{ row }">
-					{{
-						row.cost && row.cost !== "0"
-							? numberFormat.currencyFormat(row.cost)
-							: ""
-					}}
-				</template>
-			</el-table-column>
-			<el-table-column label="Action" width="100">
-				<template #default="{ row }">
-					<div class="flex justify-center">
+					</td>
+
+					<!-- Remark -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.remark }}
+					</td>
+
+					<!-- Budget -->
+					<td
+						v-if="userStore.getters.role === 'admin'"
+						class="text-sm text-gray-900 p-2 whitespace-nowrap border-r"
+					>
+						{{ row.budget }}
+					</td>
+
+					<!-- Cost -->
+					<td
+						v-if="userStore.getters.role === 'admin'"
+						class="text-sm text-gray-900 p-2 whitespace-nowrap border-r"
+					>
+						{{
+							row.cost && row.cost !== "0"
+								? numberFormat.currencyFormat(row.cost)
+								: ""
+						}}
+					</td>
+
+					<!-- Action -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap">
 						<el-button
 							type="text"
 							@click="showModalActivity(row)"
@@ -252,27 +257,206 @@
 						>
 							Edit
 						</el-button>
-					</div>
-				</template>
-			</el-table-column>
-		</el-table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 		<ModalActivity
 			:row="modalRowActivity"
 			:isModalVisible="isShowModalActivity"
 			@onCancel="closeModalActivity"
 			@onSubmit="handleUpdateActivity"
 		/>
+
+		<div
+			class="el-table-filter absolute"
+			:style="{
+				transform: `translate(${positionNamaSubprogram.x}px, ${positionNamaSubprogram.y}px)`,
+			}"
+			style="transform-origin: center top; z-index: 2041"
+			x-placement="bottom-end"
+		>
+			<div class="el-table-filter__content">
+				<div class="el-scrollbar">
+					<div
+						class="el-table-filter__wrap el-scrollbar__wrap"
+						style="margin-bottom: -19px; margin-right: -19px"
+					>
+						<div class="el-scrollbar__view">
+							<div
+								role="group"
+								aria-label="checkbox-group"
+								class="el-checkbox-group el-table-filter__checkbox-group"
+							>
+								<label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="" /></span
+									><span class="el-checkbox__label"><!----></span></label
+								><label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="Q1" /></span
+									><span class="el-checkbox__label">Q1<!----></span></label
+								><label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="Q2" /></span
+									><span class="el-checkbox__label">Q2<!----></span></label
+								><label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="Q3" /></span
+									><span class="el-checkbox__label">Q3<!----></span></label
+								><label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="Q4" /></span
+									><span class="el-checkbox__label">Q4<!----></span></label
+								><label class="el-checkbox"
+									><span class="el-checkbox__input"
+										><span class="el-checkbox__inner"></span
+										><input
+											type="checkbox"
+											aria-hidden="false"
+											class="el-checkbox__original"
+											value="All" /></span
+									><span class="el-checkbox__label">All<!----></span></label
+								>
+							</div>
+						</div>
+					</div>
+					<div class="el-scrollbar__bar is-horizontal">
+						<div
+							class="el-scrollbar__thumb"
+							style="transform: translateX(0%)"
+						></div>
+					</div>
+					<div class="el-scrollbar__bar is-vertical">
+						<div
+							class="el-scrollbar__thumb"
+							style="transform: translateY(0%)"
+						></div>
+					</div>
+				</div>
+			</div>
+			<div class="el-table-filter__bottom">
+				<button disabled="disabled" class="is-disabled">Confirm</button
+				><button>Reset</button>
+			</div>
+		</div>
 	</section>
 </template>
 
 <script setup>
 // Import data
-import { PopOverStatus, ModalActivity } from "@/components";
+import {
+	PopOverStatus,
+	ModalActivity,
+	HeaderActivityTable,
+	LoadingSpinner,
+} from "@/components";
 import { numberFormat, dateUtil } from "@/utils";
 import { computed, watch, ref, onMounted } from "vue";
-import { useFetch, useWindow } from "@/composables";
+import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
-import { Notification } from "element-ui";
+import { Loading, Notification } from "element-ui";
+
+const handleClickOutside = () => {
+	if (showFilter.value) {
+		//reset
+		showFilter.value = "";
+		optionsData.value = [];
+		optionsChecked.value = [];
+	}
+};
+
+const tableHeader = ref([
+	{
+		label: "No",
+		value: "No",
+	},
+	{
+		label: "Status",
+		value: "status",
+	},
+	{
+		label: "Week Executed",
+		value: "weekExecuted",
+	},
+	{
+		label: "Date Executed",
+		value: "dateExecuted",
+	},
+	{
+		label: "Program",
+		value: "namaProgram",
+	},
+	{
+		label: "Subprogram",
+		value: "namaSubprogram",
+	},
+	{
+		label: "Deskripsi Activity",
+		value: "deskripsiActivity",
+	},
+	{
+		label: "Additional Info",
+		value: "additionalInfo",
+	},
+	{
+		label: "Site ID",
+		value: "siteID",
+	},
+	{
+		label: "Site Name",
+		value: "siteName",
+	},
+	{
+		label: "Kabupaten",
+		value: "namaKabupaten",
+	},
+	{
+		label: "DO",
+		value: "namaDO",
+	},
+	{
+		label: "NS",
+		value: "namaNS",
+	},
+	{
+		label: "PIC",
+		value: "namaPIC",
+	},
+	{
+		label: "Target Q",
+		value: "targetQuartal",
+	},
+	{
+		label: "Remark",
+		value: "remark",
+	},
+]);
 
 const props = defineProps({
 	data: {
@@ -293,33 +477,6 @@ const props = defineProps({
 	},
 });
 
-const namaSubprogram = ref(null);
-const positionNamaSubprogram = ref({
-	x: 0,
-	y: 0,
-});
-const windowSize = useWindow();
-
-onMounted(() => {
-	if (namaSubprogram.value) {
-		const position = namaSubprogram.value.$el.getBoundingClientRect();
-		positionNamaSubprogram.value = {
-			x: position.x,
-			y: position.y,
-		};
-		console.log(positionNamaSubprogram.value);
-
-		watch(windowSize.windowWidth, (newSize) => {
-			const position = namaSubprogram.value.$el.getBoundingClientRect();
-			positionNamaSubprogram.value = {
-				x: position.x,
-				y: position.y,
-			};
-			console.log(positionNamaSubprogram.value);
-		});
-	}
-});
-
 const emit = defineEmits(["onFilter", "onSort"]);
 
 const data = computed(() => props.data);
@@ -327,14 +484,484 @@ const filterData = computed(() => props.filterData);
 const numberStart = computed(() => props.numberStart);
 const loading = computed(() => props.loading);
 
-// Handle filter
-const filterHandler = (value) => {
-	emit("onFilter", value);
+onMounted(() => {
+	if (userStore.getters.role === "admin") {
+		tableHeader.value.push({
+			label: "Budget",
+			value: "budget",
+		});
+		tableHeader.value.push({
+			label: "Cost",
+			value: "cost",
+		});
+	}
+});
+
+const optionsData = ref([]);
+const optionsChecked = ref([]);
+const showFilter = ref("");
+
+// program filter variable
+const programChecked = ref([]);
+
+// subprogram filter variable
+const subprogramChecked = ref([]);
+
+// status filter variable
+const statusChecked = ref([]);
+
+// week executed filter variable
+const weekExecutedChecked = ref([]);
+
+// date executed filter variable
+const dateExecutedChecked = ref([]);
+
+// deskrpsi activity filter variable
+const deskripsiActivityChecked = ref([]);
+
+// additional info filter variable
+const additionalInfoChecked = ref([]);
+
+// site id filter variable
+const siteIDChecked = ref([]);
+
+// site name filter variable
+const siteNameChecked = ref([]);
+
+// kabupaten filter variable
+const kabupatenChecked = ref([]);
+
+// DO filter variable
+const doChecked = ref([]);
+
+// NS filter variable
+const nsChecked = ref([]);
+
+// PIC filter variable
+const picChecked = ref([]);
+
+// target Q filter variable
+const targetQChecked = ref([]);
+
+// remark filter variable
+const remarkChecked = ref([]);
+
+// budget filter variable
+const budgetChecked = ref([]);
+
+// cost filter variable
+const costChecked = ref([]);
+
+const handleCheckedChange = (value) => {
+	if (showFilter.value) {
+		switch (showFilter.value) {
+			case "namaProgram":
+				programChecked.value = value;
+				break;
+			case "namaSubprogram":
+				subprogramChecked.value = value;
+				break;
+			case "status":
+				statusChecked.value = value;
+				break;
+			case "weekExecuted":
+				weekExecutedChecked.value = value;
+				break;
+			case "dateExecuted":
+				dateExecutedChecked.value = value;
+				break;
+			case "deskripsiActivity":
+				deskripsiActivityChecked.value = value;
+				break;
+			case "additionalInfo":
+				additionalInfoChecked.value = value;
+				break;
+			case "siteID":
+				siteIDChecked.value = value;
+				break;
+			case "siteName":
+				siteNameChecked.value = value;
+				break;
+			case "namaKabupaten":
+				kabupatenChecked.value = value;
+				break;
+			case "namaDO":
+				doChecked.value = value;
+				break;
+			case "namaNS":
+				nsChecked.value = value;
+				break;
+			case "namaPIC":
+				picChecked.value = value;
+				break;
+			case "targetQuartal":
+				targetQChecked.value = value;
+				break;
+			case "remark":
+				remarkChecked.value = value;
+				break;
+			case "budget":
+				budgetChecked.value = value;
+				break;
+			case "cost":
+				costChecked.value = value;
+				break;
+			default:
+				break;
+		}
+
+		if (value.length < optionsChecked.value.length) {
+			optionsData.value.unshift(
+				...optionsChecked.value.filter((x) => !value.includes(x))
+			);
+		} else {
+			optionsData.value = optionsData.value.filter((item) =>
+				!value.includes(item) ? item : null
+			);
+		}
+	}
+};
+
+const handleResetFilter = (column) => {
+	if (column) {
+		switch (column.value) {
+			case "namaProgram":
+				programChecked.value = [];
+				break;
+			case "namaSubprogram":
+				subprogramChecked.value = [];
+				break;
+			case "status":
+				statusChecked.value = [];
+				break;
+			case "weekExecuted":
+				weekExecutedChecked.value = [];
+				break;
+			case "dateExecuted":
+				dateExecutedChecked.value = [];
+				break;
+			case "deskripsiActivity":
+				deskripsiActivityChecked.value = [];
+				break;
+			case "additionalInfo":
+				additionalInfoChecked.value = [];
+				break;
+			case "siteID":
+				siteIDChecked.value = [];
+				break;
+			case "siteName":
+				siteNameChecked.value = [];
+				break;
+			case "namaKabupaten":
+				kabupatenChecked.value = [];
+				break;
+			case "namaDO":
+				doChecked.value = [];
+				break;
+			case "namaNS":
+				nsChecked.value = [];
+				break;
+			case "namaPIC":
+				picChecked.value = [];
+				break;
+			case "targetQuartal":
+				targetQChecked.value = [];
+				break;
+			case "remark":
+				remarkChecked.value = [];
+				break;
+			case "budget":
+				budgetChecked.value = [];
+				break;
+			case "cost":
+				costChecked.value = [];
+				break;
+			default:
+				break;
+		}
+
+		// reset
+		showFilter.value = "";
+		optionsData.value = [];
+		optionsChecked.value = [];
+
+		let filter = {};
+		filter[column.value] = [];
+		emit("onFilter", filter);
+	}
+};
+
+const handleSubmitFilter = (column) => {
+	if (column) {
+		let filter = {};
+
+		// if filter is date executed or cost, then reset format
+		if (column.value === "dateExecuted") {
+			optionsChecked.value = optionsChecked.value.map((item) => {
+				return item ? dateUtil.resetDateFormat(item) : item;
+			});
+		} else if (column.value === "cost") {
+			optionsChecked.value = optionsChecked.value.map((item) => {
+				return item ? numberFormat.resetDigitFormat(item) : item;
+			});
+		}
+
+		filter[column.value] = optionsChecked.value;
+
+		// reset
+		showFilter.value = "";
+		optionsData.value = [];
+		optionsChecked.value = [];
+
+		// emit event
+		emit("onFilter", filter);
+	}
+};
+
+const handleShowFilter = (column) => {
+	console.log(column);
+	if (column.value === showFilter.value) {
+		showFilter.value = "";
+		optionsData.value = [];
+		optionsChecked.value = [];
+	} else {
+		showFilter.value = column.value;
+
+		// set checked data
+		switch (showFilter.value) {
+			case "namaProgram":
+				optionsChecked.value = programChecked.value;
+				break;
+			case "namaSubprogram":
+				optionsChecked.value = subprogramChecked.value;
+				break;
+			case "status":
+				optionsChecked.value = statusChecked.value;
+				break;
+			case "weekExecuted":
+				optionsChecked.value = weekExecutedChecked.value;
+				break;
+			case "dateExecuted":
+				optionsChecked.value = dateExecutedChecked.value;
+				break;
+			case "deskripsiActivity":
+				optionsChecked.value = deskripsiActivityChecked.value;
+				break;
+			case "additionalInfo":
+				optionsChecked.value = additionalInfoChecked.value;
+				break;
+			case "siteID":
+				optionsChecked.value = siteIDChecked.value;
+				break;
+			case "siteName":
+				optionsChecked.value = siteNameChecked.value;
+				break;
+			case "namaKabupaten":
+				optionsChecked.value = kabupatenChecked.value;
+				break;
+			case "namaDO":
+				optionsChecked.value = doChecked.value;
+				break;
+			case "namaNS":
+				optionsChecked.value = nsChecked.value;
+				break;
+			case "namaPIC":
+				optionsChecked.value = picChecked.value;
+				break;
+			case "targetQuartal":
+				optionsChecked.value = targetQChecked.value;
+				break;
+			case "remark":
+				optionsChecked.value = remarkChecked.value;
+				break;
+			case "budget":
+				optionsChecked.value = budgetChecked.value;
+				break;
+			case "cost":
+				optionsChecked.value = costChecked.value;
+				break;
+			default:
+				break;
+		}
+
+		//  reset filter variable
+		optionsData.value = [];
+		disabledScroll.value = false;
+	}
+};
+
+const anyCheckedValue = (column) => {
+	let checked = false;
+	switch (column.value) {
+		case "namaProgram":
+			checked = programChecked.value.length > 0;
+			break;
+		case "namaSubprogram":
+			checked = subprogramChecked.value.length > 0;
+			break;
+		case "status":
+			checked = statusChecked.value.length > 0;
+			break;
+		case "weekExecuted":
+			checked = weekExecutedChecked.value.length > 0;
+			break;
+		case "dateExecuted":
+			checked = dateExecutedChecked.value.length > 0;
+			break;
+		case "deskripsiActivity":
+			checked = deskripsiActivityChecked.value.length > 0;
+			break;
+		case "additionalInfo":
+			checked = additionalInfoChecked.value.length > 0;
+			break;
+		case "siteID":
+			checked = siteIDChecked.value.length > 0;
+			break;
+		case "siteName":
+			checked = siteNameChecked.value.length > 0;
+			break;
+		case "namaKabupaten":
+			checked = kabupatenChecked.value.length > 0;
+			break;
+		case "namaDO":
+			checked = doChecked.value.length > 0;
+			break;
+		case "namaNS":
+			checked = nsChecked.value.length > 0;
+			break;
+		case "namaPIC":
+			checked = picChecked.value.length > 0;
+			break;
+		case "targetQuartal":
+			checked = targetQChecked.value.length > 0;
+			break;
+		case "remark":
+			checked = remarkChecked.value.length > 0;
+			break;
+		case "budget":
+			checked = budgetChecked.value.length > 0;
+			break;
+		case "cost":
+			checked = costChecked.value.length > 0;
+			break;
+		default:
+			break;
+	}
+	return checked;
+};
+
+// Pagination
+const disabledScroll = ref(false);
+const loadFilterData = () => {
+	if (showFilter.value) {
+		if (
+			optionsData.value.length >=
+			filterData.value[showFilter.value].length - optionsChecked.value.length
+		) {
+			disabledScroll.value = true;
+		} else {
+			let currentLength = 0;
+			const startIndex = optionsData.value.length;
+			const endIndex = filterData.value[showFilter.value].length;
+			for (let i = startIndex; i < endIndex; i++) {
+				if (currentLength < 10) {
+					let data = filterData.value[showFilter.value][i];
+					// format data
+					if (data && showFilter.value === "dateExecuted") {
+						data = dateUtil.convertDateToMMMDDYY(data);
+					} else if (data && showFilter.value === "cost") {
+						data = numberUtil.currencyFormat(data);
+					}
+
+					// check if data is not checked
+					const isNotChecked = !optionsChecked.value.includes(
+						filterData.value[showFilter.value][i]
+					);
+					if (isNotChecked) {
+						optionsData.value.push(data);
+						currentLength++;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+	}
+};
+
+const searchFilter = ref("");
+const isSearching = ref(false);
+
+const handleSearchFilter = (value) => {
+	if (showFilter.value && value.length < 2) {
+		setTimeout(() => {
+			isSearching.value = true;
+
+			//  get first 10 data without include checked
+			optionsData.value = [];
+			for (let i = 0; i < filterData.value[showFilter.value].length; i++) {
+				if (optionsData.value.length < 10) {
+					if (
+						!optionsChecked.value.includes(
+							filterData.value[showFilter.value][i]
+						)
+					) {
+						optionsData.value.push(filterData.value[showFilter.value][i]);
+					}
+				} else {
+					break;
+				}
+			}
+
+			isSearching.value = false;
+		}, 500);
+	} else if (showFilter.value && value && value.length >= 2) {
+		setTimeout(() => {
+			isSearching.value = true;
+			// regex that start with value
+			const regex = new RegExp(`^${value}`, "i");
+
+			// search data max 10
+			optionsData.value = [];
+			for (let i = 0; i < filterData.value[showFilter.value].length; i++) {
+				// if total data less than 10
+				if (optionsData.value.length < 10) {
+					// if data match regex and not include in checked
+					if (
+						regex.test(filterData.value[showFilter.value][i]) &&
+						!optionsChecked.value.includes(
+							filterData.value[showFilter.value][i]
+						)
+					) {
+						optionsData.value.push(filterData.value[showFilter.value][i]);
+					}
+				} else {
+					break;
+				}
+			}
+
+			isSearching.value = false;
+		}, 500);
+	}
 };
 
 // handle sort
-const sortHandler = (value) => {
-	emit("onSort", value);
+const sortBy = ref("");
+const orderBy = ref("");
+
+const sortHandler = (column, value) => {
+	if (column.value === orderBy.value && value === sortBy.value) {
+		// reset
+		sortBy.value = "";
+		orderBy.value = "";
+
+		emit("onSort", null);
+	} else {
+		sortBy.value = value;
+		orderBy.value = column.value;
+
+		emit("onSort", { orderBy: orderBy.value, sortBy: sortBy.value });
+	}
 };
 
 // Modal Activity
@@ -389,17 +1016,20 @@ const handleUpdateActivity = (form) => {
 };
 
 // Handle Update Activity
-const handleStatusUpdate = (row, status) => {
+const handleStatusUpdate = (row, result) => {
 	// console.log(row);
 	const body = new FormData();
 
-	const date = new Date();
-	const dateNow = date.toISOString().slice(0, 10);
-
 	body.append("activityId", row.activityID);
 	body.append("siteId", row.siteID);
-	body.append("dateExecuted", dateNow);
-	body.append("status", status);
+	body.append("status", result.status);
+	if (result.status === "Done") {
+		body.append("dateExecuted", result.date);
+	} else {
+		const date = new Date();
+		const dateNow = date.toISOString().slice(0, 10);
+		body.append("dateExecuted", dateNow);
+	}
 
 	// console.log(activityStatusParams);
 	const { data } = useFetch({
@@ -410,12 +1040,26 @@ const handleStatusUpdate = (row, status) => {
 
 	watch(data, (newData) => {
 		if (newData) {
-			row.status = status === "NY" ? "Not Yet" : "Done";
+			row.status = newData.status;
 			row.weekExecuted = newData.weekExecuted
 				? parseInt(newData.weekExecuted)
 				: "";
 			row.dateExecuted = newData.dateExecuted ? newData.dateExecuted : "";
 		}
+	});
+};
+
+// handle render header
+const renderHeader = (h, { column, $index }) => {
+	return h(HeaderActivityTable, {
+		props: {
+			column,
+			$index,
+		},
+		on: {
+			onFilter: filterHandler,
+			onSort: sortHandler,
+		},
 	});
 };
 </script>
@@ -431,5 +1075,13 @@ const handleStatusUpdate = (row, status) => {
 	background-color: rgb(229, 231, 235) !important;
 	padding: 0 !important;
 	text-align: center !important;
+}
+
+.el-checkbox {
+	font-size: 10px;
+}
+
+.el-checkbox__label {
+	font-size: 10px;
 }
 </style>

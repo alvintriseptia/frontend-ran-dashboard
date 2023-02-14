@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="p-4 border border-gray-200 rounded-lg bg-white overflow-auto"
+		class="p-4 border border-gray-200 rounded-lg bg-white overflow-y-auto overflow-x-hidden"
 		:style="{ maxHeight: maxHeight }"
 	>
 		<div class="mb-4">
