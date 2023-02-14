@@ -51,7 +51,14 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody>
+
+			<!-- IF EMPTY -->
+			<div class="absolute left-1/2" v-if="!data || data.length === 0">
+				<el-empty description="No Data"> </el-empty>
+			</div>
+
+			<!-- IF NOT EMPTY -->
+			<tbody v-else-if="data.length > 0">
 				<tr v-for="(row, index) in data" class="border-b">
 					<!-- Index Number -->
 					<td

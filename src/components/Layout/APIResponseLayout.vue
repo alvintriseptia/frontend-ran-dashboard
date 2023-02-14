@@ -11,7 +11,7 @@
 			</template>
 		</el-result>
 	</div>
-	<div v-else-if="!data || data.length === 0">
+	<div v-else-if="!data || data.length === 0 || data === {}">
 		<el-empty description="No Data"> </el-empty>
 	</div>
 </template>
@@ -22,15 +22,15 @@ import LoadingSpinner from "./LoadingSpinner.vue";
 
 const props = defineProps({
 	loading: {
-		type: Boolean,
+		type: Boolean | Object,
 		required: true,
 	},
 	data: {
-		type: Array,
+		type: Array | Object,
 		default: () => [],
 	},
 	error: {
-		type: String,
+		type: String | Object,
 		default: null,
 	},
 });

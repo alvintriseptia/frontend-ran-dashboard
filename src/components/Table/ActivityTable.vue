@@ -97,6 +97,7 @@
 										v-for="item in optionsData"
 										:label="item"
 										:key="item"
+										:checked="optionsChecked.includes(item)"
 									>
 										{{ item }}
 									</el-checkbox>
@@ -134,7 +135,7 @@
 				<el-empty description="No Data"> </el-empty>
 			</div>
 
-			<tbody v-if="data.length > 0">
+			<tbody v-else-if="data.length > 0">
 				<tr v-for="(row, index) in data" class="border-b">
 					<!-- Index Number -->
 					<td
@@ -625,6 +626,13 @@ const handleShowFilter = (column) => {
 		showFilter.value = column.value;
 		totalFilterData.value = filterData.value[column.value].length;
 
+		//  reset filter variable
+		optionsData.value =
+			filterData.value[showFilter.value].length < 10
+				? filterData.value[showFilter.value]
+				: filterData.value[showFilter.value].slice(0, 10);
+		disabledScroll.value = optionsData.value.length < 10 ? true : false;
+
 		// set checked data
 		switch (showFilter.value) {
 			case "namaProgram":
@@ -681,10 +689,6 @@ const handleShowFilter = (column) => {
 			default:
 				break;
 		}
-
-		//  reset filter variable
-		optionsData.value = [];
-		disabledScroll.value = false;
 	}
 };
 
@@ -778,16 +782,9 @@ const loadFilterData = () => {
 						const regex = new RegExp(`^${searchFilter.value}`, "i");
 						isPushed =
 							regex.test(filterData.value[showFilter.value][i]) &&
-							!optionsChecked.value.includes(
-								filterData.value[showFilter.value][i]
-							) &&
 							!optionsData.value.includes(
 								filterData.value[showFilter.value][i]
 							);
-					} else {
-						isPushed = !optionsChecked.value.includes(
-							filterData.value[showFilter.value][i]
-						);
 					}
 
 					if (isPushed) {
@@ -812,20 +809,10 @@ const handleSearchFilter = (value) => {
 			isSearching.value = true;
 
 			//  get first 10 data without include checked
-			optionsData.value = [];
-			for (let i = 0; i < filterData.value[showFilter.value].length; i++) {
-				if (optionsData.value.length < 10) {
-					if (
-						!optionsChecked.value.includes(
-							filterData.value[showFilter.value][i]
-						)
-					) {
-						optionsData.value.push(filterData.value[showFilter.value][i]);
-					}
-				} else {
-					break;
-				}
-			}
+			optionsData.value =
+				filterData.value[showFilter.value].length < 10
+					? filterData.value[showFilter.value]
+					: filterData.value[showFilter.value].slice(0, 10);
 
 			isSearching.value = false;
 		}, 500);
@@ -841,13 +828,8 @@ const handleSearchFilter = (value) => {
 			for (let i = 0; i < filterData.value[showFilter.value].length; i++) {
 				// if total data less than 10
 				if (optionsData.value.length < 10) {
-					// if data match regex and not include in checked
-					if (
-						regex.test(filterData.value[showFilter.value][i]) &&
-						!optionsChecked.value.includes(
-							filterData.value[showFilter.value][i]
-						)
-					) {
+					// if data match regex
+					if (regex.test(filterData.value[showFilter.value][i])) {
 						optionsData.value.push(filterData.value[showFilter.value][i]);
 					}
 				} else {

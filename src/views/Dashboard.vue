@@ -74,7 +74,7 @@
 					v-for="(item, index) in logActivities.data"
 					:key="index"
 					:program="item.namaProgram"
-					:subProgram="item.namaSubprogram"
+					:subProgram="item.namaSubprogram ? item.namaSubprogram : ''"
 					:siteId="item.siteID"
 					:siteName="item.siteName"
 					:isDone="item.status.toLowerCase() === 'done'"

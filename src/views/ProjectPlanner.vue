@@ -1,17 +1,16 @@
 <template>
 	<section>
 		<Card title="Monthly Progress Activity" class="min-h-[400px]">
-			<BarChart
-				v-if="progressActivity.data"
-				:chartOptions="chartOptions"
-				:chartData="chartData"
-			/>
 			<APIResponseLayout
-				v-else
+				v-if="
+					progressActivity.data.value === null ||
+					progressActivity.data.value.length === 0
+				"
 				:loading="progressActivity.loading"
 				:error="progressActivity.error"
 				:data="progressActivity.data"
 			/>
+			<BarChart v-else :chartOptions="chartOptions" :chartData="chartData" />
 		</Card>
 
 		<Card title="Project Planner" class="mt-8">
@@ -57,7 +56,13 @@
 </template>
 
 <script setup>
-import { ProjectTable, Select, Card, BarChart } from "@/components";
+import {
+	ProjectTable,
+	Select,
+	Card,
+	BarChart,
+	APIResponseLayout,
+} from "@/components";
 import { dateUtil } from "@/utils";
 import { onMounted, ref, watch } from "vue";
 import { useFetch } from "@/composables";
@@ -105,7 +110,10 @@ const progressActivityUrl = ref(null);
 const progressActivity = useFetch({
 	url: progressActivityUrl,
 });
-const chartData = ref({});
+const chartData = ref({
+	labels: monthNames,
+	datasets: [],
+});
 
 // get project planner from api
 const { data, error, loading, doFetch } = useFetch({

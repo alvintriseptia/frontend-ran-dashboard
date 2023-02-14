@@ -86,13 +86,13 @@ export default {
 				return;
 			}
 			this.visible = !this.visible;
-			const status = this.status === "Done" ? "NY" : "Done";
-			this.$emit("onUpdate", status);
+			const status = "NY";
+			this.$emit("onUpdate", { status });
 		},
 		handleDone() {
 			this.visible = !this.visible;
 			this.datePickerVisible = !this.datePickerVisible;
-			const status = this.status === "Done" ? "NY" : "Done";
+			const status = "Done";
 			this.$emit("onUpdate", { status, date: this.date });
 		},
 		handleDatePicker() {
