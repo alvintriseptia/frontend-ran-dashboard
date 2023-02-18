@@ -3,4 +3,5 @@ import ProjectPlanner from "./ProjectPlanner.vue";
 import Activities from "./Activities.vue";
 import Login from "./Login.vue";
 import Sites from "./Sites.vue";
-export { Dashboard, ProjectPlanner, Activities, Login, Sites };
+import Accounts from "./Accounts.vue";
+export { Dashboard, ProjectPlanner, Activities, Login, Sites, Accounts };

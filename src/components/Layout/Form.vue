@@ -26,7 +26,7 @@
 					<el-input v-model="ruleForm.username"></el-input>
 				</el-form-item>
 				<el-form-item label="Password" prop="password">
-					<el-input type="password" v-model="ruleForm.password"></el-input>
+					<el-input show-password v-model="ruleForm.password"></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="submitForm('ruleForm')"
@@ -97,30 +97,6 @@ export default {
 					return false;
 				}
 			});
-		},
-		loginGuest() {
-			this.loading = true;
-			userStore
-				.dispatch("loginGuest")
-				.then((res) => {
-					if (res) {
-						this.$router.push({ name: "dashboard" });
-					}
-				})
-				.catch((err) => {
-					if (!err.response) {
-						this.$notify.error({
-							title: "Error",
-							message: err.message,
-						});
-					} else {
-						this.$notify.error({
-							title: "Error",
-							message: err.response.data.message,
-						});
-					}
-				});
-			this.loading = false;
 		},
 	},
 	components: {

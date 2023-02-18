@@ -39,6 +39,12 @@ const routes = [
 		component: views.Sites,
 		meta: { requiresAuth: true },
 	},
+	{
+		path: "/accounts",
+		name: "accounts",
+		component: views.Accounts,
+		meta: { requiresAuth: true },
+	},
 ];
 
 const router = new VueRouter({
@@ -71,7 +77,10 @@ function userCheckRequireAuth(to, from, next) {
 		}
 
 		//	if user is not admin and tries to access sites page, redirect to dashboard
-		if (to.path === "/sites" && userStore.getters.role !== "admin") {
+		if (
+			(to.path === "/sites" || to.path === "/accounts") &&
+			userStore.getters.role !== "admin"
+		) {
 			next("/");
 			return;
 		}

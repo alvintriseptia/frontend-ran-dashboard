@@ -278,14 +278,21 @@
 
 					<!-- Action -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap">
-						<el-button
-							type="text"
-							@click="showModalActivity(row)"
-							icon="el-icon-edit"
-							size="mini"
+						<el-tooltip
+							class="item"
+							effect="dark"
+							content="Edit Plan Activity"
+							placement="top-start"
 						>
-							Edit
-						</el-button>
+							<el-button
+								type="text"
+								@click="showModalActivity(row)"
+								icon="el-icon-edit"
+								size="mini"
+							>
+								Edit
+							</el-button></el-tooltip
+						>
 					</td>
 				</tr>
 			</tbody>

@@ -27,7 +27,7 @@
 				<div>
 					<i class="el-icon-user"></i>
 					<span class="text-sm text-gray-500">{{
-						stringUtil.toCapitalize(userStore.getters.role)
+						stringUtil.toCapitalize(userStore.getters.user.username)
 					}}</span>
 				</div>
 			</el-menu-item>
@@ -60,13 +60,21 @@
 			<el-menu-item index="4" v-if="userStore.getters.role === 'admin'">
 				<router-link to="/sites">
 					<div>
-						<i class="el-icon-setting"></i>
+						<i class="el-icon-place"></i>
 						<span slot="title"> Sites </span>
 					</div>
 				</router-link>
 			</el-menu-item>
+			<el-menu-item index="5" v-if="userStore.getters.role === 'admin'">
+				<router-link to="/accounts">
+					<div>
+						<i class="el-icon-setting"></i>
+						<span slot="title"> Accounts </span>
+					</div>
+				</router-link>
+			</el-menu-item>
 			<hr />
-			<el-menu-item index="5">
+			<el-menu-item index="6">
 				<div>
 					<button @click="userStore.dispatch('logout')">
 						<i class="el-icon-d-arrow-left"></i>

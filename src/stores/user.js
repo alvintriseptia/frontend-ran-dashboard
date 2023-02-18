@@ -39,22 +39,6 @@ export const userStore = new Store({
 					});
 			});
 		},
-		loginGuest({ commit }) {
-			return new Promise((resolve, reject) => {
-				axios
-					.post("/api/auth/login-guest")
-					.then((response) => {
-						if (response.data.status === "success") {
-							resolve(response);
-						} else {
-							reject(response);
-						}
-					})
-					.catch((error) => {
-						reject(error);
-					});
-			});
-		},
 		async getUser({ commit }) {
 			try {
 				const response = await axios.get("/api/auth/user");

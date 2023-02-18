@@ -11,7 +11,6 @@
 		}"
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
-		v-loading="loading"
 	>
 		<el-table-column label="NO" :width="50" fixed="left">
 			<template #default="{ row, $index }">
@@ -48,7 +47,7 @@
 		<el-table-column label="COMPLETE" :width="90">
 			<template #default="{ row }">
 				<el-progress
-					:percentage="row.percentage"
+					:percentage="parseInt(row.percentage)"
 					:stroke-width="4"
 					:color="customProgressColors"
 				/>
@@ -131,9 +130,6 @@ const props = defineProps({
 	},
 });
 
-// Define Computed
-const loading = computed(() => props.loading);
-
 const currentWeek = computed(() => {
 	return props.weekHighlighted + skippedColumns - 1;
 });
@@ -161,32 +157,32 @@ const customProgressColors = [
 function cellClassChecker({ row, columnIndex }) {
 	// Actual Start
 	if (
-		columnIndex === row.weekStartActual + (skippedColumns - 1) &&
-		row.weekStartActual !== null
+		row.weekStartActual &&
+		columnIndex === parseInt(row.weekStartActual) + (skippedColumns - 1)
 	) {
 		return "bg-purple-300 p-0";
 	}
 
 	// Actual Complete
 	else if (
-		columnIndex === row.weekCompleteActual + (skippedColumns - 1) &&
-		row.weekCompleteActual !== null
+		row.weekCompleteActual !== null &&
+		columnIndex === parseInt(row.weekCompleteActual) + (skippedColumns - 1)
 	) {
 		return "bg-purple-600 p-0 text-white";
 	}
 
 	// Actual Start Beyond
 	else if (
-		columnIndex === row.weekStartBeyond + (skippedColumns - 1) &&
-		row.weekStartBeyond !== null
+		row.weekStartBeyond &&
+		columnIndex === parseInt(row.weekStartBeyond) + (skippedColumns - 1)
 	) {
 		return "bg-orange-300 p-0";
 	}
 
 	// Actual Complete Beyond
 	else if (
-		columnIndex === row.weekCompleteBeyond + (skippedColumns - 1) &&
-		row.weekCompleteBeyond !== null
+		row.weekCompleteBeyond &&
+		columnIndex === parseInt(row.weekCompleteBeyond) + (skippedColumns - 1)
 	) {
 		return "bg-orange-600 p-0 text-white";
 	}
@@ -198,8 +194,8 @@ function cellClassChecker({ row, columnIndex }) {
 
 	// Plan Duration Highlited
 	else if (
-		columnIndex >= row.weekStart + (skippedColumns - 1) &&
-		columnIndex <= row.weekEnd + (skippedColumns - 1)
+		columnIndex >= parseInt(row.weekStart) + (skippedColumns - 1) &&
+		columnIndex <= parseInt(row.weekEnd) + (skippedColumns - 1)
 	) {
 		return "bg-purple-100 p-0";
 	}
@@ -215,7 +211,9 @@ function convertMonthToMMM(monthName) {
 function getWeekInYear(week, monthNumber) {
 	const weekInYear =
 		week +
-		props.weekInMonths.slice(0, monthNumber).reduce((acc, cur) => acc + cur, 0);
+		props.weekInMonths
+			.slice(0, monthNumber)
+			.reduce((acc, cur) => parseInt(acc) + parseInt(cur), 0);
 	return weekInYear;
 }
 

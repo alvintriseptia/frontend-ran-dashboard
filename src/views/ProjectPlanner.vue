@@ -32,24 +32,21 @@
 					<span class="text-gray-900">{{ item.label }}</span>
 				</div>
 			</section>
-			<section>
-				<div class="h-80" v-if="error">
-					<el-result icon="error" title="Terjadi Kesalahan" :subTitle="error">
-						<template slot="extra">
-							<el-button type="primary" size="medium" @click="doFetch">
-								Refresh
-							</el-button>
-						</template>
-					</el-result>
-				</div>
-
-				<ProjectTable
-					v-else
-					:weekHighlighted="weekHighlighted"
-					:data="rows"
+			<section class="min-h-[400px]">
+				<APIResponseLayout
+					v-if="rows.length === 0"
+					:error="error"
 					:loading="loading"
-					:weekInMonths="weekInMonths"
+					@refreshFunction="doFetch"
 				/>
+				<transition v-else name="el-fade-in">
+					<ProjectTable
+						:weekHighlighted="weekHighlighted"
+						:data="rows"
+						:loading="loading"
+						:weekInMonths="weekInMonths"
+					/>
+				</transition>
 			</section>
 		</Card>
 	</section>
@@ -132,11 +129,11 @@ onMounted(async () => {
 	watch(data, (newData) => {
 		if (newData) {
 			rows.value = newData.rows;
-			weekInMonths.value = newData.weeksPerMonth;
+			weekInMonths.value = newData.weeksPerMonth.map((item) => parseInt(item));
 			if (newData.weeksPerMonth && newData.weeksPerMonth.length > 0) {
 				let total = 0;
 				for (let i = 0; i < newData.weeksPerMonth.length; i++) {
-					total += newData.weeksPerMonth[i];
+					total += parseInt(newData.weeksPerMonth[i]);
 				}
 				totalWeeks.value = Array.from({ length: total }, (_, i) => {
 					return {
