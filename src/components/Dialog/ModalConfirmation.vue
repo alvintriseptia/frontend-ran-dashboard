@@ -4,6 +4,7 @@
 		:visible.sync="dialogVisible"
 		width="30%"
 		@close="emit('onCancel')"
+		:append-to-body="appendToBody"
 	>
 		<p class="font-semibold text-sm mb-4 text-center">{{ message }}</p>
 		<p class="text-center">{{ description }}</p>
@@ -42,6 +43,10 @@ const props = defineProps({
 	description: {
 		type: String,
 		default: "",
+	},
+	appendToBody: {
+		type: Boolean,
+		default: false,
 	},
 });
 

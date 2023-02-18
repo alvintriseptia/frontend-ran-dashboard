@@ -14,17 +14,40 @@
 			>
 		</template>
 
-		<section class="my-4 flex items-center">
-			<el-pagination
-				:page-size="activitiesParams.limit"
-				:pager-count="5"
-				layout="prev, pager, next"
-				:total="activities.totalData"
-				@current-change="handleCurrentChange"
-				ref="pagination"
-			>
-			</el-pagination>
-			<div class="flex items-center">
+		<section class="my-4 flex justify-between items-center">
+			<transition name="el-fade-in">
+				<div class="flex items-center -mb-4 gap-x-2">
+					<div class="flex items-start justify-start gap-x-1">
+						<el-button
+							@click="selectAllPlanActivity"
+							icon="el-icon-success"
+							size="mini"
+							type="success"
+						>
+							Select All
+						</el-button>
+
+						<el-button
+							@click="resetPlanActivityChecked"
+							icon="el-icon-remove"
+							size="mini"
+							type="danger"
+						>
+							Reset
+						</el-button>
+					</div>
+					<el-button
+						@click="showModalStatus"
+						icon="el-icon-key"
+						size="mini"
+						v-show="isShowBulkUpdate"
+					>
+						Update Status
+					</el-button>
+				</div>
+			</transition>
+			<div class="flex items-center ml-auto">
+				<p class="text-xs mr-2">Rows per page</p>
 				<div class="max-w-[80px]">
 					<Select
 						:options="limits"
@@ -33,11 +56,21 @@
 						defaultValue="10"
 					/>
 				</div>
-				<p class="text-xs ml-2">Rows per page</p>
+				<el-pagination
+					:page-size="activitiesParams.limit"
+					:pager-count="5"
+					layout="prev, pager, next"
+					:total="activities.totalData"
+					@current-change="handleCurrentChange"
+					ref="pagination"
+				>
+				</el-pagination>
 			</div>
 		</section>
+
 		<section class="min-h-[400px]">
 			<ActivityTable
+				ref="activityTable"
 				v-if="activities.data"
 				:data="activities.data"
 				:loading="activities.loading"
@@ -47,8 +80,10 @@
 					activitiesParams.limit +
 					1
 				"
+				:planActivityChecked="planActivityChecked"
 				@onFilter="handleFilterChange"
 				@onSort="handleSortChange"
+				@onBulkUpdate="handlePlanActivityChecked"
 			/>
 			<APIResponseLayout
 				v-else
@@ -62,6 +97,14 @@
 			v-if="userStore.getters.role === 'admin'"
 			:isShow="isShowInputActivities"
 			@closeInputActivities="closeInputActivities"
+		/>
+		<ModalStatus
+			v-if="userStore.getters.role === 'admin'"
+			:isModalVisible="isShowModalStatus"
+			@onCancel="closeModalStatus"
+			@onSubmit="updatePlanActivityChecked"
+			:activities="planActivityChecked"
+			@onBulkUpdate="handlePlanActivityChecked"
 		/>
 		<ImportExcel
 			v-if="userStore.getters.role === 'admin'"
@@ -83,11 +126,12 @@ import {
 	InputActivity,
 	Card,
 	Select,
+	ModalStatus,
 } from "@/components";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
-import { Notification } from "element-ui";
+import { Notification, Loading } from "element-ui";
 
 // Menu Import Activities
 const isShowImportActivities = ref(false);
@@ -202,6 +246,14 @@ const limits = [
 		value: 100,
 		label: "100",
 	},
+	{
+		value: 250,
+		label: "250",
+	},
+	{
+		value: 500,
+		label: "500",
+	},
 ];
 
 const activities = ref(
@@ -264,5 +316,194 @@ const handleLimitChange = (val) => {
 // handle pagination
 const handleCurrentChange = (val) => {
 	activitiesParams.value.page = val;
+};
+
+// handle bulk update
+const isShowBulkUpdate = ref(false);
+const toggleBulkUpdate = (value) => {
+	isShowBulkUpdate.value = value;
+};
+
+const isShowModalStatus = ref(false);
+
+const showModalStatus = () => {
+	isShowModalStatus.value = true;
+};
+
+const closeModalStatus = () => {
+	// delete plan activity where sites is empty
+	planActivityChecked.value.forEach((value, key) => {
+		const sites = value.sites;
+		if (sites.length === 0) {
+			planActivityChecked.value.delete(key);
+
+			// remove checked
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+			allCheckbox.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+		} else {
+			// adjust checked with new respose
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+
+			allCheckbox.forEach((checkbox) => {
+				if (sites.includes(checkbox.value)) {
+					checkbox.checked = true;
+				} else {
+					checkbox.checked = false;
+				}
+			});
+		}
+	});
+
+	isShowModalStatus.value = false;
+
+	// decide toggle bulk update
+	if (planActivityChecked.value.size === 0) {
+		toggleBulkUpdate(false);
+	} else {
+		toggleBulkUpdate(true);
+	}
+};
+
+const planActivityChecked = ref(new Map());
+const handlePlanActivityChecked = (row) => {
+	const key = row.activityID;
+	if (planActivityChecked.value.has(key)) {
+		const sites = planActivityChecked.value.get(key).sites;
+		const isExist = sites.findIndex((site) => site === row.siteID);
+		if (isExist !== -1) {
+			// remove site
+			if (sites.length === 1) {
+				planActivityChecked.value.delete(key);
+			} else {
+				const newSites = sites.splice(isExist, 1);
+
+				planActivityChecked.value.set(key, {
+					...planActivityChecked.value.get(key),
+					sites: newSites,
+				});
+			}
+		} else {
+			// add site
+			planActivityChecked.value.set(key, {
+				...planActivityChecked.value.get(key),
+				sites: [...planActivityChecked.value.get(key).sites, row.siteID],
+			});
+		}
+	} else {
+		const data = {
+			namaProgram: row.namaProgram,
+			namaSubprogram: row.namaSubprogram,
+			activityId: row.activityID,
+			deskripsiActivity: row.deskripsiActivity,
+			dateExecuted: ref(null),
+			status: ref(null),
+			sites: [row.siteID],
+		};
+		planActivityChecked.value.set(key, data);
+	}
+
+	// toggle bulk update button
+	if (planActivityChecked.value.size > 0) {
+		toggleBulkUpdate(true);
+	} else {
+		toggleBulkUpdate(false);
+	}
+};
+
+const activityTable = ref(null);
+
+// select all checkbox
+const selectAllPlanActivity = () => {
+	planActivityChecked.value = new Map();
+
+	activities.value.data.forEach((row) => {
+		handlePlanActivityChecked(row);
+	});
+
+	const allCheckbox =
+		activityTable.value.$el.querySelectorAll(".checkbox_activity");
+
+	// check all checkbox
+	allCheckbox.forEach((checkbox) => {
+		checkbox.checked = true;
+	});
+
+	toggleBulkUpdate(true);
+};
+
+// reset all checkbox
+const resetPlanActivityChecked = () => {
+	planActivityChecked.value = new Map();
+	const allCheckbox =
+		activityTable.value.$el.querySelectorAll(".checkbox_activity");
+
+	// reset all checkbox
+	allCheckbox.forEach((checkbox) => {
+		checkbox.checked = false;
+	});
+
+	toggleBulkUpdate(false);
+};
+
+// update plan activity
+const updatePlanActivityChecked = (result) => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
+
+	// console.log(activityStatusParams);
+	const { data, status, error } = useFetch({
+		url: "/api/activity-plan/bulk-update-status",
+		method: "PUT",
+		body: {
+			data: result,
+		},
+	});
+
+	watch([data, status, error], ([newData, newStatus, newError]) => {
+		if (newStatus === "success" && newData) {
+			// Update all checked data with response
+			activities.value.data.forEach((row) => {
+				const filterData = newData.filter(
+					(item) => item.activityId === row.activityID
+				);
+				if (
+					filterData.length > 0 &&
+					filterData[0].sitesUpdated.includes(row.siteID)
+				) {
+					const result = filterData[0];
+					row.status = result.status;
+					row.weekExecuted = result.weekExecuted
+						? parseInt(result.weekExecuted)
+						: "";
+					row.dateExecuted = result.dateExecuted ? result.dateExecuted : "";
+				}
+			});
+
+			resetPlanActivityChecked();
+
+			Loading.service().close();
+			closeModalStatus();
+			Notification.success({
+				title: "Error",
+				message: "Plan activity successfully updated",
+			});
+		} else if (newStatus === "error" && newError) {
+			Loading.service().close();
+			Notification.error({
+				title: "Error",
+				message: newError,
+			});
+		}
+	});
 };
 </script>
