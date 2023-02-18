@@ -38,7 +38,7 @@
 					</div>
 					<el-button
 						@click="showModalStatus"
-						icon="el-icon-key"
+						icon="el-icon-magic-stick"
 						size="mini"
 						v-show="isShowBulkUpdate"
 					>
@@ -486,6 +486,7 @@ const updatePlanActivityChecked = (result) => {
 						? parseInt(result.weekExecuted)
 						: "";
 					row.dateExecuted = result.dateExecuted ? result.dateExecuted : "";
+					row.updatedBy = result.updatedBy;
 				}
 			});
 

@@ -168,6 +168,21 @@
 						{{ numberFormat.digitFormat(index + numberStart) }}
 					</td>
 
+					<!-- Deskripsi Activity -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.deskripsiActivity }}
+					</td>
+
+					<!-- Site ID -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteID }}
+					</td>
+
+					<!-- Site Name -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.siteName }}
+					</td>
+
 					<!-- Status -->
 					<td
 						class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
@@ -176,6 +191,13 @@
 							:status="row.status"
 							@onUpdate="(result) => handleStatusUpdate(row, result)"
 						/>
+					</td>
+
+					<!-- Updated By -->
+					<td
+						class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
+					>
+						{{ row.updatedBy }}
 					</td>
 
 					<!-- Week Executed -->
@@ -194,21 +216,6 @@
 								? dateUtil.convertDateToMMMDDYY(row.dateExecuted)
 								: ""
 						}}
-					</td>
-
-					<!-- Deskripsi Activity -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.deskripsiActivity }}
-					</td>
-
-					<!-- Site ID -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.siteID }}
-					</td>
-
-					<!-- Site Name -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.siteName }}
 					</td>
 
 					<!-- Nama Program -->
@@ -278,14 +285,21 @@
 
 					<!-- Action -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap">
-						<el-button
-							type="text"
-							@click="showModalActivity(row)"
-							icon="el-icon-edit"
-							size="mini"
+						<el-tooltip
+							class="item"
+							effect="dark"
+							content="Edit Plan Activity"
+							placement="top-start"
 						>
-							Edit
-						</el-button>
+							<el-button
+								type="text"
+								@click="showModalActivity(row)"
+								icon="el-icon-edit"
+								size="mini"
+							>
+								Edit
+							</el-button></el-tooltip
+						>
 					</td>
 				</tr>
 			</tbody>
@@ -327,18 +341,6 @@ const tableHeader = ref([
 		value: "no",
 	},
 	{
-		label: "Status",
-		value: "status",
-	},
-	{
-		label: "Week Executed",
-		value: "weekExecuted",
-	},
-	{
-		label: "Date Executed",
-		value: "dateExecuted",
-	},
-	{
 		label: "Deskripsi Activity",
 		value: "deskripsiActivity",
 	},
@@ -349,6 +351,22 @@ const tableHeader = ref([
 	{
 		label: "Site Name",
 		value: "siteName",
+	},
+	{
+		label: "Status",
+		value: "status",
+	},
+	{
+		label: "Updated By",
+		value: "updatedBy",
+	},
+	{
+		label: "Week Executed",
+		value: "weekExecuted",
+	},
+	{
+		label: "Date Executed",
+		value: "dateExecuted",
 	},
 	{
 		label: "Program",
@@ -980,6 +998,7 @@ const handleStatusUpdate = (row, result) => {
 				? parseInt(newData.weekExecuted)
 				: "";
 			row.dateExecuted = newData.dateExecuted ? newData.dateExecuted : "";
+			row.updatedBy = newData.updatedBy;
 		}
 	});
 };

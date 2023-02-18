@@ -98,21 +98,35 @@
 							class="flex justify-center gap-x-2"
 							v-if="row.siteID !== 'All'"
 						>
-							<el-button
-								@click="handleEdit(row, index)"
-								type="warning"
-								icon="el-icon-edit"
-								size="small"
-								circle
-							></el-button>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								content="Edit Site"
+								placement="top-start"
+							>
+								<el-button
+									@click="handleEdit(row, index)"
+									type="warning"
+									icon="el-icon-edit"
+									size="small"
+									circle
+								></el-button>
+							</el-tooltip>
 
-							<el-button
-								@click="handleRemove(row, index)"
-								type="primary"
-								icon="el-icon-delete"
-								size="small"
-								circle
-							></el-button>
+							<el-tooltip
+								class="item"
+								effect="dark"
+								content="Delete Site"
+								placement="top-start"
+							>
+								<el-button
+									@click="handleRemove(row, index)"
+									type="primary"
+									icon="el-icon-delete"
+									size="small"
+									circle
+								></el-button>
+							</el-tooltip>
 						</div>
 					</td>
 				</tr>
