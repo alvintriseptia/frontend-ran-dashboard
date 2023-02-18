@@ -486,6 +486,7 @@ const updatePlanActivityChecked = (result) => {
 						? parseInt(result.weekExecuted)
 						: "";
 					row.dateExecuted = result.dateExecuted ? result.dateExecuted : "";
+					row.updatedBy = result.updatedBy;
 				}
 			});
 
