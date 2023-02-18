@@ -35,13 +35,24 @@ body {
 	font-weight: 600;
 }
 
-.el-tag.el-tag--info {
+.el-tag.el-tag--warning {
 	background-color: rgba(255, 119, 35, 0.2);
 	color: #ff7723;
 	font-weight: 600;
 }
 
+.el-tag.el-tag--info {
+	background-color: rgba(237, 28, 36, 0.2);
+	color: #ed1c24;
+	font-weight: 600;
+}
+
 .el-button--primary {
+	color: #ed1c24;
+}
+
+.el-button--primary:hover {
+	background: rgba(237, 28, 36, 0.2);
 	color: #ed1c24;
 }
 
@@ -53,11 +64,25 @@ body {
 	color: #16a34a;
 }
 
+.el-button--success:hover,
+.el-button--success:focus,
+.el-button--success:active {
+	background: rgba(22, 163, 74, 0.2);
+	color: #16a34a;
+}
+
 .el-button--warning {
 	color: #ff7723;
 }
 
 .el-button--danger {
+	color: #ed1c24;
+}
+
+.el-button--danger:hover,
+.el-button--danger:focus,
+.el-button--danger:active {
+	background: rgba(237, 28, 36, 0.2);
 	color: #ed1c24;
 }
 

@@ -13,17 +13,38 @@
 		row-class-name="no-hover-table"
 		v-loading="loading"
 	>
-		<el-table-column label="NO" :width="50">
+		<el-table-column label="NO" :width="50" fixed="left">
 			<template #default="{ row, $index }">
 				<div class="pl-2">
 					{{ $index + 1 }}
 				</div>
 			</template>
 		</el-table-column>
-		<el-table-column prop="program" label="PROGRAM" :min-width="150" />
-		<el-table-column prop="subProgram" label="SUB PROGRAM" :min-width="200" />
-		<el-table-column prop="activity" label="ACTIVITY" :min-width="250" />
-		<el-table-column prop="target" label="TARGET" />
+		<el-table-column
+			prop="program"
+			label="PROGRAM"
+			:min-width="150"
+			fixed="left"
+		/>
+		<el-table-column
+			prop="subProgram"
+			label="SUB PROGRAM"
+			:min-width="200"
+			fixed="left"
+		/>
+		<el-table-column
+			prop="activity"
+			label="ACTIVITY"
+			:min-width="250"
+			fixed="left"
+		/>
+		<el-table-column label="TARGET">
+			<template #default="{ row }">
+				<div class="text-center">
+					{{ row.target }}
+				</div>
+			</template>
+		</el-table-column>
 		<el-table-column label="COMPLETE" :width="90">
 			<template #default="{ row }">
 				<el-progress

@@ -60,6 +60,6 @@ const props = defineProps({
 });
 
 function getTagItemColor(isDone) {
-	return isDone ? "success" : "info";
+	return isDone ? "success" : "warning";
 }
 </script>

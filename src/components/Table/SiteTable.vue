@@ -1,5 +1,5 @@
 <template>
-	<section class="overflow-x-auto">
+	<section class="overflow-x-auto min-h-[400px]">
 		<table v-loading="loading">
 			<thead class="bg-gray-100 border-b">
 				<tr>

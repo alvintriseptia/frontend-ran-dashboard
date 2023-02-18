@@ -8,15 +8,19 @@
 						:key="header.value"
 						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
 						:class="{
-							'min-w-[150px]': header !== 'Deskripsi Activity',
-							'min-w-[250px]': header === 'Deskripsi Activity',
-							'min-w-[60px]': header === 'No',
+							'min-w-[30px]':
+								header.value === 'no' || header.value === 'checkbox',
+							'min-w-[250px]': header.value === 'deskripsiActivity',
+							'min-w-[150px]':
+								header.value !== 'deskripsiActivity' &&
+								header.value !== 'no' &&
+								header.value !== 'checkbox',
 							'bg-gray-200': index % 2 === 0,
 						}"
 					>
 						<div
 							class="flex items-center justify-between gap-x-2"
-							v-if="header.value !== 'No'"
+							v-if="header.value !== 'no' && header.value !== 'checkbox'"
 						>
 							<div class="flex items-center gap-x-1">
 								<div
@@ -82,7 +86,7 @@
 								<el-checkbox-group
 									v-model="optionsChecked"
 									class="flex flex-col gap-y-3"
-									@change="handleCheckedChange"
+									@change="handleFilterChecked"
 								>
 									<el-checkbox
 										v-for="item in optionsChecked"
@@ -139,6 +143,26 @@
 				<tr v-for="(row, index) in data" class="border-b">
 					<!-- Index Number -->
 					<td
+						class="p-2 text-gray-900 flex justify-center items-center h-11 border-r"
+					>
+						<input
+							:name="'checkbox' + '-' + row.activityID"
+							:value="row.siteID"
+							type="checkbox"
+							class="w-3 h-3 bg-gray-100 border-gray-300 rounded accent-primary checkbox_activity cursor-pointer"
+							:checked="
+								planActivityChecked.has(row.activityID) &&
+								planActivityChecked
+									.get(row.activityID)
+									.sites.findIndex((site) => site === row.siteID) !== -1
+									? true
+									: false
+							"
+							@change="emit('onBulkUpdate', row)"
+						/>
+					</td>
+					<!-- Index Number -->
+					<td
 						class="text-xs p-2 whitespace-nowrap text-gray-900 text-center border-r"
 					>
 						{{ numberFormat.digitFormat(index + numberStart) }}
@@ -172,24 +196,9 @@
 						}}
 					</td>
 
-					<!-- Nama Program -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.namaProgram }}
-					</td>
-
-					<!-- Nama Subprogram -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.namaSubprogram }}
-					</td>
-
 					<!-- Deskripsi Activity -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
 						{{ row.deskripsiActivity }}
-					</td>
-
-					<!-- Additional Info -->
-					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.additionalInfo }}
 					</td>
 
 					<!-- Site ID -->
@@ -200,6 +209,21 @@
 					<!-- Site Name -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
 						{{ row.siteName }}
+					</td>
+
+					<!-- Nama Program -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaProgram }}
+					</td>
+
+					<!-- Nama Subprogram -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.namaSubprogram }}
+					</td>
+
+					<!-- Additional Info -->
+					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
+						{{ row.additionalInfo }}
 					</td>
 
 					<!-- Kabupaten -->
@@ -235,7 +259,7 @@
 					<!-- Budget -->
 					<td
 						v-if="userStore.getters.role === 'admin'"
-						class="text-sm text-gray-900 p-2 whitespace-nowrap border-r"
+						class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
 					>
 						{{ row.budget }}
 					</td>
@@ -243,7 +267,7 @@
 					<!-- Cost -->
 					<td
 						v-if="userStore.getters.role === 'admin'"
-						class="text-sm text-gray-900 p-2 whitespace-nowrap border-r"
+						class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
 					>
 						{{
 							row.cost && row.cost !== "0"
@@ -277,12 +301,7 @@
 
 <script setup>
 // Import data
-import {
-	PopOverStatus,
-	ModalActivity,
-	HeaderActivityTable,
-	LoadingSpinner,
-} from "@/components";
+import { PopOverStatus, ModalActivity, LoadingSpinner } from "@/components";
 import { numberFormat, dateUtil } from "@/utils";
 import { computed, watch, ref, onMounted } from "vue";
 import { useFetch } from "@/composables";
@@ -300,8 +319,12 @@ const handleClickOutside = () => {
 
 const tableHeader = ref([
 	{
+		label: "#",
+		value: "checkbox",
+	},
+	{
 		label: "No",
-		value: "No",
+		value: "no",
 	},
 	{
 		label: "Status",
@@ -316,20 +339,8 @@ const tableHeader = ref([
 		value: "dateExecuted",
 	},
 	{
-		label: "Program",
-		value: "namaProgram",
-	},
-	{
-		label: "Subprogram",
-		value: "namaSubprogram",
-	},
-	{
 		label: "Deskripsi Activity",
 		value: "deskripsiActivity",
-	},
-	{
-		label: "Additional Info",
-		value: "additionalInfo",
 	},
 	{
 		label: "Site ID",
@@ -338,6 +349,18 @@ const tableHeader = ref([
 	{
 		label: "Site Name",
 		value: "siteName",
+	},
+	{
+		label: "Program",
+		value: "namaProgram",
+	},
+	{
+		label: "Subprogram",
+		value: "namaSubprogram",
+	},
+	{
+		label: "Additional Info",
+		value: "additionalInfo",
 	},
 	{
 		label: "Kabupaten",
@@ -382,14 +405,19 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	planActivityChecked: {
+		type: Map,
+		default: () => new Map(),
+	},
 });
 
-const emit = defineEmits(["onFilter", "onSort"]);
+const emit = defineEmits(["onFilter", "onSort", "onBulkUpdate"]);
 
 const data = computed(() => props.data);
 const filterData = computed(() => props.filterData);
 const numberStart = computed(() => props.numberStart);
 const loading = computed(() => props.loading);
+const planActivityChecked = computed(() => props.planActivityChecked);
 
 onMounted(() => {
 	if (userStore.getters.role === "admin") {
@@ -460,7 +488,7 @@ const budgetChecked = ref([]);
 // cost filter variable
 const costChecked = ref([]);
 
-const handleCheckedChange = (value) => {
+const handleFilterChecked = (value) => {
 	if (showFilter.value) {
 		switch (showFilter.value) {
 			case "namaProgram":
@@ -600,7 +628,7 @@ const handleSubmitFilter = (column) => {
 			});
 		} else if (column.value === "cost") {
 			optionsChecked.value = optionsChecked.value.map((item) => {
-				return item ? numberFormat.resetDigitFormat(item) : item;
+				return item ? numberFormat.resetCurrencyFormat(item) : item;
 			});
 		}
 
@@ -627,10 +655,21 @@ const handleShowFilter = (column) => {
 		totalFilterData.value = filterData.value[column.value].length;
 
 		//  reset filter variable
-		optionsData.value =
+		const data =
 			filterData.value[showFilter.value].length < 10
 				? filterData.value[showFilter.value]
 				: filterData.value[showFilter.value].slice(0, 10);
+		if (showFilter.value === "dateExecuted") {
+			optionsData.value = data.map((item) => {
+				return item ? dateUtil.convertDateToMMMDDYY(item) : item;
+			});
+		} else if (showFilter.value === "cost") {
+			optionsData.value = data.map((item) => {
+				return item ? numberFormat.currencyFormat(item) : item;
+			});
+		} else {
+			optionsData.value = data;
+		}
 		disabledScroll.value = optionsData.value.length < 10 ? true : false;
 
 		// set checked data
@@ -912,7 +951,6 @@ const handleUpdateActivity = (form) => {
 	});
 };
 
-// Handle Update Activity
 const handleStatusUpdate = (row, result) => {
 	// console.log(row);
 	const body = new FormData();

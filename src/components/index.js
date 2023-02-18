@@ -59,5 +59,12 @@ export { Sidebar };
 import PopOverStatus from "./Dialog/PopOverStatus.vue";
 import ModalActivity from "./Dialog/ModalActivity.vue";
 import ModalConfirmation from "./Dialog/ModalConfirmation.vue";
+import ModalStatus from "./Dialog/ModalStatus.vue";
 import PopOverInput from "./Dialog/PopOverInput.vue";
-export { PopOverStatus, ModalActivity, ModalConfirmation, PopOverInput };
+export {
+	PopOverStatus,
+	ModalActivity,
+	ModalConfirmation,
+	PopOverInput,
+	ModalStatus,
+};

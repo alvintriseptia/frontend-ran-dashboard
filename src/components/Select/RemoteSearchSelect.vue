@@ -9,9 +9,8 @@
 		remote-show-suffix
 		:remote-method="remoteMethod"
 		:loading="loading"
-		class="w-[300px]"
 		@change="onChange"
-		collapse-tags
+		:collapse-tags="collapseTags"
 	>
 		<el-option
 			v-for="item in options"
@@ -19,6 +18,7 @@
 			:label="item.label"
 			:value="item.value"
 			v-loading="loading"
+			type
 		/>
 	</el-select>
 </template>
@@ -34,6 +34,10 @@ const value = ref([]);
 // Define props
 const props = defineProps({
 	options: {
+		type: Array,
+		default: () => [],
+	},
+	defaultValue: {
 		type: Array,
 		default: () => [],
 	},
@@ -61,6 +65,10 @@ const props = defineProps({
 		type: Function,
 		default: () => {},
 	},
+	collapseTags: {
+		type: Boolean,
+		default: true,
+	},
 });
 
 // Define emits
@@ -82,6 +90,8 @@ onMounted(() => {
 			  })
 			: [];
 	});
+
+	value.value = props.defaultValue;
 });
 
 // check if the value is changed
@@ -89,7 +99,7 @@ onMounted(() => {
 // Define methods
 // remoteMethod is used to search the options
 const remoteMethod = (query) => {
-	if (query) {
+	if (query && query.length >= 2) {
 		loading.value = true;
 		emit("onChange", query);
 		loading.value = false;

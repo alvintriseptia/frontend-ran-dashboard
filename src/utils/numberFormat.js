@@ -14,13 +14,13 @@ const digitFormat = (value) => {
 	return formatter.format(value);
 };
 
-const resetDigitFormat = (value) => {
-	const newValue = value.replace(/\./g, "");
+const resetCurrencyFormat = (value) => {
+	const newValue = value.replace(/[^0-9]/g, "");
 	return newValue;
 };
 
 export default {
 	currencyFormat,
 	digitFormat,
-	resetDigitFormat,
+	resetCurrencyFormat,
 };

@@ -1,62 +1,59 @@
 <template>
 	<div>
-		<transition name="el-fade-in-linear">
-			<Card title="Sites" :alert="alertCard">
-				<template #header>
-					<OutlinedButton @onClick="showInput('input')" class="mr-4"
-						>Input Site</OutlinedButton
-					>
-					<OutlinedButton @onClick="showImportSites"
-						>Import Sites</OutlinedButton
-					>
-				</template>
+		<Card title="Sites" :alert="alertCard">
+			<template #header>
+				<OutlinedButton @onClick="showInput('input')" class="mr-4"
+					>Input Site</OutlinedButton
+				>
+				<OutlinedButton @onClick="showImportSites">Import Sites</OutlinedButton>
+			</template>
 
-				<section class="my-4 flex items-center justify-between">
+			<section class="my-4 flex items-center justify-between">
+				<RemoteSearchSelect
+					:options="unref(searchSites.data)"
+					placeholder="Select Site"
+					@onChange="handleSearchSites"
+					@onUpdate="handleUpdateSite"
+					labelOption="id,name"
+					valueOption="id"
+				/>
+				<div class="flex items-center">
 					<div class="flex items-center">
-						<el-pagination
-							:page-size="sitesParams.limit"
-							:pager-count="5"
-							layout="prev, pager, next"
-							:total="sites.totalData"
-							@current-change="handleCurrentChange"
-						>
-						</el-pagination>
-						<div class="flex items-center">
-							<div class="max-w-[80px]">
-								<Select
-									:options="limits"
-									@onChange="handleLimitChange"
-									placeholder="Rows per page"
-									defaultValue="10"
-								/>
-							</div>
-							<p class="text-xs ml-2">Rows per page</p>
+						<p class="text-xs mr-2">Rows per page</p>
+						<div class="max-w-[80px]">
+							<Select
+								:options="limits"
+								@onChange="handleLimitChange"
+								placeholder="Rows per page"
+								defaultValue="10"
+							/>
 						</div>
 					</div>
-					<RemoteSearchSelect
-						:options="unref(searchSites.data)"
-						placeholder="Select Site"
-						@onChange="handleSearchSites"
-						@onUpdate="handleUpdateSite"
-						labelOption="id,name"
-						valueOption="id"
-					/>
-				</section>
-				<section>
-					<SiteTable
-						@onSelect="handleRemoveButton"
-						:data="sites.data"
-						@onRemove="handleShowModalConfirmation"
-						@onEdit="handleEdit"
-						type="site"
-						:loading="sites.loading"
-						@onSort="handleSitesSortChange"
-						:numberStart="
-							sitesParams.page * sitesParams.limit - sitesParams.limit + 1
-						"
-					/>
-				</section> </Card
-		></transition>
+					<el-pagination
+						:page-size="sitesParams.limit"
+						:pager-count="5"
+						layout="prev, pager, next"
+						:total="sites.totalData"
+						@current-change="handleCurrentChange"
+					>
+					</el-pagination>
+				</div>
+			</section>
+			<section>
+				<SiteTable
+					@onSelect="handleRemoveButton"
+					:data="sites.data"
+					@onRemove="handleShowModalConfirmation"
+					@onEdit="handleEdit"
+					type="site"
+					:loading="sites.loading"
+					@onSort="handleSitesSortChange"
+					:numberStart="
+						sitesParams.page * sitesParams.limit - sitesParams.limit + 1
+					"
+				/>
+			</section>
+		</Card>
 
 		<!-- Dialog -->
 		<ImportExcel
