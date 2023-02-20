@@ -101,7 +101,9 @@
 										v-for="item in optionsData"
 										:label="item"
 										:key="item"
-										:checked="optionsChecked.includes(item)"
+										:checked="
+											optionsChecked.length > 0 && optionsChecked.includes(item)
+										"
 									>
 										{{ item }}
 									</el-checkbox>
@@ -464,6 +466,9 @@ const subprogramChecked = ref([]);
 // status filter variable
 const statusChecked = ref([]);
 
+// updated by filter variable
+const updatedByChecked = ref([]);
+
 // week executed filter variable
 const weekExecutedChecked = ref([]);
 
@@ -520,6 +525,12 @@ const handleFilterChecked = (value) => {
 				break;
 			case "weekExecuted":
 				weekExecutedChecked.value = value;
+				break;
+			case "dateExecuted":
+				dateExecutedChecked.value = value;
+				break;
+			case "updatedBy":
+				updatedByChecked.value = value;
 				break;
 			case "dateExecuted":
 				dateExecutedChecked.value = value;
@@ -583,6 +594,9 @@ const handleResetFilter = (column) => {
 				break;
 			case "dateExecuted":
 				dateExecutedChecked.value = [];
+				break;
+			case "updatedBy":
+				updatedByChecked.value = [];
 				break;
 			case "deskripsiActivity":
 				deskripsiActivityChecked.value = [];
@@ -707,6 +721,9 @@ const handleShowFilter = (column) => {
 			case "dateExecuted":
 				optionsChecked.value = dateExecutedChecked.value;
 				break;
+			case "updatedBy":
+				optionsChecked.value = updatedByChecked.value;
+				break;
 			case "deskripsiActivity":
 				optionsChecked.value = deskripsiActivityChecked.value;
 				break;
@@ -766,6 +783,9 @@ const anyCheckedValue = (column) => {
 			break;
 		case "dateExecuted":
 			checked = dateExecutedChecked.value.length > 0;
+			break;
+		case "updatedBy":
+			checked = updatedByChecked.value.length > 0;
 			break;
 		case "deskripsiActivity":
 			checked = deskripsiActivityChecked.value.length > 0;

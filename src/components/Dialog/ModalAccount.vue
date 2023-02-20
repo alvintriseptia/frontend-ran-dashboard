@@ -84,7 +84,9 @@
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="onCancel">Cancel</el-button>
-			<el-button type="primary" @click="onSubmit">Update</el-button>
+			<el-button type="primary" @click="onSubmit">{{
+				type === "reset" ? "Reset" : "Update"
+			}}</el-button>
 		</span>
 	</el-dialog>
 </template>
@@ -197,6 +199,15 @@ watch(
 			namaNS: newVal.nsID,
 			active: parseInt(newVal.active),
 		};
+		if (ruleFormRef.value) {
+			ruleFormRef.value.resetFields();
+		}
+	}
+);
+// watch props type
+watch(
+	() => props.type,
+	(newVal) => {
 		if (ruleFormRef.value) {
 			ruleFormRef.value.resetFields();
 		}

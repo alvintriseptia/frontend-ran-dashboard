@@ -43,17 +43,19 @@
 					<p class="mb-1 font-semibold">
 						Sites <strong class="text-primary">*</strong>
 					</p>
-					<RemoteSearchSelect
-						:options="searchSites[row[1].activityId]"
-						:defaultValue="row[1].sites"
-						labelOption="siteID"
-						valueOption="siteID"
-						:collapseTags="false"
-						placeholder="Sites"
-						class="w-full"
-						@onChange="(query) => handleSearchSites(query, row[1].activityId)"
-						@onUpdate="(value) => handleUpdateSite(value, row[1].activityId)"
-					/>
+					<div class="max-h-[300px] overflow-y-auto py-2">
+						<RemoteSearchSelect
+							:options="searchSites[row[1].activityId]"
+							:defaultValue="row[1].sites"
+							labelOption="siteID"
+							valueOption="siteID"
+							:collapseTags="false"
+							placeholder="Sites"
+							class="w-full"
+							@onChange="(query) => handleSearchSites(query, row[1].activityId)"
+							@onUpdate="(value) => handleUpdateSite(value, row[1].activityId)"
+						/>
+					</div>
 				</div>
 
 				<div class="mb-4">

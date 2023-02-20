@@ -36,8 +36,8 @@
 						:key="index"
 						:chart-id="index.toString()"
 						:programName="item.namaProgram"
-						:doneActivity="item.done"
-						:notYetActivity="item.notYet"
+						:doneActivity="parseInt(item.done)"
+						:notYetActivity="parseInt(item.notYet)"
 					/>
 				</el-container>
 			</Card>
