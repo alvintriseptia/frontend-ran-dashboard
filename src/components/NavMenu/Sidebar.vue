@@ -27,7 +27,7 @@
 				<div>
 					<i class="el-icon-user"></i>
 					<span class="text-sm text-gray-500">{{
-						stringUtil.toCapitalize(userStore.getters.user.username)
+						userStore.getters.user.username
 					}}</span>
 				</div>
 			</el-menu-item>

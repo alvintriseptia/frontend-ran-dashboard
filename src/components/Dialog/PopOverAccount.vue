@@ -51,7 +51,7 @@ export default {
 	methods: {
 		handleActive(active) {
 			this.visible = !this.visible;
-			this.$emit("onUpdate", active);
+			if (active !== this.active) this.$emit("onUpdate", active);
 		},
 	},
 };

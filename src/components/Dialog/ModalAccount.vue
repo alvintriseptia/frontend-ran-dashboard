@@ -197,8 +197,9 @@ watch(
 			namaNS: newVal.nsID,
 			active: parseInt(newVal.active),
 		};
-
-		ruleFormRef.value.resetFields();
+		if (ruleFormRef.value) {
+			ruleFormRef.value.resetFields();
+		}
 	}
 );
 

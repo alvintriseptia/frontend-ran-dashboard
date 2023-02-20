@@ -93,18 +93,17 @@
 				@refreshFunction="activities.doFetch"
 			/>
 		</section>
-		<InputActivity
-			v-if="userStore.getters.role === 'admin'"
-			:isShow="isShowInputActivities"
-			@closeInputActivities="closeInputActivities"
-		/>
 		<ModalStatus
-			v-if="userStore.getters.role === 'admin'"
 			:isModalVisible="isShowModalStatus"
 			@onCancel="closeModalStatus"
 			@onSubmit="updatePlanActivityChecked"
 			:activities="planActivityChecked"
 			@onBulkUpdate="handlePlanActivityChecked"
+		/>
+		<InputActivity
+			v-if="userStore.getters.role === 'admin'"
+			:isShow="isShowInputActivities"
+			@closeInputActivities="closeInputActivities"
 		/>
 		<ImportExcel
 			v-if="userStore.getters.role === 'admin'"

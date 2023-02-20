@@ -161,6 +161,7 @@ onMounted(() => {
 		() => props.activities,
 		(val) => {
 			data.value = val;
+			totalPlan.value = countTotalPlan();
 		}
 	);
 });
