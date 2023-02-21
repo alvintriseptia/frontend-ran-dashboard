@@ -54,7 +54,7 @@
 					<!-- Is Active -->
 					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
 						<PopOverAccount
-							v-if="row.admin !== '1'"
+							v-if="convertUtil.toBoolean(row.admin) === false"
 							:active="row.active"
 							@onUpdate="(result) => handleActive(row, result)"
 						/>
@@ -62,7 +62,10 @@
 
 					<!-- Action -->
 					<td class="text-sm text-gray-900 p-2 whitespace-nowrap">
-						<div class="flex justify-center gap-x-2" v-if="row.admin !== '1'">
+						<div
+							class="flex justify-center gap-x-2"
+							v-if="convertUtil.toBoolean(row.admin) === false"
+						>
 							<el-tooltip
 								class="item"
 								effect="dark"
@@ -102,7 +105,7 @@
 
 <script setup>
 import { computed, watch } from "vue";
-import { numberFormat } from "@/utils";
+import { numberFormat, convertUtil } from "@/utils";
 import { useFetch } from "@/composables";
 import { PopOverAccount } from "@/components";
 import { Notification } from "element-ui";

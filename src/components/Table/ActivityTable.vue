@@ -235,9 +235,9 @@
 						{{ row.additionalInfo }}
 					</td>
 
-					<!-- Kabupaten -->
+					<!-- NS -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.namaKabupaten }}
+						{{ row.namaNS }}
 					</td>
 
 					<!-- DO -->
@@ -245,9 +245,9 @@
 						{{ row.namaDO }}
 					</td>
 
-					<!-- NS -->
+					<!-- Kabupaten -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.namaNS }}
+						{{ row.namaKabupaten }}
 					</td>
 
 					<!-- PIC -->
@@ -383,16 +383,16 @@ const tableHeader = ref([
 		value: "additionalInfo",
 	},
 	{
-		label: "Kabupaten",
-		value: "namaKabupaten",
+		label: "NS",
+		value: "namaNS",
 	},
 	{
 		label: "DO",
 		value: "namaDO",
 	},
 	{
-		label: "NS",
-		value: "namaNS",
+		label: "Kabupaten",
+		value: "namaKabupaten",
 	},
 	{
 		label: "PIC",

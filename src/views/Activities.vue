@@ -319,8 +319,14 @@ const handleCurrentChange = (val) => {
 
 // handle bulk update
 const isShowBulkUpdate = ref(false);
-const toggleBulkUpdate = (value) => {
-	isShowBulkUpdate.value = value;
+const toggleBulkUpdate = () => {
+	if (planActivityChecked.value.size > 0) {
+		isShowBulkUpdate.value = true;
+	} else {
+		isShowBulkUpdate.value = false;
+	}
+
+	console.log(planActivityChecked.value);
 };
 
 const isShowModalStatus = ref(false);
@@ -362,11 +368,7 @@ const closeModalStatus = () => {
 	isShowModalStatus.value = false;
 
 	// decide toggle bulk update
-	if (planActivityChecked.value.size === 0) {
-		toggleBulkUpdate(false);
-	} else {
-		toggleBulkUpdate(true);
-	}
+	toggleBulkUpdate();
 };
 
 const planActivityChecked = ref(new Map());
@@ -407,22 +409,39 @@ const handlePlanActivityChecked = (row) => {
 		planActivityChecked.value.set(key, data);
 	}
 
-	// toggle bulk update button
-	if (planActivityChecked.value.size > 0) {
-		toggleBulkUpdate(true);
-	} else {
-		toggleBulkUpdate(false);
-	}
+	toggleBulkUpdate();
 };
 
 const activityTable = ref(null);
 
 // select all checkbox
 const selectAllPlanActivity = () => {
-	planActivityChecked.value = new Map();
-
 	activities.value.data.forEach((row) => {
-		handlePlanActivityChecked(row);
+		const key = row.activityID;
+		// check if plan activity checked has key
+		if (planActivityChecked.value.has(key)) {
+			const sites = planActivityChecked.value.get(key).sites;
+			const isExist = sites.findIndex((site) => site === row.siteID);
+			// if not exist, then add site
+			if (isExist === -1) {
+				// add site
+				planActivityChecked.value.set(key, {
+					...planActivityChecked.value.get(key),
+					sites: [...planActivityChecked.value.get(key).sites, row.siteID],
+				});
+			}
+		} else {
+			const data = {
+				namaProgram: row.namaProgram,
+				namaSubprogram: row.namaSubprogram,
+				activityId: row.activityID,
+				deskripsiActivity: row.deskripsiActivity,
+				dateExecuted: ref(null),
+				status: ref(null),
+				sites: [row.siteID],
+			};
+			planActivityChecked.value.set(key, data);
+		}
 	});
 
 	const allCheckbox =
@@ -433,12 +452,33 @@ const selectAllPlanActivity = () => {
 		checkbox.checked = true;
 	});
 
-	toggleBulkUpdate(true);
+	toggleBulkUpdate();
 };
 
 // reset all checkbox
 const resetPlanActivityChecked = () => {
-	planActivityChecked.value = new Map();
+	activities.value.data.forEach((row) => {
+		const key = row.activityID;
+		// check if plan activity checked has key
+		if (planActivityChecked.value.has(key)) {
+			const sites = planActivityChecked.value.get(key).sites;
+			const isExist = sites.findIndex((site) => site === row.siteID);
+			// if exist, then remove site
+			if (isExist !== 1) {
+				if (sites.length === 1) {
+					planActivityChecked.value.delete(key);
+				} else {
+					const newSites = sites.splice(isExist, 1);
+
+					planActivityChecked.value.set(key, {
+						...planActivityChecked.value.get(key),
+						sites: newSites,
+					});
+				}
+			}
+		}
+	});
+
 	const allCheckbox =
 		activityTable.value.$el.querySelectorAll(".checkbox_activity");
 
@@ -447,7 +487,7 @@ const resetPlanActivityChecked = () => {
 		checkbox.checked = false;
 	});
 
-	toggleBulkUpdate(false);
+	toggleBulkUpdate();
 };
 
 // update plan activity
@@ -494,7 +534,7 @@ const updatePlanActivityChecked = (result) => {
 			Loading.service().close();
 			closeModalStatus();
 			Notification.success({
-				title: "Error",
+				title: "Success",
 				message: "Plan activity successfully updated",
 			});
 		} else if (newStatus === "error" && newError) {

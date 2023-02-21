@@ -77,6 +77,9 @@ const emit = defineEmits(["onUpdate", "onChange"]);
 // onMounted, to set the initial value
 onMounted(() => {
 	options.value = computed(() => {
+		if (props.defaultValue.length > 0) {
+			value.value = props.defaultValue;
+		}
 		return props.options
 			? props.options.map((item) => {
 					const label = props.labelOption
@@ -90,8 +93,6 @@ onMounted(() => {
 			  })
 			: [];
 	});
-
-	value.value = props.defaultValue;
 });
 
 // check if the value is changed

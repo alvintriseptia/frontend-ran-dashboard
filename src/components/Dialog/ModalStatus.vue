@@ -135,14 +135,18 @@ const props = defineProps({
 		required: true,
 	},
 });
+const activities = computed(() => props.activities);
 const data = ref(new Map());
 const isShowAlert = ref(false);
 
 const totalPlan = ref(0);
-const countTotalPlan = () => {
+const countTotalPlan = (plan) => {
 	let total = 0;
-	for (let value of data.value.values()) {
-		total += value.sites.length;
+
+	if (plan) {
+		for (let value of plan.values()) {
+			total += value.sites.length;
+		}
 	}
 
 	return total;
@@ -155,15 +159,14 @@ const toggleShowModalConfirmation = (value) => {
 
 // on mounted
 onMounted(() => {
-	data.value = props.activities;
-	totalPlan.value = countTotalPlan();
-
-	// Watch Variable
 	watch(
-		() => props.activities,
+		() => props.isModalVisible,
 		(val) => {
-			data.value = val;
-			totalPlan.value = countTotalPlan();
+			console.log("new value");
+			console.log(activities.value);
+			data.value = new Map(activities.value);
+			console.log(data.value);
+			totalPlan.value = countTotalPlan(activities.value);
 		}
 	);
 });
@@ -281,6 +284,6 @@ const handleUpdateSite = (value, activityId) => {
 	const activity = data.value.get(activityId);
 	activity.sites = value;
 
-	totalPlan.value = countTotalPlan();
+	totalPlan.value = countTotalPlan(data.value);
 };
 </script>
