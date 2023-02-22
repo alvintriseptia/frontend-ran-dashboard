@@ -24,12 +24,12 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref, computed } from "vue";
+import { defineProps, defineEmits, onMounted, ref, computed, watch } from "vue";
 
 // Define variable
 const loading = ref(false);
 const options = ref([]);
-const value = ref([]);
+const value = ref(props.modelValue);
 
 // Define props
 const props = defineProps({
@@ -38,7 +38,11 @@ const props = defineProps({
 		default: () => [],
 	},
 	defaultValue: {
-		type: Array,
+		type: Array | String,
+		default: () => [],
+	},
+	modelValue: {
+		type: Array | String,
 		default: () => [],
 	},
 	placeholder: {
@@ -93,6 +97,13 @@ onMounted(() => {
 			  })
 			: [];
 	});
+
+	watch(
+		() => props.modelValue,
+		(val) => {
+			value.value = val;
+		}
+	);
 });
 
 // check if the value is changed

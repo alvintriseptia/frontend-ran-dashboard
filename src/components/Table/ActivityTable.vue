@@ -89,21 +89,10 @@
 									@change="handleFilterChecked"
 								>
 									<el-checkbox
-										v-for="item in optionsChecked"
-										:label="item"
-										:key="item + 'checked'"
-									>
-										{{ item }}
-									</el-checkbox>
-									<hr v-if="optionsChecked.length > 0" />
-									<el-checkbox
 										v-if="!isSearching"
 										v-for="item in optionsData"
 										:label="item"
 										:key="item"
-										:checked="
-											optionsChecked.length > 0 && optionsChecked.includes(item)
-										"
 									>
 										{{ item }}
 									</el-checkbox>
@@ -287,51 +276,52 @@
 
 					<!-- Action -->
 					<td class="text-xs text-gray-900 p-2 whitespace-nowrap">
-						<el-tooltip
-							class="item"
-							effect="dark"
-							content="Edit Plan Activity"
-							placement="top-start"
-						>
-							<el-button
-								type="text"
-								@click="showModalActivity(row)"
-								icon="el-icon-edit"
-								size="mini"
+						<div class="flex justify-center gap-x-2">
+							<el-tooltip
+								class="item"
+								effect="dark"
+								content="Edit Plan"
+								placement="top-start"
 							>
-								Edit
-							</el-button></el-tooltip
-						>
+								<el-button
+									@click="handleEdit(row, index)"
+									type="warning"
+									icon="el-icon-edit"
+									size="small"
+									circle
+								></el-button>
+							</el-tooltip>
+
+							<el-tooltip
+								class="item"
+								effect="dark"
+								content="Delete Plan"
+								placement="top-start"
+							>
+								<el-button
+									@click="handleRemove(row, index)"
+									type="primary"
+									icon="el-icon-delete"
+									size="small"
+									circle
+								></el-button>
+							</el-tooltip>
+						</div>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<ModalActivity
-			:row="modalRowActivity"
-			:isModalVisible="isShowModalActivity"
-			@onCancel="closeModalActivity"
-			@onSubmit="handleUpdateActivity"
-		/>
 	</section>
 </template>
 
 <script setup>
 // Import data
-import { PopOverStatus, ModalActivity, LoadingSpinner } from "@/components";
+import { PopOverStatus, LoadingSpinner } from "@/components";
 import { numberFormat, dateUtil } from "@/utils";
 import { computed, watch, ref, onMounted } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
 import { Notification } from "element-ui";
-
-const handleClickOutside = () => {
-	if (showFilter.value) {
-		//reset
-		showFilter.value = "";
-		optionsData.value = [];
-		optionsChecked.value = [];
-	}
-};
 
 const tableHeader = ref([
 	{
@@ -431,7 +421,13 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(["onFilter", "onSort", "onBulkUpdate"]);
+const emit = defineEmits([
+	"onFilter",
+	"onSort",
+	"onBulkUpdate",
+	"onRemove",
+	"onEdit",
+]);
 
 const data = computed(() => props.data);
 const filterData = computed(() => props.filterData);
@@ -451,6 +447,17 @@ onMounted(() => {
 		});
 	}
 });
+
+// ====================================== FILTER TABLE ==============================
+// Handle filter container
+const handleClickOutside = () => {
+	if (showFilter.value) {
+		//reset
+		showFilter.value = "";
+		optionsData.value = [];
+		optionsChecked.value = [];
+	}
+};
 
 const optionsData = ref([]);
 const optionsChecked = ref([]);
@@ -919,6 +926,7 @@ const handleSearchFilter = (value) => {
 	}
 };
 
+// =================== SORT TABLE ===================
 // handle sort
 const sortBy = ref("");
 const orderBy = ref("");
@@ -938,57 +946,7 @@ const sortHandler = (column, value) => {
 	}
 };
 
-// Modal Activity
-const isShowModalActivity = ref(false);
-const modalRowActivity = ref({});
-
-const showModalActivity = (row) => {
-	isShowModalActivity.value = true;
-	modalRowActivity.value = row;
-};
-
-const closeModalActivity = () => {
-	isShowModalActivity.value = false;
-};
-
-// Handle Update Activity
-const handleUpdateActivity = (form) => {
-	const body = new FormData();
-	body.append("activityId", form.activityId);
-	body.append("siteId", form.siteId);
-	body.append("remark", form.remark);
-	body.append("targetQuartal", form.targetQuartal);
-	// console.log(activityStatusParams);
-	const { data, error } = useFetch({
-		url: "/api/activity/plan",
-		method: "POST",
-		body,
-	});
-
-	watch(data, (newData) => {
-		if (newData) {
-			modalRowActivity.value.targetQuartal = newData.targetQuartal;
-			modalRowActivity.value.remark = newData.remark;
-			Notification.success({
-				title: "Success",
-				message: "Activity has been updated",
-			});
-			isShowModalActivity.value = false;
-			modalRowActivity.value = {};
-		}
-	});
-
-	watch(error, (newError) => {
-		if (newError) {
-			console.log(newError);
-			Notification.error({
-				title: "Error",
-				message: "Failed to update activity",
-			});
-		}
-	});
-};
-
+// =================== STATUS UPDATE ===================
 const handleStatusUpdate = (row, result) => {
 	// console.log(row);
 	const body = new FormData();
@@ -1005,23 +963,44 @@ const handleStatusUpdate = (row, result) => {
 	}
 
 	// console.log(activityStatusParams);
-	const { data } = useFetch({
+	const { data, status, message } = useFetch({
 		url: "/api/activity/week-executed",
 		method: "POST",
 		body,
 	});
 
-	watch(data, (newData) => {
-		if (newData) {
-			row.status = newData.status;
-			row.weekExecuted = newData.weekExecuted
-				? parseInt(newData.weekExecuted)
-				: "";
-			row.dateExecuted = newData.dateExecuted ? newData.dateExecuted : "";
-			row.updatedBy = newData.updatedBy;
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				row.status = newData.status;
+				row.weekExecuted = newData.weekExecuted
+					? parseInt(newData.weekExecuted)
+					: "";
+				row.dateExecuted = newData.dateExecuted ? newData.dateExecuted : "";
+				row.updatedBy = newData.updatedBy;
+
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				unwatch();
+			}
 		}
-	});
+	);
 };
+
+// =================== Action Column ===================
+function handleRemove(row, index) {
+	emit("onRemove", { row, index });
+}
+
+function handleEdit(row, index) {
+	emit("onEdit", { row, index });
+}
 </script>
 
 <style>

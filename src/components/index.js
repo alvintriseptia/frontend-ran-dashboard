@@ -54,9 +54,10 @@ export { ActivityItem, HeaderActivityTable };
 // Input
 import ImportExcel from "./Input/ImportExcel.vue";
 import InputActivity from "./Input/InputActivity.vue";
+import UpdateActivity from "./Input/UpdateActivity.vue";
 import InputSite from "./Input/InputSite.vue";
 import InputAccount from "./Input/InputAccount.vue";
-export { ImportExcel, InputActivity, InputSite, InputAccount };
+export { ImportExcel, InputActivity, UpdateActivity, InputSite, InputAccount };
 
 // =================================================================================================================== //
 // Nav Menu
@@ -70,6 +71,7 @@ import ModalAccount from "./Dialog/ModalAccount.vue";
 import ModalActivity from "./Dialog/ModalActivity.vue";
 import ModalConfirmation from "./Dialog/ModalConfirmation.vue";
 import ModalStatus from "./Dialog/ModalStatus.vue";
+import ModalBulkDelete from "./Dialog/ModalBulkDelete.vue";
 import PopOverInput from "./Dialog/PopOverInput.vue";
 import PopOverAccount from "./Dialog/PopOverAccount.vue";
 export {
@@ -80,4 +82,5 @@ export {
 	PopOverInput,
 	PopOverAccount,
 	ModalStatus,
+	ModalBulkDelete,
 };

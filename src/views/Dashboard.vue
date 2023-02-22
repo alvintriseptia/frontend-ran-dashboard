@@ -22,10 +22,8 @@
 					class="flex flex-wrap gap-y-6 md:gap-6 justify-center items-center min-h-[400px]"
 				>
 					<APIResponseLayout
-						v-if="
-							programSummary.data === null || programSummary.data.length === 0
-						"
-						:error="programSummary.error"
+						v-if="!programSummary.data || programSummary.data.length === 0"
+						:error="programSummary.message"
 						:loading="programSummary.loading"
 						@refreshFunction="programSummary.doFetch"
 						:data="programSummary.data"
@@ -63,8 +61,8 @@
 					</el-tooltip>
 				</template>
 				<APIResponseLayout
-					v-if="logActivities.data === null || logActivities.data.length === 0"
-					:error="logActivities.error"
+					v-if="!logActivities.data || logActivities.data.length === 0"
+					:error="logActivities.message"
 					:loading="logActivities.loading"
 					@refreshFunction="logActivities.doFetch"
 					:data="logActivities.data"
@@ -86,7 +84,10 @@
 		</section>
 
 		<section class="my-10">
-			<Card title="Activities Summary">
+			<Card
+				title="Activities Summary"
+				subtitle="Note: the value represents → done activities/target activities"
+			>
 				<template #header
 					><el-tooltip
 						class="item"
@@ -128,7 +129,7 @@
 				/>
 				<APIResponseLayout
 					v-else
-					:error="activitySummary.error"
+					:error="activitySummary.message"
 					:loading="activitySummary.loading"
 					@refreshFunction="activitySummary.doFetch"
 					:data="activitySummary.data"

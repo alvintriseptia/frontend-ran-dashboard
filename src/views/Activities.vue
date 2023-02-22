@@ -1,51 +1,60 @@
 <template>
-	<Card title="Activites" :alert="alertCard">
+	<Card title="Plan Activites" :alert="alertCard">
 		<template #header>
 			<OutlinedButton
 				v-if="userStore.getters.role === 'admin'"
 				@onClick="showInputActivities"
 				class="mr-4"
-				>Input Activities</OutlinedButton
+				>Input Plan Activity</OutlinedButton
 			>
 			<OutlinedButton
 				v-if="userStore.getters.role === 'admin'"
 				@onClick="showImportActivities"
-				>Import Activities</OutlinedButton
+				>Import Plan Activities</OutlinedButton
 			>
 		</template>
 
 		<section class="my-4 flex justify-between items-center">
-			<transition name="el-fade-in">
-				<div class="flex items-center -mb-4 gap-x-2">
-					<div class="flex items-start justify-start gap-x-1">
-						<el-button
-							@click="selectAllPlanActivity"
-							icon="el-icon-success"
-							size="mini"
-							type="success"
-						>
-							Select All
-						</el-button>
-
-						<el-button
-							@click="resetPlanActivityChecked"
-							icon="el-icon-remove"
-							size="mini"
-							type="danger"
-						>
-							Reset
-						</el-button>
-					</div>
+			<div class="flex items-center gap-x-2">
+				<el-button
+					@click="selectAllPlanActivity"
+					icon="el-icon-success"
+					size="mini"
+					type="success"
+				>
+					Select All
+				</el-button>
+				<el-button
+					@click="resetPlanActivityChecked"
+					icon="el-icon-remove"
+					size="mini"
+					type="danger"
+				>
+					Reset
+				</el-button>
+				<transition name="el-fade-in">
 					<el-button
 						@click="showModalStatus"
 						icon="el-icon-magic-stick"
 						size="mini"
-						v-show="isShowBulkUpdate"
+						v-show="isShowButtonCheckbox"
+						type="warning"
 					>
 						Update Status
 					</el-button>
-				</div>
-			</transition>
+				</transition>
+				<transition name="el-fade-in">
+					<el-button
+						@click="showModalBulkDelete"
+						icon="el-icon-delete"
+						size="mini"
+						v-show="isShowButtonCheckbox"
+						type="danger"
+					>
+						Delete Selected
+					</el-button>
+				</transition>
+			</div>
 			<div class="flex items-center ml-auto">
 				<p class="text-xs mr-2">Rows per page</p>
 				<div class="max-w-[80px]">
@@ -84,15 +93,20 @@
 				@onFilter="handleFilterChange"
 				@onSort="handleSortChange"
 				@onBulkUpdate="handlePlanActivityChecked"
+				@onRemove="handleShowModalConfirmation"
+				@onEdit="handleShowFormUpdateActivity"
 			/>
 			<APIResponseLayout
 				v-else
 				:loading="activities.loading"
-				:error="activities.error"
+				:error="activities.message"
 				:data="activities.data"
 				@refreshFunction="activities.doFetch"
 			/>
 		</section>
+
+		<!-- DIALOG -->
+		<!-- Bulk Update -->
 		<ModalStatus
 			:isModalVisible="isShowModalStatus"
 			@onCancel="closeModalStatus"
@@ -100,15 +114,80 @@
 			:activities="planActivityChecked"
 			@onBulkUpdate="handlePlanActivityChecked"
 		/>
+
+		<!-- Bulk Delete -->
+		<ModalBulkDelete
+			:isModalVisible="isShowModalBulkDelete"
+			@onCancel="closeModalBulkDelete"
+			@onSubmit="deletePlanActivityChecked"
+			:activities="planActivityChecked"
+			@onBulkUpdate="handlePlanActivityChecked"
+		/>
+
+		<!-- Delete Confirmation -->
+		<ModalConfirmation
+			v-if="userStore.getters.role === 'admin'"
+			title="Confirmation"
+			:isModalVisible="isShowModalConfirmation"
+			message="Are you sure want to delete this plan?"
+			@onSubmit="handleConfirmModalConfirmation"
+			@onCancel="handleCancelModalConfirmation"
+		>
+			<template #content>
+				<section v-if="rowModalConfirmation">
+					<div class="flex gap-x-4 font-semibold text-xs">
+						<div>
+							<p>Program</p>
+							<p>Sub Program</p>
+							<p>Site ID</p>
+							<p>Site Name</p>
+							<p>Activity</p>
+						</div>
+						<div>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+						</div>
+						<div class="font-normal">
+							<p>
+								{{ rowModalConfirmation.namaProgram }}
+							</p>
+							<p>
+								{{ rowModalConfirmation.namaSubprogram }}
+							</p>
+							<p>{{ rowModalConfirmation.siteID }}</p>
+							<p>{{ rowModalConfirmation.siteName }}</p>
+							<p>
+								{{ rowModalConfirmation.deskripsiActivity }}
+							</p>
+						</div>
+					</div>
+				</section>
+			</template>
+		</ModalConfirmation>
+
+		<!-- Form Activity -->
 		<InputActivity
 			v-if="userStore.getters.role === 'admin'"
 			:isShow="isShowInputActivities"
 			@closeInputActivities="closeInputActivities"
 		/>
+
+		<!-- Form Activity -->
+		<UpdateActivity
+			v-if="userStore.getters.role === 'admin'"
+			:isShow="isShowFormUpdateActivity"
+			:row="formUpdateActivity"
+			@closeFormUpdateActivity="closeFormUpdateActivity"
+		/>
+
+		<!-- Import Activities -->
 		<ImportExcel
 			v-if="userStore.getters.role === 'admin'"
 			:isShow="isShowImportActivities"
-			title="Import Activities"
+			title="Import Plan Activities"
 			url="/api/activity-plan/upload"
 			@closeImportExcel="closeImportActivities"
 			urlTemplate="/Activity Template.xlsx"
@@ -123,16 +202,21 @@ import {
 	ActivityTable,
 	ImportExcel,
 	InputActivity,
+	UpdateActivity,
 	Card,
 	Select,
 	ModalStatus,
+	ModalConfirmation,
+	ModalBulkDelete,
 } from "@/components";
 import { ref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
 import { Notification, Loading } from "element-ui";
 
+// ==============================================================================================
 // Menu Import Activities
+
 const isShowImportActivities = ref(false);
 const alertCard = ref(null);
 
@@ -145,11 +229,15 @@ const showImportActivities = () => {
 
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
+	console.log(result);
 	if (result) {
 		// console.log(result);
 		if (result.isRefresh) {
 			alertCard.value = {
-				type: !result.message ? "success" : "warning",
+				type:
+					!result.message || result.message.length === 0
+						? "success"
+						: "warning",
 				title: result.data,
 				description: result.message,
 			};
@@ -169,6 +257,7 @@ const closeImportActivities = (result) => {
 	}
 };
 
+// ==============================================================================
 // Menu Input Activities
 const isShowInputActivities = ref(false);
 
@@ -191,8 +280,7 @@ const closeInputActivities = (result) => {
 	}
 };
 
-// =================== Activities ===================
-
+// =================== Activities Data ===================
 // Activities
 // ["status", "weekExecuted", "deskripsiActivity", "namaProgram", "namaSubprogram", "additionalInfo", "siteID", "siteName", "namaKabupaten", "namaDO", "namaNS", "namaPIC", "targetQuartal", "remark", "budget", "cost"]
 const props = defineProps({
@@ -317,58 +405,17 @@ const handleCurrentChange = (val) => {
 	activitiesParams.value.page = val;
 };
 
-// handle bulk update
-const isShowBulkUpdate = ref(false);
-const toggleBulkUpdate = () => {
+// ============================== CHECKBOX ==============================
+// handle button checkbox
+const isShowButtonCheckbox = ref(false);
+const toggleButtonCheckbox = () => {
 	if (planActivityChecked.value.size > 0) {
-		isShowBulkUpdate.value = true;
+		isShowButtonCheckbox.value = true;
 	} else {
-		isShowBulkUpdate.value = false;
+		isShowButtonCheckbox.value = false;
 	}
 
 	console.log(planActivityChecked.value);
-};
-
-const isShowModalStatus = ref(false);
-
-const showModalStatus = () => {
-	isShowModalStatus.value = true;
-};
-
-const closeModalStatus = () => {
-	// delete plan activity where sites is empty
-	planActivityChecked.value.forEach((value, key) => {
-		const sites = value.sites;
-		if (sites.length === 0) {
-			planActivityChecked.value.delete(key);
-
-			// remove checked
-			const allCheckbox = activityTable.value.$el.querySelectorAll(
-				`input[type="checkbox"][name="checkbox-${key}"]`
-			);
-			allCheckbox.forEach((checkbox) => {
-				checkbox.checked = false;
-			});
-		} else {
-			// adjust checked with new respose
-			const allCheckbox = activityTable.value.$el.querySelectorAll(
-				`input[type="checkbox"][name="checkbox-${key}"]`
-			);
-
-			allCheckbox.forEach((checkbox) => {
-				if (sites.includes(checkbox.value)) {
-					checkbox.checked = true;
-				} else {
-					checkbox.checked = false;
-				}
-			});
-		}
-	});
-
-	isShowModalStatus.value = false;
-
-	// decide toggle bulk update
-	toggleBulkUpdate();
 };
 
 const planActivityChecked = ref(new Map());
@@ -409,7 +456,7 @@ const handlePlanActivityChecked = (row) => {
 		planActivityChecked.value.set(key, data);
 	}
 
-	toggleBulkUpdate();
+	toggleButtonCheckbox();
 };
 
 const activityTable = ref(null);
@@ -452,7 +499,7 @@ const selectAllPlanActivity = () => {
 		checkbox.checked = true;
 	});
 
-	toggleBulkUpdate();
+	toggleButtonCheckbox();
 };
 
 // reset all checkbox
@@ -487,10 +534,53 @@ const resetPlanActivityChecked = () => {
 		checkbox.checked = false;
 	});
 
-	toggleBulkUpdate();
+	toggleButtonCheckbox();
 };
 
-// update plan activity
+// =================== BULK UPDATE ===================
+const isShowModalStatus = ref(false);
+
+const showModalStatus = () => {
+	isShowModalStatus.value = true;
+};
+
+const closeModalStatus = () => {
+	// delete plan activity where sites is empty
+	planActivityChecked.value.forEach((value, key) => {
+		const sites = value.sites;
+		if (sites.length === 0) {
+			planActivityChecked.value.delete(key);
+
+			// remove checked
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+			allCheckbox.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+		} else {
+			// adjust checked with new respose
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+
+			allCheckbox.forEach((checkbox) => {
+				if (sites.includes(checkbox.value)) {
+					checkbox.checked = true;
+				} else {
+					checkbox.checked = false;
+				}
+			});
+		}
+	});
+
+	isShowModalStatus.value = false;
+
+	// decide toggle bulk update
+	toggleButtonCheckbox();
+};
+
+// bulk update plan activity
 const updatePlanActivityChecked = (result) => {
 	Loading.service({
 		lock: true,
@@ -500,7 +590,7 @@ const updatePlanActivityChecked = (result) => {
 	});
 
 	// console.log(activityStatusParams);
-	const { data, status, error } = useFetch({
+	const { data, status, message } = useFetch({
 		url: "/api/activity-plan/bulk-update-status",
 		method: "PUT",
 		body: {
@@ -508,41 +598,250 @@ const updatePlanActivityChecked = (result) => {
 		},
 	});
 
-	watch([data, status, error], ([newData, newStatus, newError]) => {
-		if (newStatus === "success" && newData) {
-			// Update all checked data with response
-			activities.value.data.forEach((row) => {
-				const filterData = newData.filter(
-					(item) => item.activityId === row.activityID
-				);
-				if (
-					filterData.length > 0 &&
-					filterData[0].sitesUpdated.includes(row.siteID)
-				) {
-					const result = filterData[0];
-					row.status = result.status;
-					row.weekExecuted = result.weekExecuted
-						? parseInt(result.weekExecuted)
-						: "";
-					row.dateExecuted = result.dateExecuted ? result.dateExecuted : "";
-					row.updatedBy = result.updatedBy;
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				// Update all checked data with response
+				activities.value.data.forEach((row) => {
+					const filterData = newData.filter(
+						(item) => item.activityId === row.activityID
+					);
+					if (
+						filterData.length > 0 &&
+						filterData[0].sitesUpdated.includes(row.siteID)
+					) {
+						const result = filterData[0];
+						row.status = result.status;
+						row.weekExecuted = result.weekExecuted
+							? parseInt(result.weekExecuted)
+							: "";
+						row.dateExecuted = result.dateExecuted ? result.dateExecuted : "";
+						row.updatedBy = result.updatedBy;
+					}
+				});
+
+				resetPlanActivityChecked();
+
+				Loading.service().close();
+				closeModalStatus();
+				Notification.success({
+					title: "Success",
+					message: "Plan activity successfully updated",
+				});
+
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Loading.service().close();
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				unwatch();
+			}
+		}
+	);
+};
+
+// ========================= UPDATE PLAN ACTIVITY =========================
+// Form Update Activity
+const isShowFormUpdateActivity = ref(false);
+const formUpdateActivity = ref({});
+const indexFormUpdateActivity = ref(null);
+
+const handleShowFormUpdateActivity = (result) => {
+	isShowFormUpdateActivity.value = true;
+	formUpdateActivity.value = result.row;
+	indexFormUpdateActivity.value = result.index;
+};
+
+const closeFormUpdateActivity = (result) => {
+	if (result) {
+		Notification.success({
+			title: "Success",
+			message: "Plan activity successfully updated",
+		});
+
+		activities.value.data[indexFormUpdateActivity.value].additionalInfo =
+			result.additionalInfo;
+		activities.value.data[indexFormUpdateActivity.value].remark = result.remark;
+		activities.value.data[indexFormUpdateActivity.value].targetQuartal =
+			result.targetQuartal;
+		activities.value.data[indexFormUpdateActivity.value].pic = result.pic;
+
+		if (userStore.user.role === "admin") {
+			activities.value.data[indexFormUpdateActivity.value].budget =
+				result.budget;
+			activities.value.data[indexFormUpdateActivity.value].cost = result.cost;
+		}
+	}
+
+	isShowFormUpdateActivity.value = false;
+};
+
+// =================== BULK DELETE ===================
+const isShowModalBulkDelete = ref(false);
+
+const showModalBulkDelete = () => {
+	isShowModalBulkDelete.value = true;
+};
+
+const closeModalBulkDelete = () => {
+	// delete plan activity where sites is empty
+	planActivityChecked.value.forEach((value, key) => {
+		const sites = value.sites;
+		if (sites.length === 0) {
+			planActivityChecked.value.delete(key);
+
+			// remove checked
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+			allCheckbox.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+		} else {
+			// adjust checked with new respose
+			const allCheckbox = activityTable.value.$el.querySelectorAll(
+				`input[type="checkbox"][name="checkbox-${key}"]`
+			);
+
+			allCheckbox.forEach((checkbox) => {
+				if (sites.includes(checkbox.value)) {
+					checkbox.checked = true;
+				} else {
+					checkbox.checked = false;
 				}
 			});
+		}
+	});
 
-			resetPlanActivityChecked();
+	isShowModalBulkDelete.value = false;
+
+	// decide toggle bulk update
+	toggleButtonCheckbox();
+};
+
+// bulk update plan activity
+const deletePlanActivityChecked = (result) => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
+
+	// console.log(activityStatusParams);
+	const { status, message } = useFetch({
+		url: "/api/activity-plan",
+		method: "DELETE",
+		body: {
+			data: result,
+		},
+	});
+
+	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
+		if (newStatus === "success") {
+			// if page is last page and only one page
+			if (
+				activitiesParams.value.page === activities.value.totalPage &&
+				activitiesParams.value.page === 1
+			) {
+				activities.value.data = [];
+			} else {
+				if (activitiesParams.value.page === activities.value.totalPage) {
+					handleCurrentChange(activitiesParams.value.page - 1);
+				} else {
+					activities.value.doFetch();
+				}
+			}
+
+			planActivityChecked.value = new Map();
+
+			const allCheckbox =
+				activityTable.value.$el.querySelectorAll(".checkbox_activity");
+
+			// reset all checkbox
+			allCheckbox.forEach((checkbox) => {
+				checkbox.checked = false;
+			});
+
+			toggleButtonCheckbox();
 
 			Loading.service().close();
-			closeModalStatus();
+			closeModalBulkDelete();
 			Notification.success({
 				title: "Success",
-				message: "Plan activity successfully updated",
+				message: "Plan activity successfully deleted",
 			});
-		} else if (newStatus === "error" && newError) {
+
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
 			Loading.service().close();
+			Notification.error({
+				title: "Error",
+				message: newMessage,
+			});
+
+			unwatch();
+		}
+	});
+};
+
+// ========================= DELETE PLAN ACTIVITY =========================
+const isShowModalConfirmation = ref(false);
+const rowModalConfirmation = ref(null);
+const indexModalConfirmation = ref(null);
+
+const handleShowModalConfirmation = (result) => {
+	console.log(result);
+	isShowModalConfirmation.value = true;
+	rowModalConfirmation.value = result.row;
+	indexModalConfirmation.value = result.index;
+};
+
+const handleCancelModalConfirmation = () => {
+	isShowModalConfirmation.value = false;
+};
+
+const handleConfirmModalConfirmation = () => {
+	const url =
+		"/api/activity-plan/" +
+		rowModalConfirmation.value.activityID +
+		"/" +
+		rowModalConfirmation.value.siteID;
+
+	const { status, message } = useFetch({
+		url: url,
+		method: "DELETE",
+	});
+
+	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
+		if (newStatus === "success") {
+			activities.value.data.splice(indexModalConfirmation.value, 1);
+			const message = `Plan ${rowModalConfirmation.value.deskripsiActivity} with site ${rowModalConfirmation.value.namaSite} successfully deleted`;
+
+			// reset modal
+			rowModalConfirmation.value = null;
+			indexModalConfirmation.value = null;
+			isShowModalConfirmation.value = false;
+
+			Notification.success({
+				title: "Success",
+				message: message,
+			});
+
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
+			isShowModalConfirmation.value = false;
+
 			Notification.error({
 				title: "Error",
 				message: newError,
 			});
+
+			unwatch();
 		}
 	});
 };

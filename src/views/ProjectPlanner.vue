@@ -7,14 +7,16 @@
 					progressActivity.data.value.length === 0
 				"
 				:loading="progressActivity.loading"
-				:error="progressActivity.error"
+				:error="progressActivity.message"
 				:data="progressActivity.data"
 			/>
 			<BarChart v-else :chartOptions="chartOptions" :chartData="chartData" />
 		</Card>
 
 		<Card title="Project Planner" class="mt-8">
-			<section class="flex gap-x-4 mb-4 items-center">
+			<section
+				class="flex flex-col gap-y-4 md:flex-row md:gap-x-4 mb-4 items-center"
+			>
 				<div class="w-32">
 					<Select
 						placeholder="Select Week"
@@ -35,7 +37,7 @@
 			<section class="min-h-[400px]">
 				<APIResponseLayout
 					v-if="rows.length === 0"
-					:error="error"
+					:error="message"
 					:loading="loading"
 					@refreshFunction="doFetch"
 				/>
@@ -66,8 +68,8 @@ import { useFetch } from "@/composables";
 import colorsTheme from "../utils/colorsTheme";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-import { Chart as ChartJS } from "chart.js";
-ChartJS.register(ChartDataLabels);
+import { Chart as ChartJS, LogarithmicScale } from "chart.js";
+ChartJS.register(ChartDataLabels, LogarithmicScale);
 // create monthly progres activity chart options
 const chartOptions = {
 	responsive: true,
@@ -81,6 +83,7 @@ const chartOptions = {
 			stacked: true,
 		},
 		y: {
+			type: "logarithmic",
 			stacked: true,
 			ticks: {
 				beginAtZero: true,
@@ -113,7 +116,7 @@ const chartData = ref({
 });
 
 // get project planner from api
-const { data, error, loading, doFetch } = useFetch({
+const { data, message, loading, doFetch } = useFetch({
 	url: "/api/activity-plan/project-planner",
 });
 
@@ -151,14 +154,34 @@ onMounted(async () => {
 				labels: monthNames,
 				datasets: newData.map((item, index) => {
 					const color = colorsTheme.getPastelColor(index);
-					return {
-						label: item.namaProgram,
-						data: item.data,
-						backgroundColor: color,
-						borderColor: color,
-						borderWidth: 1,
-						type: item.namaProgram === "Total" ? "line" : "bar",
-					};
+					if (item.namaProgram === "Total") {
+						return {
+							label: item.namaProgram,
+							data: item.data,
+							backgroundColor: "#000",
+							type: "line",
+							datalabels: {
+								color: "#FFFFFF",
+								anchor: "end",
+								align: "end",
+								offset: 0,
+								borderRadius: 4,
+								backgroundColor: "#000000",
+								font: {
+									size: 12,
+									weight: "bold",
+								},
+							},
+						};
+					} else {
+						return {
+							label: item.namaProgram,
+							data: item.data,
+							backgroundColor: color,
+							borderColor: color,
+							borderWidth: 1,
+						};
+					}
 				}),
 			};
 		}

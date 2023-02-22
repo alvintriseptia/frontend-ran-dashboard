@@ -155,29 +155,36 @@ function handleEdit(row, index) {
 
 function handleActive(row) {
 	const body = new FormData();
-	const active = row.active === "1" ? 0 : 1;
+	const active = convertUtil.toBoolean(row.active) === true ? 0 : 1;
 	body.append("active", active);
 
-	const { data, status, error } = useFetch({
+	const { data, status, message } = useFetch({
 		url: "/api/auth/user/change-status/" + row.username,
 		method: "PUT",
 		body,
 	});
 
-	watch([data, status, error], ([newData, newStatus, newError]) => {
-		if (newStatus === "success" && newData) {
-			row.active = active.toString();
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				row.active = active.toString();
 
-			Notification.success({
-				title: "Success",
-				message: newData,
-			});
-		} else if (newStatus === "error" && newError) {
-			Notification.error({
-				title: "Error",
-				message: newError,
-			});
+				Notification.success({
+					title: "Success",
+					message: newData,
+				});
+
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				unwatch();
+			}
 		}
-	});
+	);
 }
 </script>

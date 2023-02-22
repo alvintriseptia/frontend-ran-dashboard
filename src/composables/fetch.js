@@ -10,7 +10,7 @@ export function useFetch({
 }) {
 	const loading = ref(true);
 	const data = ref(null);
-	const error = ref(null);
+	const message = ref(null);
 	const status = ref(null);
 	const totalData = ref(null);
 	const totalPage = ref(null);
@@ -35,7 +35,7 @@ export function useFetch({
 						if (res.data.message === "Unauthorized") {
 							window.location.replace("/login");
 						}
-						error.value = res.data.message;
+						message.value = res.data.message;
 						data.value = null;
 					} else {
 						data.value = res.data.data;
@@ -50,9 +50,9 @@ export function useFetch({
 						}
 
 						if (res.data.message) {
-							error.value = res.data.message;
+							message.value = res.data.message;
 						} else {
-							error.value = null;
+							message.value = null;
 						}
 					}
 
@@ -61,12 +61,12 @@ export function useFetch({
 				.catch((err) => {
 					if (!err.response) {
 						// network error
-						error.value = "Error: Network Error";
+						message.value = "Error: Network Error";
 					} else {
 						if (err.response.data.message === "Unauthorized") {
 							window.location.replace("/login");
 						}
-						error.value = err.response.data.message;
+						message.value = err.response.data.message;
 					}
 
 					// reset data state..
@@ -91,7 +91,7 @@ export function useFetch({
 	return {
 		data,
 		status,
-		error,
+		message,
 		loading,
 		doFetch,
 		totalData,

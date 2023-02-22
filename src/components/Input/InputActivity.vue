@@ -4,7 +4,7 @@
 		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">Input Activities</h2>
+			<h2 class="text-lg lg:text-xl font-bold">Input Plan Activity</h2>
 			<OutlinedButton size="sm" @onClick="emit('closeInputActivities')"
 				>&#10006;</OutlinedButton
 			>
@@ -34,7 +34,7 @@
 
 			<el-form-item label="Site" :label-width="formLabelWidth" prop="siteID">
 				<RemoteSearchSelect
-					v-model="formInputActivity.siteID"
+					:modelValue="formInputActivity.siteID"
 					:options="unref(searchSites.data)"
 					:isMultiple="false"
 					placeholder="Select Site"
@@ -312,26 +312,42 @@ function onSubmit() {
 			}
 
 			// console.log(activityStatusParams);
-			const { data, error } = useFetch({
+			const { data, status, message } = useFetch({
 				url: "/api/activity-plan",
 				method: "POST",
 				body,
 			});
 
-			watch(data, (newData) => {
-				if (newData) {
-					emit("closeInputActivities", newData);
-				}
-			});
+			const unwatch = watch(
+				[data, status, message],
+				([newData, newStatus, newMessage]) => {
+					if (newStatus === "success" && newData) {
+						//reset form
+						formInputActivity.value = {
+							deskripsiActivity: "",
+							siteID: "",
+							targetQuartal: "",
+							remark: "",
+							statusActivity: "",
+							weekExecuted: "",
+						};
+						ruleFormRef.value.model.deskripsiActivity = "";
+						ruleFormRef.value.model.siteID = "";
+						ruleFormRef.value.resetFields();
 
-			watch(error, (newError) => {
-				if (newError) {
-					Notification.error({
-						title: "Error",
-						message: newError,
-					});
+						emit("closeInputActivities", newData);
+
+						unwatch();
+					} else if (newStatus === "error" && newMessage) {
+						Notification.error({
+							title: "Error",
+							message: newMessage,
+						});
+
+						unwatch();
+					}
 				}
-			});
+			);
 		} else {
 			return false;
 		}

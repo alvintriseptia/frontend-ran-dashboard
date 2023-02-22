@@ -158,22 +158,24 @@ onMounted(() => {
 		(newVal) => {
 			if (newVal.siteID) {
 				if (type.value === "edit") {
-					const { data, error } = useFetch({
+					const { data, status, message } = useFetch({
 						url: `/api/activity-plan/count-by-site-id/${newVal.siteID}`,
 					});
-					watch(data, (newData) => {
-						if (newData) {
-							siteCount.value = parseInt(newData);
+					const unwatch = watch(
+						[data, status, message],
+						([newData, newStatus, newMessage]) => {
+							if (newStatus === "success" && newData) {
+								siteCount.value = parseInt(newData);
+								unwatch();
+							} else if (newStatus === "error" && newMessage) {
+								Notification.error({
+									title: "Error",
+									message: newMessage,
+								});
+								unwatch();
+							}
 						}
-					});
-					watch(error, (newError) => {
-						if (newError) {
-							Notification.error({
-								title: "Error",
-								message: newError,
-							});
-						}
-					});
+					);
 				}
 
 				if (newVal.siteID) {
@@ -262,27 +264,44 @@ function onSubmit() {
 			body.append("kabupaten", ruleForm.value.namaKabupaten);
 
 			// console.log(activityStatusParams);
-			const { data, error } = useFetch({
+			const { data, status, message } = useFetch({
 				url: type.value === "input" ? "/api/site" : `/api/site/${siteID.value}`,
 				method: type.value === "input" ? "POST" : "PUT",
 				body,
 			});
 
-			watch(data, (newData) => {
-				if (newData) {
-					emit("closeInput", { ...newData, type });
-				}
-			});
+			const unwatch = watch(
+				[data, status, message],
+				([newData, newStatus, newMessage]) => {
+					if (newStatus === "success" && newData) {
+						// reset form
+						ruleForm.value = {
+							siteID: "",
+							siteName: "",
+							namaDO: "",
+							namaNS: "",
+							namaKabupaten: "",
+						};
 
-			watch(error, (newError) => {
-				if (newError) {
-					console.log(newError);
-					Notification.error({
-						title: "Error",
-						message: newError,
-					});
+						ruleFormRef.value.model.namaDO = "";
+						ruleFormRef.value.model.namaNS = "";
+						ruleFormRef.value.model.namaKabupaten = "";
+
+						ruleFormRef.value.resetFields();
+
+						emit("closeInput", { ...newData, type });
+
+						unwatch();
+					} else if (newStatus === "error" && newMessage) {
+						Notification.error({
+							title: "Error",
+							message: newMessage,
+						});
+
+						unwatch();
+					}
 				}
-			});
+			);
 		} else {
 			return false;
 		}

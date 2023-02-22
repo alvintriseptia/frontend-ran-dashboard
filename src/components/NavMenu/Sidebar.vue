@@ -6,18 +6,19 @@
 		:collapse="!isMobile ? false : isCollapse"
 		:active-text-color="colorsTheme.primary"
 	>
-		<div class="flex md:flex-col justify-between">
+		<div class="flex lg:flex-col justify-between">
 			<el-menu-item
 				index="0"
-				class="flex justify-center items-center transition-none"
+				class="flex transition-none"
+				:class="isMobile ? '' : 'justify-center items-center'"
 			>
 				<button @click="handleCollapse">
 					<img
-						:src="isCollapse ? telkomselLogo : telkomsel"
+						:src="isMobile ? telkomselLogo : telkomsel"
 						alt="telkomsel"
 						:class="
-							isCollapse
-								? 'w-[100px] h-[40px] object-contain'
+							isMobile
+								? 'w-[70px] h-[40px] object-contain'
 								: 'w-[140px] h-[80px] object-contain'
 						"
 					/>
@@ -35,7 +36,7 @@
 		<div v-if="!isMobile ? true : !isCollapse">
 			<el-menu-item index="1">
 				<router-link to="/">
-					<div>
+					<div @click="isCollapse = !isCollapse">
 						<i class="el-icon-menu"></i>
 						<span slot="title"> Dashboard </span>
 					</div>
@@ -43,7 +44,7 @@
 			</el-menu-item>
 			<el-menu-item index="2">
 				<router-link to="/project-planner">
-					<div>
+					<div @click="isCollapse = !isCollapse">
 						<i class="el-icon-document"></i>
 						<span slot="title"> Project Planner </span>
 					</div>
@@ -51,7 +52,7 @@
 			</el-menu-item>
 			<el-menu-item index="3">
 				<router-link to="/activities">
-					<div>
+					<div @click="isCollapse = !isCollapse">
 						<i class="el-icon-reading"></i>
 						<span slot="title"> Activities </span>
 					</div>
@@ -59,7 +60,7 @@
 			</el-menu-item>
 			<el-menu-item index="4" v-if="userStore.getters.role === 'admin'">
 				<router-link to="/sites">
-					<div>
+					<div @click="isCollapse = !isCollapse">
 						<i class="el-icon-place"></i>
 						<span slot="title"> Sites </span>
 					</div>
@@ -67,7 +68,7 @@
 			</el-menu-item>
 			<el-menu-item index="5" v-if="userStore.getters.role === 'admin'">
 				<router-link to="/accounts">
-					<div>
+					<div @click="isCollapse = !isCollapse">
 						<i class="el-icon-setting"></i>
 						<span slot="title"> Accounts </span>
 					</div>
@@ -95,7 +96,7 @@ import telkomselLogo from "@/assets/images/telkomsel-logo.png";
 
 const { isMobile } = useWindow();
 
-const isCollapse = ref(false);
+const isCollapse = ref(true);
 
 const handleCollapse = () => {
 	if (isMobile.value) {

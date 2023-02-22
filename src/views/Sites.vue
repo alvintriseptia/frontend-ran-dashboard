@@ -282,7 +282,10 @@ const closeImportSites = (result) => {
 		// console.log(result);
 		if (result.isRefresh) {
 			alertCard.value = {
-				type: !result.message ? "success" : "warning",
+				type:
+					!result.message || result.message.length === 0
+						? "success"
+						: "warning",
 				title: result.data,
 				description: result.message,
 			};
@@ -297,10 +300,6 @@ const closeImportSites = (result) => {
 				description: result.message,
 			};
 		}
-
-		setTimeout(() => {
-			alertCard.value = null;
-		}, 5000);
 	} else {
 		alertCard.value = null;
 	}
@@ -340,63 +339,69 @@ const handleShowModalConfirmation = (result) => {
 		typeDialog.value = result.typeDialog;
 
 		if (typeDialog.value === "delete") {
-			console.log("delete...");
-
 			let url = "";
 
 			messageDialog.value = "Are you sure want to delete this site?";
 			url = `/api/activity-plan/count-by-site-id/${result.row.siteID}`;
 
-			const { data, error } = useFetch({
+			const { data, status, message } = useFetch({
 				url,
 			});
-			watch(data, (newData) => {
-				if (newData) {
-					if (parseInt(newData) > 0) {
-						deletedCount.value = parseInt(newData);
-						if (result.type === "site") {
-							descriptionDialog.value = `There are ${newData} activity plans related to this site will be deleted.`;
+			const unwatch = watch(
+				[data, status, message],
+				([newData, newStatus, newMessage]) => {
+					if (newStatus === "success" && newData) {
+						if (parseInt(newData) > 0) {
+							deletedCount.value = parseInt(newData);
+							if (result.type === "site") {
+								descriptionDialog.value = `There are ${newData} activity plans related to this site will be deleted.`;
+							} else {
+								descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be deleted.`;
+							}
 						} else {
-							descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be deleted.`;
+							deletedCount.value = 0;
 						}
-					} else {
-						deletedCount.value = 0;
+						isShowModalConfirmation.value = true;
+
+						unwatch();
+					} else if (newStatus === "error" && newMessage) {
+						Notification.error({
+							title: "Error",
+							message: newMessage,
+						});
+
+						unwatch();
 					}
 				}
-				isShowModalConfirmation.value = true;
-			});
-			watch(error, (newError) => {
-				if (newError) {
-					Notification.error({
-						title: "Error",
-						message: newError,
-					});
-				}
-			});
+			);
 		} else if (typeDialog.value === "edit") {
 			messageDialog.value = "Are you sure want to update this data?";
-			const { data, error } = useFetch({
+			const { data, status, message } = useFetch({
 				url: `/api/site/count-by-${result.type}/${result.row.value}`,
 			});
-			watch(data, (newData) => {
-				if (newData) {
-					if (parseInt(newData) > 0) {
-						deletedCount.value = parseInt(newData);
-						descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be updated.`;
-					} else {
-						deletedCount.value = 0;
+			const unwatch = watch(
+				[data, status, message],
+				([newData, newStatus, newMessage]) => {
+					if (newStatus === "success" && newData) {
+						if (parseInt(newData) > 0) {
+							deletedCount.value = parseInt(newData);
+							descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be updated.`;
+						} else {
+							deletedCount.value = 0;
+						}
+						isShowModalConfirmation.value = true;
+
+						unwatch();
+					} else if (newStatus === "error" && newMessage) {
+						Notification.error({
+							title: "Error",
+							message: newMessage,
+						});
+
+						unwatch();
 					}
 				}
-				isShowModalConfirmation.value = true;
-			});
-			watch(error, (newError) => {
-				if (newError) {
-					Notification.error({
-						title: "Error",
-						message: newError,
-					});
-				}
-			});
+			);
 		}
 	} else {
 		Nofitication.error({
@@ -423,12 +428,12 @@ const handleDelete = () => {
 	isShowModalConfirmation.value = false;
 	const url = "/api/site/" + row.value.siteID;
 
-	const { status, error } = useFetch({
+	const { status, message } = useFetch({
 		url: url,
 		method: "DELETE",
 	});
 
-	watch(status, (newStatus) => {
+	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
 		if (newStatus === "success") {
 			sites.value.data.splice(index.value, 1);
 
@@ -444,15 +449,15 @@ const handleDelete = () => {
 				title: "Success",
 				message: message,
 			});
-		}
-	});
 
-	watch(error, (newError) => {
-		if (newError) {
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
 			Notification.error({
 				title: "Error",
 				message: newError,
 			});
+
+			unwatch();
 		}
 	});
 };

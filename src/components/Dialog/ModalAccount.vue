@@ -15,9 +15,12 @@
 				label="Username"
 				:label-width="formLabelWidth"
 				prop="username"
-				:disable="type === 'reset'"
 			>
-				<el-input v-model="form.username" autocomplete="off"></el-input>
+				<el-input
+					:disabled="type === 'reset'"
+					v-model="form.username"
+					autocomplete="off"
+				></el-input>
 			</el-form-item>
 
 			<el-form-item
@@ -249,23 +252,28 @@ function onSubmit() {
 				url = "/api/auth/user/reset-password/" + username.value;
 			}
 
-			const { data, error } = useFetch({
+			const { data, status, message } = useFetch({
 				url: url,
 				method: "PUT",
 				body,
 			});
 
-			watch(data, (newData) => {
-				if (newData) {
-					emit("onSubmit", newData);
-				}
-			});
+			watch([data, status, message], ([newData, newStatus, newMessage]) => {
+				if (newStatus === "success" && newData) {
+					ruleFormRef.value.model.namaNS = "";
+					form.value = {
+						username: "",
+						password: "",
+						confirmPassword: "",
+						namaNS: "",
+						active: 1,
+					};
 
-			watch(error, (newError) => {
-				if (newError) {
+					emit("onSubmit", newData);
+				} else if (newStatus === "error" && newMessage) {
 					Notification.error({
 						title: "Error",
-						message: newError,
+						message: newMessage,
 					});
 				}
 			});

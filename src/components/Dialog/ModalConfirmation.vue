@@ -2,12 +2,14 @@
 	<el-dialog
 		:title="title"
 		:visible.sync="dialogVisible"
-		width="30%"
 		@close="emit('onCancel')"
 		:append-to-body="appendToBody"
 	>
 		<p class="font-semibold text-sm mb-4 text-center">{{ message }}</p>
+		<slot name="content" />
+
 		<p class="text-center">{{ description }}</p>
+
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="emit('onCancel')">Cancel</el-button>
 			<el-button

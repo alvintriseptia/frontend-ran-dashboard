@@ -30,7 +30,29 @@
 				{{ row.deskripsiActivity }}
 			</p>
 		</section>
-		<el-form :model="form">
+		<el-form :model="form" :rules="rules" ref="ruleForm" label-position="top">
+			<el-form-item
+				v-if="userStore.getters.role === 'admin'"
+				label="Budget"
+				:label-width="formLabelWidth"
+			>
+				<el-input v-model="form.budget" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item
+				v-if="userStore.getters.role === 'admin'"
+				type="number"
+				label="Cost"
+				:label-width="formLabelWidth"
+				prop="cost"
+			>
+				<el-input v-model="form.cost" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="PIC" :label-width="formLabelWidth">
+				<el-input v-model="form.pic" autocomplete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="Additional Info" :label-width="formLabelWidth">
+				<el-input v-model="form.additionalInfo" autocomplete="off"></el-input>
+			</el-form-item>
 			<el-form-item label="Remark" :label-width="formLabelWidth">
 				<el-input v-model="form.remark" autocomplete="off"></el-input>
 			</el-form-item>
@@ -54,6 +76,7 @@
 
 <script setup>
 import { computed, ref, watch } from "vue";
+import { userStore } from "@/stores";
 
 const formLabelWidth = "120px";
 const options = [
@@ -91,7 +114,13 @@ const props = defineProps({
 });
 
 function onSubmit() {
-	emit("onSubmit", form.value);
+	ruleForm.value.validate((valid) => {
+		if (valid) {
+			emit("onSubmit", form.value);
+		} else {
+			return false;
+		}
+	});
 }
 function onCancel() {
 	emit("onCancel");
@@ -100,21 +129,45 @@ function onCancel() {
 const dialogFormVisible = computed(() => props.isModalVisible);
 
 const form = ref({
+	budget: userStore.getters.role === "admin" ? props.row.budget : "",
+	cost: userStore.getters.role === "admin" ? props.row.cost : "",
+	additionalInfo: props.row.additionalInfo,
 	remark: props.row.remark,
 	targetQuartal: props.row.targetQuartal,
 	activityId: props.row.activityID,
 	siteId: props.row.siteID,
+	pic: props.row.namaPIC,
 });
+
+const rules = ref({
+	cost: [
+		{
+			validator: (rule, value, callback) => {
+				if (value && !Number(value)) {
+					callback(new Error("Please input number"));
+				} else {
+					callback();
+				}
+			},
+		},
+	],
+});
+
+const ruleForm = ref(null);
 
 // watch props row
 watch(
 	() => props.row,
 	(newVal) => {
 		form.value = {
+			budget: userStore.getters.role === "admin" ? newVal.budget : "",
+			cost: userStore.getters.role === "admin" ? newVal.cost : "",
+			additionalInfo: newVal.additionalInfo,
 			remark: newVal.remark,
 			targetQuartal: newVal.targetQuartal,
 			activityId: newVal.activityID,
 			siteId: newVal.siteID,
+			pic: newVal.namaPIC,
 		};
 	}
 );

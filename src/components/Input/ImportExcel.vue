@@ -104,25 +104,29 @@ const handleImport = () => {
 	body.append("upfile", excelFile.value.raw);
 
 	// console.log(activityStatusParams);
-	const { data, status, error } = useFetch({
+	const { data, status, message } = useFetch({
 		url: props.url,
 		method: "POST",
 		body,
 	});
 
-	watch([data, status, error], ([newData, newStatus, newError]) => {
+	watch([data, status, message], ([newData, newStatus, newMessage]) => {
 		if (newStatus === "success" && newData) {
+			// reset current data
+			excelFile.value = {};
+			files.value = [];
+
 			Loading.service().close();
 			emit("closeImportExcel", {
 				isRefresh: newData ? true : false,
 				data: newData,
-				message: error ? error : "",
+				message: newMessage ? newMessage : message.value,
 			});
-		} else if (newStatus === "error" && newError) {
+		} else if (newStatus === "error" && newMessage) {
 			Loading.service().close();
 			Notification.error({
 				title: "Error",
-				message: newError,
+				message: newMessage,
 			});
 		} else {
 			Loading.service().close();
