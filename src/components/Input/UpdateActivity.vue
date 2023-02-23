@@ -243,21 +243,26 @@ function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
 		if (valid) {
 			const body = new FormData();
-			body.append("activityId", form.activityId);
-			body.append("siteId", form.siteId);
-			body.append("remark", form.remark);
-			body.append("pic", form.pic);
-			body.append("targetQuartal", form.targetQuartal);
-			body.append("additionalInfo", form.additionalInfo);
+			body.append("activityId", formUpdateActivity.value.activityId);
+			body.append("siteId", formUpdateActivity.value.siteId);
+			body.append("additionalInfo", formUpdateActivity.value.additionalInfo);
+			body.append("targetQuartal", formUpdateActivity.value.targetQuartal);
+			body.append("remark", formUpdateActivity.value.remark);
+			body.append("pic", formUpdateActivity.value.pic);
 
 			if (userStore.getters.role === "admin") {
-				body.append("budget", form.budget);
-				body.append("cost", form.cost);
+				body.append("budget", formUpdateActivity.value.budget);
+				body.append("cost", formUpdateActivity.value.cost);
 			}
 
-			// console.log(activityStatusParams);
+			const url =
+				"/api/activity-plan/" +
+				formUpdateActivity.value.activityId +
+				"/" +
+				formUpdateActivity.value.siteId;
+
 			const { data, status, message } = useFetch({
-				url: "/api/activity-plan",
+				url,
 				method: "PUT",
 				body,
 			});
@@ -266,19 +271,6 @@ function onSubmit() {
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
-						//reset form
-						formUpdateActivity.value = {
-							deskripsiActivity: "",
-							additionalInfo: "",
-							remark: "",
-							targetQuartal: "",
-							activityId: "",
-							siteId: "",
-							pic: "",
-							budget: "",
-							cost: "",
-						};
-						ruleFormRef.value.resetFields();
 						emit("closeFormUpdateActivity", newData);
 
 						unwatch();

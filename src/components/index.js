@@ -72,6 +72,7 @@ import ModalActivity from "./Dialog/ModalActivity.vue";
 import ModalConfirmation from "./Dialog/ModalConfirmation.vue";
 import ModalStatus from "./Dialog/ModalStatus.vue";
 import ModalBulkDelete from "./Dialog/ModalBulkDelete.vue";
+import ModalBulkUpdate from "./Dialog/ModalBulkUpdate.vue";
 import PopOverInput from "./Dialog/PopOverInput.vue";
 import PopOverAccount from "./Dialog/PopOverAccount.vue";
 export {
@@ -83,4 +84,5 @@ export {
 	PopOverAccount,
 	ModalStatus,
 	ModalBulkDelete,
+	ModalBulkUpdate,
 };
