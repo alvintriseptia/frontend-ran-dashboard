@@ -124,6 +124,14 @@
 			@onBulkUpdate="handlePlanActivityChecked"
 		/>
 
+		<!-- Bulk Update -->
+		<ModalBulkUpdate
+			:isModalVisible="isShowModalBulkUpdate"
+			:data="dataBulkUpdate"
+			@onCancel="closeModalBulkUpdate"
+			@onSubmit="bulkUpdatePlanActivity"
+		/>
+
 		<!-- Delete Confirmation -->
 		<ModalConfirmation
 			v-if="userStore.getters.role === 'admin'"
@@ -208,6 +216,7 @@ import {
 	ModalStatus,
 	ModalConfirmation,
 	ModalBulkDelete,
+	ModalBulkUpdate,
 } from "@/components";
 import { ref, watch } from "vue";
 import { useFetch } from "@/composables";
@@ -229,16 +238,20 @@ const showImportActivities = () => {
 
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
-	console.log(result);
 	if (result) {
-		// console.log(result);
+		console.log(result.data);
+		if (result.data.updateable.length > 0) {
+			dataBulkUpdate.value = result.data.updateable;
+			showModalBulkUpdate();
+		}
+
 		if (result.isRefresh) {
 			alertCard.value = {
 				type:
 					!result.message || result.message.length === 0
 						? "success"
 						: "warning",
-				title: result.data,
+				title: result.data.successMessage,
 				description: result.message,
 			};
 			activitiesParams.value = {
@@ -248,7 +261,7 @@ const closeImportActivities = (result) => {
 		} else if (result.message) {
 			alertCard.value = {
 				type: "warning",
-				title: result.data,
+				title: result.data.successMessage,
 				description: result.message,
 			};
 		}
@@ -270,7 +283,6 @@ const showInputActivities = () => {
 
 const closeInputActivities = (result) => {
 	isShowInputActivities.value = false;
-	console.log(result);
 	if (result) {
 		activities.value.data.unshift(result);
 		Notification.success({
@@ -345,7 +357,7 @@ const limits = [
 
 const activities = ref(
 	useFetch({
-		url: "/api/activity",
+		url: "/api/activity-plan",
 		params: activitiesParams,
 	})
 );
@@ -537,7 +549,7 @@ const resetPlanActivityChecked = () => {
 	toggleButtonCheckbox();
 };
 
-// =================== BULK UPDATE ===================
+// =================== BULK UPDATE STATUS ===================
 const isShowModalStatus = ref(false);
 
 const showModalStatus = () => {
@@ -644,6 +656,61 @@ const updatePlanActivityChecked = (result) => {
 	);
 };
 
+// ========================= BULK UPDATE PLAN ACTIVITY =========================
+const dataBulkUpdate = ref([]);
+const isShowModalBulkUpdate = ref(false);
+
+const showModalBulkUpdate = () => {
+	isShowModalBulkUpdate.value = true;
+};
+
+const closeModalBulkUpdate = () => {
+	// reset data bulk update
+	dataBulkUpdate.value = [];
+	isShowModalBulkUpdate.value = false;
+};
+
+// bulk update plan activity
+const bulkUpdatePlanActivity = (result) => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
+
+	// console.log(activityStatusParams);
+	const { status, message } = useFetch({
+		url: "/api/activity-plan/bulk-update",
+		method: "PUT",
+		body: {
+			data: result,
+		},
+	});
+
+	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
+		if (newStatus === "success") {
+			dataBulkUpdate.value = [];
+			Loading.service().close();
+			closeModalBulkUpdate();
+			Notification.success({
+				title: "Success",
+				message: "Plan activity successfully updated",
+			});
+
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
+			Loading.service().close();
+			Notification.error({
+				title: "Error",
+				message: newMessage,
+			});
+
+			unwatch();
+		}
+	});
+};
+
 // ========================= UPDATE PLAN ACTIVITY =========================
 // Form Update Activity
 const isShowFormUpdateActivity = ref(false);
@@ -657,6 +724,7 @@ const handleShowFormUpdateActivity = (result) => {
 };
 
 const closeFormUpdateActivity = (result) => {
+	isShowFormUpdateActivity.value = false;
 	if (result) {
 		Notification.success({
 			title: "Success",
@@ -668,16 +736,14 @@ const closeFormUpdateActivity = (result) => {
 		activities.value.data[indexFormUpdateActivity.value].remark = result.remark;
 		activities.value.data[indexFormUpdateActivity.value].targetQuartal =
 			result.targetQuartal;
-		activities.value.data[indexFormUpdateActivity.value].pic = result.pic;
+		activities.value.data[indexFormUpdateActivity.value].namaPIC = result.pic;
 
-		if (userStore.user.role === "admin") {
+		if (userStore.getters.role === "admin") {
 			activities.value.data[indexFormUpdateActivity.value].budget =
 				result.budget;
 			activities.value.data[indexFormUpdateActivity.value].cost = result.cost;
 		}
 	}
-
-	isShowFormUpdateActivity.value = false;
 };
 
 // =================== BULK DELETE ===================

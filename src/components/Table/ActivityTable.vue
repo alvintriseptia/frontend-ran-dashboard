@@ -953,7 +953,7 @@ const handleStatusUpdate = (row, result) => {
 
 	body.append("activityId", row.activityID);
 	body.append("siteId", row.siteID);
-	body.append("status", result.status);
+	body.append("done", result.status === "Done" ? 1 : 0);
 	if (result.status === "Done") {
 		body.append("dateExecuted", result.date);
 	} else {
@@ -962,10 +962,11 @@ const handleStatusUpdate = (row, result) => {
 		body.append("dateExecuted", dateNow);
 	}
 
-	// console.log(activityStatusParams);
+	const url =
+		"/api/activity-plan/date-executed/" + row.activityID + "/" + row.siteID;
 	const { data, status, message } = useFetch({
-		url: "/api/activity/week-executed",
-		method: "POST",
+		url,
+		method: "PUT",
 		body,
 	});
 
