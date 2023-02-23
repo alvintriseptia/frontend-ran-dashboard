@@ -5,13 +5,22 @@
 				v-if="userStore.getters.role === 'admin'"
 				@onClick="showInputActivities"
 				class="mr-4"
-				>Input Plan Activity</OutlinedButton
 			>
+				Input
+			</OutlinedButton>
 			<OutlinedButton
 				v-if="userStore.getters.role === 'admin'"
 				@onClick="showImportActivities"
-				>Import Plan Activities</OutlinedButton
 			>
+				Import
+			</OutlinedButton>
+			<Button
+				v-if="userStore.getters.role === 'admin'"
+				@onClick="handleExportPlanActivities"
+				class="ml-4"
+			>
+				Export
+			</Button>
 		</template>
 
 		<section class="my-4 flex justify-between items-center">
@@ -205,6 +214,7 @@
 
 <script setup>
 import {
+	Button,
 	OutlinedButton,
 	APIResponseLayout,
 	ActivityTable,
@@ -222,6 +232,7 @@ import { ref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { userStore } from "@/stores";
 import { Notification, Loading } from "element-ui";
+import axios from "axios";
 
 // ==============================================================================================
 // Menu Import Activities
@@ -239,7 +250,6 @@ const showImportActivities = () => {
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
 	if (result) {
-		console.log(result.data);
 		if (result.data.updateable.length > 0) {
 			dataBulkUpdate.value = result.data.updateable;
 			showModalBulkUpdate();
@@ -910,5 +920,49 @@ const handleConfirmModalConfirmation = () => {
 			unwatch();
 		}
 	});
+};
+
+// ========================= EXPORT EXCEL =========================
+const handleExportPlanActivities = async () => {
+	try {
+		Loading.service({
+			lock: true,
+			text: "Loading...",
+			spinner: "el-icon-loading",
+			background: "rgba(0, 0, 0, 0.7)",
+		});
+		const url = "/api/activity-plan/download";
+		const response = await axios.get(url, {
+			responseType: "blob",
+		});
+
+		const blob = new Blob([response.data], {
+			type: "application/vnd.ms-excel",
+		});
+		const link = document.createElement("a");
+
+		link.href = window.URL.createObjectURL(blob);
+
+		const currentDate = new Date();
+		const date = currentDate.getDate();
+		const month = currentDate.getMonth() + 1;
+		const year = currentDate.getFullYear();
+
+		const filename = `plan-activity-${month}-${date}-${year}`;
+		link.download = filename;
+		link.click();
+
+		Loading.service().close();
+		Notification.success({
+			title: "Success",
+			message: "Plan activity successfully exported",
+		});
+	} catch (error) {
+		Loading.service().close();
+		Notification.error({
+			title: "Error",
+			message: error,
+		});
+	}
 };
 </script>

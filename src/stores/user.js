@@ -10,10 +10,14 @@ Vue.use(Vuex);
 export const userStore = new Store({
 	state: {
 		user: null,
+		loading: false,
 	},
 	mutations: {
 		setUser(state, user) {
 			state.user = user;
+		},
+		setLoading(state, loading) {
+			state.loading = loading;
 		},
 	},
 	actions: {
@@ -41,6 +45,7 @@ export const userStore = new Store({
 		},
 		async getUser({ commit }) {
 			try {
+				commit("setLoading", true);
 				const response = await axios.get("/api/auth/user");
 				if (response.data.status === "success") {
 					commit("setUser", response.data.data);
@@ -55,6 +60,8 @@ export const userStore = new Store({
 				if (router.currentRoute.path !== "/login") {
 					router.push("/login");
 				}
+			} finally {
+				commit("setLoading", false);
 			}
 		},
 		async logout({ commit }) {
@@ -87,6 +94,9 @@ export const userStore = new Store({
 		},
 		role(state) {
 			return state.user.role;
+		},
+		loading(state) {
+			return state.loading;
 		},
 	},
 });
