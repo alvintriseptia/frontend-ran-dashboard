@@ -3,9 +3,9 @@
 		<Card title="Sites" :alert="alertCard">
 			<template #header>
 				<OutlinedButton @onClick="showInput('input')" class="mr-4"
-					>Input Site</OutlinedButton
-				>
-				<OutlinedButton @onClick="showImportSites">Import Sites</OutlinedButton>
+					>Input
+				</OutlinedButton>
+				<OutlinedButton @onClick="showImportSites">Import</OutlinedButton>
 			</template>
 
 			<section class="my-4 flex items-center justify-between">
