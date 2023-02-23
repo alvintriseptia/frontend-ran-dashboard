@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40 import-activity"
+		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
 		:class="isShow ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
@@ -110,27 +110,36 @@ const handleImport = () => {
 		body,
 	});
 
-	watch([data, status, message], ([newData, newStatus, newMessage]) => {
-		if (newStatus === "success" && newData) {
-			// reset current data
-			excelFile.value = {};
-			files.value = [];
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				// reset current data
+				excelFile.value = {};
+				files.value = [];
 
-			Loading.service().close();
-			emit("closeImportExcel", {
-				isRefresh: newData ? true : false,
-				data: newData,
-				message: newMessage ? newMessage : message.value,
-			});
-		} else if (newStatus === "error" && newMessage) {
-			Loading.service().close();
-			Notification.error({
-				title: "Error",
-				message: newMessage,
-			});
-		} else {
-			Loading.service().close();
+				Loading.service().close();
+				emit("closeImportExcel", {
+					isRefresh: newData ? true : false,
+					data: newData,
+					message: newMessage ? newMessage : message.value,
+				});
+
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Loading.service().close();
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				unwatch();
+			} else {
+				Loading.service().close();
+
+				unwatch();
+			}
 		}
-	});
+	);
 };
 </script>

@@ -11,6 +11,7 @@
 		}"
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
+		lazy
 	>
 		<el-table-column label="NO" :width="50" fixed="left">
 			<template #default="{ row, $index }">
@@ -107,7 +108,7 @@
 <script setup>
 // Import Data
 import { dateUtil, colorsTheme, numberFormat } from "@/utils";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { userStore } from "@/stores";
 
 // Define Props
@@ -155,28 +156,20 @@ const customProgressColors = [
 // Define Methods
 // cellClassChecker will check the current cell to be highlighted
 function cellClassChecker({ row, columnIndex }) {
-	// Actual Start
-	if (
-		row.weekStartActual &&
-		columnIndex === parseInt(row.weekStartActual) + (skippedColumns - 1)
-	) {
-		return "bg-purple-300 p-0";
-	}
-
 	// Actual Complete
-	else if (
+	if (
 		row.weekCompleteActual !== null &&
 		columnIndex === parseInt(row.weekCompleteActual) + (skippedColumns - 1)
 	) {
 		return "bg-purple-600 p-0 text-white";
 	}
 
-	// Actual Start Beyond
+	// Actual Start
 	else if (
-		row.weekStartBeyond &&
-		columnIndex === parseInt(row.weekStartBeyond) + (skippedColumns - 1)
+		row.weekStartActual &&
+		columnIndex === parseInt(row.weekStartActual) + (skippedColumns - 1)
 	) {
-		return "bg-orange-300 p-0";
+		return "bg-purple-300 p-0";
 	}
 
 	// Actual Complete Beyond
@@ -185,6 +178,14 @@ function cellClassChecker({ row, columnIndex }) {
 		columnIndex === parseInt(row.weekCompleteBeyond) + (skippedColumns - 1)
 	) {
 		return "bg-orange-600 p-0 text-white";
+	}
+
+	// Actual Start Beyond
+	else if (
+		row.weekStartBeyond &&
+		columnIndex === parseInt(row.weekStartBeyond) + (skippedColumns - 1)
+	) {
+		return "bg-orange-300 p-0";
 	}
 
 	// Week Highlighted

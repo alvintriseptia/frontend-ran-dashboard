@@ -90,6 +90,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { RemoteSearchSelect, ModalConfirmation } from "@/components";
 import axios from "axios";
 import { Notification } from "element-ui";
+import { debounce } from "vue-debounce";
 
 // Variables
 const emit = defineEmits(["onSubmit", "onCancel"]);
@@ -175,7 +176,7 @@ const dialogVisible = computed(() => props.isModalVisible);
 const urlSearchSites = "/api/activity-plan/search";
 const searchSites = ref([{}]);
 
-const handleSearchSites = async (query, activityId) => {
+const handleSearchSites = debounce(async (query, activityId) => {
 	try {
 		const response = await axios.get(urlSearchSites, {
 			params: {
@@ -215,7 +216,7 @@ const handleSearchSites = async (query, activityId) => {
 			});
 		}
 	}
-};
+}, "400ms");
 
 const handleUpdateSite = (value, activityId) => {
 	const activity = data.value.get(activityId);

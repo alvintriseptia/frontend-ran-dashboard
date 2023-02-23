@@ -6,18 +6,21 @@
 		</el-col>
 		<el-col
 			:span="isMobile || !userStore.getters.isLoggedIn ? 24 : 21"
-			class="md:px-4 my-2"
+			class="md:px-4 my-2 overflow-x-hidden"
 		>
 			<h1 class="text-3xl font-bold mb-8 text-center md:text-left">
 				Dashboard Squad Operation & Availability 2023
 			</h1>
+			<div class="h-full" v-if="userStore.getters.loading">
+				<LoadingSpinner />
+			</div>
 			<router-view> </router-view>
 		</el-col>
 	</el-row>
 </template>
 
 <script setup>
-import { Sidebar } from "@/components";
+import { Sidebar, LoadingSpinner } from "@/components";
 import { useWindow } from "@/composables";
 import { userStore } from "@/stores";
 

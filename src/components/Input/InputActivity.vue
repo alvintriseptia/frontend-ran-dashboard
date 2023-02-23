@@ -111,6 +111,7 @@ import { OutlinedButton, Button, RemoteSearchSelect } from "@/components";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
+import { debounce } from "vue-debounce";
 
 // Target Quartal Options
 const quarterOptions = [
@@ -238,7 +239,7 @@ const searchActivities = ref(
 );
 
 // handle search
-const handleSearchActivities = (val) => {
+const handleSearchActivities = debounce((val) => {
 	if (val.length >= 1 && val.length <= 2) return;
 
 	if (val && val.length >= 3) {
@@ -246,7 +247,7 @@ const handleSearchActivities = (val) => {
 	} else {
 		searchActivityParams.value.deskripsiActivity = "";
 	}
-};
+}, "400ms");
 
 // handle on update
 function handleUpdateActivity(value) {
@@ -271,7 +272,7 @@ const searchSites = ref(
 );
 
 // handle search
-const handleSearchSites = (val) => {
+const handleSearchSites = debounce((val) => {
 	if (val.length >= 1 && val.length <= 2) return;
 
 	if (val && val.length >= 3) {
@@ -279,7 +280,7 @@ const handleSearchSites = (val) => {
 	} else {
 		searchSiteParams.value.site = "";
 	}
-};
+}, "400ms");
 
 // onMounted
 onMounted(async () => {

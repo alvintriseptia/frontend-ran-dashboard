@@ -36,7 +36,7 @@
 						:options="limits"
 						@onChange="handleLimitChange"
 						placeholder="Rows per page"
-						defaultValue="10"
+						defaultValue="50"
 					/>
 				</div>
 				<el-pagination
@@ -161,7 +161,7 @@
 									{{ row.oldData.updatedBy }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.updatedBy }}
+									{{ row.newData.updatedBy || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -184,7 +184,7 @@
 									{{ row.oldData.weekExecuted }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.weekExecuted }}
+									{{ row.newData.weekExecuted || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -215,7 +215,7 @@
 									{{
 										row.newData.dateExecuted
 											? dateUtil.convertDateToMMMDDYY(row.newData.dateExecuted)
-											: ""
+											: "-"
 									}}
 								</div>
 							</el-popover>
@@ -249,7 +249,7 @@
 								</p>
 
 								<div slot="reference">
-									{{ row.newData.namaProgram }}
+									{{ row.newData.namaProgram || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -272,7 +272,7 @@
 									{{ row.oldData.namaSubprogram }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.namaSubprogram }}
+									{{ row.newData.namaSubprogram || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -293,7 +293,7 @@
 									{{ row.oldData.additionalInfo }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.additionalInfo }}
+									{{ row.newData.additionalInfo || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -313,7 +313,7 @@
 									{{ row.oldData.namaNS }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.namaNS }}
+									{{ row.newData.namaNS || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -333,7 +333,7 @@
 									{{ row.oldData.namaDO }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.namaDO }}
+									{{ row.newData.namaDO || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -353,7 +353,7 @@
 									{{ row.oldData.namaKabupaten }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.namaKabupaten }}
+									{{ row.newData.namaKabupaten || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -373,7 +373,7 @@
 									{{ row.oldData.namaPIC }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.namaPIC }}
+									{{ row.newData.namaPIC || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -393,7 +393,7 @@
 									{{ row.oldData.targetQuartal }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.targetQuartal }}
+									{{ row.newData.targetQuartal || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -413,7 +413,7 @@
 									{{ row.oldData.remark }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.remark }}
+									{{ row.newData.remark || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -433,7 +433,7 @@
 									{{ row.oldData.budget }}
 								</p>
 								<div slot="reference">
-									{{ row.newData.budget }}
+									{{ row.newData.budget || "-" }}
 								</div>
 							</el-popover>
 						</td>
@@ -460,6 +460,7 @@
 									}}
 								</p>
 								<div slot="reference">
+									|| '-'
 									{{
 										typeof row.newData.cost === "number"
 											? numberFormat.currencyFormat(row.newData.cost)
@@ -632,18 +633,7 @@ const handlePlanActivityChecked = (row) => {
 	} else {
 		const item = {
 			row: row.row,
-			activityId: row.oldData.activityID,
-			siteId: row.oldData.siteID,
-			namaProgram: row.newData.namaProgram || row.oldData.namaProgram,
-			namaSubprogram: row.newData.namaSubprogram || row.oldData.namaSubprogram,
-			deskripsiActivity: row.oldData.deskripsiActivity,
-			dateExecuted: row.newData.dateExecuted || row.oldData.dateExecuted,
-			status: row.newData.status || row.oldData.status,
-			additionalInfo: row.newData.additionalInfo || row.oldData.additionalInfo,
-			remark: row.newData.remark || row.oldData.remark,
-			budget: row.newData.budget || row.oldData.budget,
-			cost:
-				row.newData.cost !== undefined ? row.newData.cost : row.oldData.cost,
+			...row.newData,
 		};
 		planActivityChecked.value.push(item);
 	}
@@ -656,18 +646,7 @@ const selectAllPlanActivity = () => {
 	planActivityChecked.value = data.value.map((row) => {
 		return {
 			row: row.row,
-			activityId: row.oldData.activityID,
-			siteId: row.oldData.siteID,
-			namaProgram: row.newData.namaProgram || row.oldData.namaProgram,
-			namaSubprogram: row.newData.namaSubprogram || row.oldData.namaSubprogram,
-			deskripsiActivity: row.oldData.deskripsiActivity,
-			dateExecuted: row.newData.dateExecuted || row.oldData.dateExecuted,
-			status: row.newData.status || row.oldData.status,
-			additionalInfo: row.newData.additionalInfo || row.oldData.additionalInfo,
-			remark: row.newData.remark || row.oldData.remark,
-			budget: row.newData.budget || row.oldData.budget,
-			cost:
-				row.newData.cost !== undefined ? row.newData.cost : row.oldData.cost,
+			...row.newData,
 		};
 	});
 
@@ -697,14 +676,15 @@ const resetPlanActivityChecked = () => {
 
 // =============================== ACTION ===============================
 function onSubmit() {
-	console.log(planActivityChecked.value);
 	toggleShowModalConfirmation(false);
 	emit("onSubmit", planActivityChecked.value);
+	planActivityChecked.value = [];
 }
 
 function onCancel() {
 	toggleShowModalConfirmation(false);
 	emit("onCancel");
+	planActivityChecked.value = [];
 }
 
 // =============================== MODAL ===============================

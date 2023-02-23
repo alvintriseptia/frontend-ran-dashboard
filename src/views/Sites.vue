@@ -3,20 +3,20 @@
 		<Card title="Sites" :alert="alertCard">
 			<template #header>
 				<OutlinedButton @onClick="showInput('input')" class="mr-4"
-					>Input Site</OutlinedButton
-				>
-				<OutlinedButton @onClick="showImportSites">Import Sites</OutlinedButton>
+					>Input
+				</OutlinedButton>
+				<OutlinedButton @onClick="showImportSites">Import</OutlinedButton>
 			</template>
 
 			<section class="my-4 flex items-center justify-between">
-				<RemoteSearchSelect
-					:options="unref(searchSites.data)"
-					placeholder="Select Site"
-					@onChange="handleSearchSites"
-					@onUpdate="handleUpdateSite"
-					labelOption="id,name"
-					valueOption="id"
-				/>
+				<el-input
+					class="max-w-[200px]"
+					placeholder="Search Site"
+					v-model="searchSite"
+					@input="handleSearchSites"
+					clearable
+				>
+				</el-input>
 				<div class="flex items-center">
 					<div class="flex items-center">
 						<p class="text-xs mr-2">Rows per page</p>
@@ -45,7 +45,6 @@
 					:data="sites.data"
 					@onRemove="handleShowModalConfirmation"
 					@onEdit="handleEdit"
-					type="site"
 					:loading="sites.loading"
 					@onSort="handleSitesSortChange"
 					:numberStart="
@@ -93,16 +92,16 @@ import {
 	ImportExcel,
 	ModalConfirmation,
 	InputSite,
-	RemoteSearchSelect,
 	Select,
 } from "@/components";
 import { ref, unref, onMounted, watch } from "vue";
 import { Notification } from "element-ui";
 import { useFetch } from "@/composables";
+import { debounce } from "vue-debounce";
 
 // Sites
 const sitesParams = ref({
-	sitesID: [],
+	site: "",
 	sortBy: null,
 	orderBy: null,
 	page: 1,
@@ -177,33 +176,25 @@ const limits = [
 	},
 ];
 
-// search params
-const searchSiteParams = ref({
-	site: "",
-});
-
-// fetch first data
-const urlSearchSite = ref(null);
-const searchSites = useFetch({
-	url: urlSearchSite,
-	params: searchSiteParams,
-});
-
 // handle search
-const handleSearchSites = (val) => {
-	if (val.length >= 1 && val.length <= 2) return;
+const searchSite = ref("");
+const handleSearchSites = debounce((val) => {
+	if (val.length === 1) return;
 
 	if (val && val.length >= 3) {
-		searchSiteParams.value.site = val;
+		sitesParams.value = {
+			...sitesParams.value,
+			site: val,
+			page: 1,
+		};
 	} else {
-		searchSiteParams.value.site = "";
+		sitesParams.value = {
+			...sitesParams.value,
+			site: "",
+			page: 1,
+		};
 	}
-};
-
-// handle on update
-function handleUpdateSite(value) {
-	sitesParams.value.sitesID = value;
-}
+}, "400ms");
 
 // Menu Input
 const isShowInput = ref(false);
@@ -307,9 +298,6 @@ const closeImportSites = (result) => {
 
 // ==========================
 // Delete Button
-const removeButtonDisabled = ref(null);
-const multipleSelection = ref([]);
-
 const handleRemoveButton = (data) => {
 	if (data.multipleSelection.length > 0) {
 		removeButtonDisabled.value = data.type;
@@ -489,7 +477,6 @@ onMounted(async () => {
 	urlNsDepartment.value = "/api/ns-departemen";
 	urlDoSubDepartment.value = "/api/do-subdepartemen";
 	urlKabupaten.value = "/api/kabupaten";
-	urlSearchSite.value = "/api/site/search";
 	nsDepartment.doFetch();
 	doSubDepartment.doFetch();
 	kabupaten.doFetch();

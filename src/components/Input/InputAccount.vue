@@ -116,7 +116,6 @@ const props = defineProps({
 	},
 });
 const isShowInput = computed(() => props.isShow);
-const type = computed(() => props.type);
 
 // Form
 const ruleForm = ref({
