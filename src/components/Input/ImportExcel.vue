@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40 import-activity"
+		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
 		:class="isShow ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">

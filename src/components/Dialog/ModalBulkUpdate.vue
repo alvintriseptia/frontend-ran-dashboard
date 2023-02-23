@@ -36,7 +36,7 @@
 						:options="limits"
 						@onChange="handleLimitChange"
 						placeholder="Rows per page"
-						defaultValue="10"
+						defaultValue="50"
 					/>
 				</div>
 				<el-pagination
@@ -697,14 +697,15 @@ const resetPlanActivityChecked = () => {
 
 // =============================== ACTION ===============================
 function onSubmit() {
-	console.log(planActivityChecked.value);
 	toggleShowModalConfirmation(false);
 	emit("onSubmit", planActivityChecked.value);
+	planActivityChecked.value = [];
 }
 
 function onCancel() {
 	toggleShowModalConfirmation(false);
 	emit("onCancel");
+	planActivityChecked.value = [];
 }
 
 // =============================== MODAL ===============================
