@@ -1,10 +1,11 @@
 <template>
-	<div
+	<component
+		:is="tag"
 		ref="targetEl"
 		:style="`min-height:${fixedMinHeight ? fixedMinHeight : minHeight}px`"
 	>
 		<slot v-if="shouldRender" />
-	</div>
+	</component>
 </template>
 
 <script>
@@ -17,7 +18,7 @@ function onIdle(cb = () => {}) {
 	} else {
 		setTimeout(() => {
 			nextTick(cb);
-		}, 300);
+		}, 200);
 	}
 }
 
@@ -28,7 +29,11 @@ export default {
 		minHeight: Number,
 		unrenderDelay: {
 			type: Number,
-			default: 10000,
+			default: 500,
+		},
+		tag: {
+			type: String,
+			default: "div",
 		},
 	},
 	setup(props) {
