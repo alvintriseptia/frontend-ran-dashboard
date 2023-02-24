@@ -9,7 +9,7 @@
 			class="md:px-4 my-2 overflow-x-hidden"
 		>
 			<h1 class="text-3xl font-bold mb-8 text-center md:text-left">
-				Dashboard Squad Operation & Availability 2023
+				Dashboard Squad Operation & Availability {{ currentYear }}
 			</h1>
 			<div class="h-full" v-if="userStore.getters.loading">
 				<LoadingSpinner />
@@ -25,4 +25,7 @@ import { useWindow } from "@/composables";
 import { userStore } from "@/stores";
 
 const { isMobile } = useWindow();
+
+// get current year
+const currentYear = new Date().getFullYear();
 </script>

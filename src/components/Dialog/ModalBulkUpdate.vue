@@ -684,7 +684,7 @@ const selectAllPlanActivity = () => {
 			};
 			delete item.activityID;
 			delete item.siteID;
-			delete tempData.namaPIC;
+			delete item.namaPIC;
 			return {
 				row: row.row,
 				...item,
@@ -700,7 +700,7 @@ const selectAllPlanActivity = () => {
 			};
 			delete item.activityID;
 			delete item.siteID;
-			delete tempData.namaPIC;
+			delete item.namaPIC;
 			return {
 				row: row.row,
 				...item,

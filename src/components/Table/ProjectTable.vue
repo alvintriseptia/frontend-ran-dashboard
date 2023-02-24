@@ -12,6 +12,7 @@
 		:cell-class-name="cellClassChecker"
 		row-class-name="no-hover-table"
 		lazy
+		max-height="700"
 	>
 		<el-table-column label="NO" :width="50" fixed="left">
 			<template #default="{ row, $index }">
@@ -77,7 +78,11 @@
 					</template>
 					<template #default="{ row }">
 						<div class="text-center">
-							{{ row.periods[getWeekInYear(week, index) - 1] }}
+							{{
+								row.periods[getWeekInYear(week, index) - 1] === 0
+									? ""
+									: row.periods[getWeekInYear(week, index) - 1]
+							}}
 						</div>
 					</template>
 				</el-table-column>
@@ -98,7 +103,11 @@
 		>
 			<template #default="{ row }">
 				<div class="text-right">
-					{{ numberFormat.currencyFormat(row.cost) }}
+					{{
+						row.cost && row.cost !== 0
+							? numberFormat.currencyFormat(row.cost)
+							: ""
+					}}
 				</div>
 			</template>
 		</el-table-column>
@@ -161,7 +170,7 @@ function cellClassChecker({ row, columnIndex }) {
 		row.weekCompleteActual !== null &&
 		columnIndex === parseInt(row.weekCompleteActual) + (skippedColumns - 1)
 	) {
-		return "bg-purple-600 p-0 text-white";
+		return "bg-purple-600 p-0 text-white border border-gray-300";
 	}
 
 	// Actual Start
@@ -169,7 +178,7 @@ function cellClassChecker({ row, columnIndex }) {
 		row.weekStartActual &&
 		columnIndex === parseInt(row.weekStartActual) + (skippedColumns - 1)
 	) {
-		return "bg-purple-300 p-0";
+		return "bg-purple-300 p-0 border border-gray-300";
 	}
 
 	// Actual Complete Beyond
@@ -177,7 +186,7 @@ function cellClassChecker({ row, columnIndex }) {
 		row.weekCompleteBeyond &&
 		columnIndex === parseInt(row.weekCompleteBeyond) + (skippedColumns - 1)
 	) {
-		return "bg-orange-600 p-0 text-white";
+		return "bg-orange-600 p-0 border border-gray-300 text-white";
 	}
 
 	// Actual Start Beyond
@@ -185,12 +194,12 @@ function cellClassChecker({ row, columnIndex }) {
 		row.weekStartBeyond &&
 		columnIndex === parseInt(row.weekStartBeyond) + (skippedColumns - 1)
 	) {
-		return "bg-orange-300 p-0";
+		return "bg-orange-300 p-0 border border-gray-300";
 	}
 
 	// Week Highlighted
 	else if (columnIndex === currentWeek.value) {
-		return "bg-yellow-200 p-0";
+		return "bg-yellow-200 p-0 border border-gray-300";
 	}
 
 	// Plan Duration Highlited
@@ -198,8 +207,17 @@ function cellClassChecker({ row, columnIndex }) {
 		columnIndex >= parseInt(row.weekStart) + (skippedColumns - 1) &&
 		columnIndex <= parseInt(row.weekEnd) + (skippedColumns - 1)
 	) {
-		return "bg-purple-100 p-0";
+		return "bg-purple-100 p-0 border border-gray-300";
 	}
+
+	// Column Index in range periods
+	else if (
+		columnIndex >= skippedColumns &&
+		columnIndex <= skippedColumns + parseInt(row.periods.length) - 1
+	) {
+		return "p-0 border border-gray-300";
+	}
+
 	return "p-0";
 }
 

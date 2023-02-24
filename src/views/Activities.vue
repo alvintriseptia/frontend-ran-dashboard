@@ -207,7 +207,7 @@
 			title="Import Plan Activities"
 			url="/api/activity-plan/upload"
 			@closeImportExcel="closeImportActivities"
-			urlTemplate="/Activity Template.xlsx"
+			urlTemplate="/Plan Activity Template.xlsx"
 		/>
 	</Card>
 </template>
