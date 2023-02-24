@@ -37,15 +37,15 @@
 			<section class="min-h-[400px]">
 				<APIResponseLayout
 					v-if="rows.length === 0"
-					:error="message"
-					:loading="loading"
-					@refreshFunction="doFetch"
+					:error="projectPlanner.message"
+					:loading="projectPlanner.loading.value"
+					@refreshFunction="projectPlanner.doFetch"
 				/>
 				<transition v-else name="el-fade-in">
 					<ProjectTable
 						:weekHighlighted="weekHighlighted"
 						:data="rows"
-						:loading="loading"
+						:loading="projectPlanner.loading.value"
 						:weekInMonths="weekInMonths"
 					/>
 				</transition>
@@ -116,8 +116,9 @@ const chartData = ref({
 });
 
 // get project planner from api
-const { data, message, loading, doFetch } = useFetch({
-	url: "/api/activity-plan/project-planner",
+const projectPlannerUrl = ref(null);
+const projectPlanner = useFetch({
+	url: projectPlannerUrl,
 });
 
 const rows = ref([]);
@@ -127,9 +128,13 @@ const totalWeeks = ref([]);
 // watch
 onMounted(async () => {
 	progressActivityUrl.value = "/api/activity-plan/program-progress-by-month";
+	projectPlannerUrl.value = "/api/activity-plan/project-planner";
 	progressActivity.doFetch();
+	setTimeout(() => {
+		projectPlanner.doFetch();
+	}, 1000);
 
-	watch(data, (newData) => {
+	watch(projectPlanner.data, (newData) => {
 		if (newData) {
 			rows.value = newData.rows;
 			weekInMonths.value = newData.weeksPerMonth.map((item) => parseInt(item));

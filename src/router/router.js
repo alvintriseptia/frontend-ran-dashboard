@@ -114,6 +114,13 @@ function userCheckGeneral(to, from, next) {
 			}
 		}
 	}
+
+	// check if path does not exist
+	if (to.matched.length === 0) {
+		next("/");
+		return;
+	}
+
 	next();
 }
 

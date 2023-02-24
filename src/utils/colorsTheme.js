@@ -8,7 +8,31 @@ const dark = "#333";
 const white = "#fff";
 const yellow = "#FFD700";
 
+const defaultPastelColors = [
+	"#77dd77",
+	"#89cff0",
+	"#99c5c4",
+	"#9adedb",
+	"#b2fba5",
+	"#cb99c9",
+	"#E4DCCF",
+	"#fdfd96",
+	"#ff964f",
+	"#ff6961",
+	"#ff9899",
+	"#6096B4",
+	"#FFF2F2",
+	"#E8F3D6",
+	"#C8FFD4",
+	"#FFD1D1",
+	"#FFF5E4",
+];
+
 const getPastelColor = (index) => {
+	if (index < defaultPastelColors.length) {
+		return defaultPastelColors[index];
+	}
+
 	const startNumber = (index % 10) * 40;
 	const totalColors = 40 * (index + 1.5);
 

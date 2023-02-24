@@ -6,6 +6,7 @@
 					>Input
 				</OutlinedButton>
 				<OutlinedButton @onClick="showImportSites">Import</OutlinedButton>
+				<Button @onClick="handleExportSites" class="ml-4"> Export </Button>
 			</template>
 
 			<section class="my-4 flex items-center justify-between">
@@ -93,11 +94,13 @@ import {
 	ModalConfirmation,
 	InputSite,
 	Select,
+	Button,
 } from "@/components";
-import { ref, unref, onMounted, watch } from "vue";
-import { Notification } from "element-ui";
+import { ref, onMounted, watch } from "vue";
 import { useFetch } from "@/composables";
 import { debounce } from "vue-debounce";
+import { Notification, Loading } from "element-ui";
+import axios from "axios";
 
 // Sites
 const sitesParams = ref({
@@ -514,4 +517,48 @@ onMounted(async () => {
 		}
 	});
 });
+
+// ========================= EXPORT EXCEL =========================
+const handleExportSites = async () => {
+	try {
+		Loading.service({
+			lock: true,
+			text: "Loading...",
+			spinner: "el-icon-loading",
+			background: "rgba(0, 0, 0, 0.7)",
+		});
+		const url = "/api/site/download";
+		const response = await axios.get(url, {
+			responseType: "blob",
+		});
+
+		const blob = new Blob([response.data], {
+			type: "application/vnd.ms-excel",
+		});
+		const link = document.createElement("a");
+
+		link.href = window.URL.createObjectURL(blob);
+
+		const currentDate = new Date();
+		const date = currentDate.getDate();
+		const month = currentDate.getMonth() + 1;
+		const year = currentDate.getFullYear();
+
+		const filename = `sites-${month}-${date}-${year}`;
+		link.download = filename;
+		link.click();
+
+		Loading.service().close();
+		Notification.success({
+			title: "Success",
+			message: "Data site successfully exported",
+		});
+	} catch (error) {
+		Loading.service().close();
+		Notification.error({
+			title: "Error",
+			message: error,
+		});
+	}
+};
 </script>
