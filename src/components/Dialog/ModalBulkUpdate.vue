@@ -654,12 +654,14 @@ const handlePlanActivityChecked = (row) => {
 		};
 		delete tempData.activityID;
 		delete tempData.siteID;
+		delete tempData.namaPIC;
 
 		const item = {
 			row: row.row,
 			...tempData,
 			activityId: row.newData.activityID,
 			siteId: row.newData.siteID,
+			pic: row.newData.namaPIC,
 		};
 		planActivityChecked.value.push(item);
 	}
@@ -682,12 +684,13 @@ const selectAllPlanActivity = () => {
 			};
 			delete item.activityID;
 			delete item.siteID;
-
+			delete tempData.namaPIC;
 			return {
 				row: row.row,
 				...item,
 				activityId: row.newData.activityID,
 				siteId: row.newData.siteID,
+				pic: row.newData.namaPIC,
 			};
 		});
 	} else {
@@ -697,12 +700,13 @@ const selectAllPlanActivity = () => {
 			};
 			delete item.activityID;
 			delete item.siteID;
-
+			delete tempData.namaPIC;
 			return {
 				row: row.row,
 				...item,
 				activityId: row.newData.activityID,
 				siteId: row.newData.siteID,
+				pic: row.newData.namaPIC,
 			};
 		});
 
