@@ -10,7 +10,16 @@
 		:close-on-press-escape="false"
 	>
 		<section class="my-4 flex justify-between items-center">
-			<div class="flex items-center gap-x-2 mb-4">
+			<div class="flex items-center gap-x-2">
+				<el-input
+					class="max-w-[250px] mr-4"
+					placeholder="Search an Activity or Site"
+					v-model="searchActivity"
+					@input="handleSearchActivity"
+					clearable
+				>
+				</el-input>
+
 				<el-button
 					@click="selectAllPlanActivity"
 					icon="el-icon-success"
@@ -43,7 +52,7 @@
 					:page-size="limitData"
 					:pager-count="5"
 					layout="prev, pager, next"
-					:total="data.length"
+					:total="searchData.length !== 0 ? searchData.length : data.length"
 					@current-change="handleCurrentChange"
 					ref="pagination"
 				>
@@ -82,7 +91,13 @@
 							class="p-2 text-gray-900 flex justify-center items-center h-11 border-r sticky left-0 bg-white"
 						>
 							<input
-								:name="'checkbox_update' + '-' + row.oldData.activityID"
+								:name="
+									'checkbox_update' +
+									'-' +
+									row.oldData.activityID +
+									'-' +
+									row.oldData.siteID
+								"
 								type="checkbox"
 								class="w-3 h-3 bg-gray-100 border-gray-300 rounded accent-primary checkbox_update_activity cursor-pointer"
 								:checked="
@@ -516,6 +531,7 @@
 import { ModalConfirmation, Select } from "@/components";
 import { numberFormat, dateUtil } from "@/utils";
 import { computed, ref, watch } from "vue";
+import { debounce } from "vue-debounce";
 
 //  ======================== TABLE HEADER ==========================
 const tableHeader = ref([
@@ -621,7 +637,9 @@ const data = computed(() => props.data);
 const planActivityChecked = ref([]);
 const handlePlanActivityChecked = (row) => {
 	const activity = planActivityChecked.value.findIndex(
-		(item) => item.activityId === row.activityID
+		(item) =>
+			item.activityId === row.newData.activityID &&
+			item.siteId === row.newData.siteID
 	);
 	if (activity !== -1) {
 		// delete site
@@ -631,60 +649,104 @@ const handlePlanActivityChecked = (row) => {
 			planActivityChecked.value.splice(activity, 1);
 		}
 	} else {
+		const tempData = {
+			...row.newData,
+		};
+		delete tempData.activityID;
+		delete tempData.siteID;
+
 		const item = {
 			row: row.row,
-			...row.newData,
+			...tempData,
+			activityId: row.newData.activityID,
+			siteId: row.newData.siteID,
 		};
 		planActivityChecked.value.push(item);
 	}
+	console.log(planActivityChecked.value);
 };
 
 const updateActivityTable = ref(null);
 
 // select all checkbox
 const selectAllPlanActivity = () => {
-	planActivityChecked.value = data.value.map((row) => {
-		return {
-			row: row.row,
-			...row.newData,
-		};
-	});
+	if (searchData.value.length > 0) {
+		planActivityChecked.value = searchData.value.map((row) => {
+			const checkbox = updateActivityTable.value.querySelector(
+				`input[type="checkbox"][name="checkbox_update-${row.oldData.activityID}-${row.oldData.siteID}"]`
+			);
+			checkbox.checked = true;
 
-	const allCheckbox = updateActivityTable.value.querySelectorAll(
-		".checkbox_update_activity"
-	);
+			const item = {
+				...row.newData,
+			};
+			delete item.activityID;
+			delete item.siteID;
 
-	// check all checkbox
-	allCheckbox.forEach((checkbox) => {
-		checkbox.checked = true;
-	});
+			return {
+				row: row.row,
+				...item,
+				activityId: row.newData.activityID,
+				siteId: row.newData.siteID,
+			};
+		});
+	} else {
+		planActivityChecked.value = data.value.map((row) => {
+			const item = {
+				...row.newData,
+			};
+			delete item.activityID;
+			delete item.siteID;
+
+			return {
+				row: row.row,
+				...item,
+				activityId: row.newData.activityID,
+				siteId: row.newData.siteID,
+			};
+		});
+
+		const allCheckbox = updateActivityTable.value.querySelectorAll(
+			".checkbox_update_activity"
+		);
+
+		// check all checkbox
+		allCheckbox.forEach((checkbox) => {
+			checkbox.checked = true;
+		});
+	}
 };
 
 // reset all checkbox
 const resetPlanActivityChecked = () => {
-	planActivityChecked.value = [];
-
-	const allCheckbox = updateActivityTable.value.querySelectorAll(
-		".checkbox_update_activity"
-	);
-
 	// reset all checkbox
-	allCheckbox.forEach((checkbox) => {
+	planActivityChecked.value.forEach((row) => {
+		const checkbox = updateActivityTable.value.querySelector(
+			`input[type="checkbox"][name="checkbox_update-${row.activityID}-${row.siteID}"]`
+		);
 		checkbox.checked = false;
 	});
+
+	planActivityChecked.value = [];
 };
 
 // =============================== ACTION ===============================
 function onSubmit() {
 	toggleShowModalConfirmation(false);
 	emit("onSubmit", planActivityChecked.value);
+	paginationData.value = [];
 	planActivityChecked.value = [];
+	searchData.value = [];
+	searchActivity.value = "";
 }
 
 function onCancel() {
 	toggleShowModalConfirmation(false);
 	emit("onCancel");
+	paginationData.value = [];
 	planActivityChecked.value = [];
+	searchData.value = [];
+	searchActivity.value = "";
 }
 
 // =============================== MODAL ===============================
@@ -711,7 +773,11 @@ const indexStart = ref(0);
 
 watch(data, (val) => {
 	if (val.length > 0) {
-		paginationData.value = val.slice(0, limitData.value);
+		if (searchData.value.length > 0) {
+			paginationData.value = searchData.value.slice(0, limitData.value);
+		} else {
+			paginationData.value = val.slice(0, limitData.value);
+		}
 	}
 });
 
@@ -740,7 +806,12 @@ const handleLimitChange = (val) => {
 
 	const start = (pagination.value.internalCurrentPage - 1) * val;
 	const end = start + val;
-	paginationData.value = data.value.slice(start, end);
+
+	if (searchData.value.length > 0) {
+		paginationData.value = searchData.value.slice(start, end);
+	} else {
+		paginationData.value = data.value.slice(start, end);
+	}
 
 	if (pagination.value.internalCurrentPage !== 1) {
 		pagination.value.internalCurrentPage = 1;
@@ -751,7 +822,47 @@ const handleLimitChange = (val) => {
 const handleCurrentChange = (val) => {
 	const start = (val - 1) * limitData.value;
 	const end = start + limitData.value;
-	paginationData.value = data.value.slice(start, end);
+
+	if (searchData.value.length > 0) {
+		paginationData.value = searchData.value.slice(start, end);
+	} else {
+		paginationData.value = data.value.slice(start, end);
+	}
+
 	indexStart.value = start;
 };
+
+// reset pagination
+const resetPagination = () => {
+	pagination.value.internalCurrentPage = 1;
+	if (searchData.value.length > 0) {
+		console.log("search data");
+		paginationData.value = searchData.value.slice(0, limitData.value);
+	} else {
+		console.log("default data");
+		paginationData.value = data.value.slice(0, limitData.value);
+	}
+};
+
+// =============================== SEARCH INPUT ===============================
+const searchActivity = ref("");
+const searchData = ref([]);
+const handleSearchActivity = debounce((val) => {
+	if (val.length === 1) return;
+
+	if (val && val.length >= 3) {
+		const regex = new RegExp(`^${val}`, "i");
+		searchData.value = data.value.filter((item) => {
+			if (
+				regex.test(item.oldData.deskripsiActivity) ||
+				regex.test(item.oldData.siteID)
+			) {
+				return item;
+			}
+		});
+	} else {
+		searchData.value = [];
+	}
+	resetPagination();
+}, "400ms");
 </script>

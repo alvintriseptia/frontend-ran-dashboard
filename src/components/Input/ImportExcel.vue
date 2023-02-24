@@ -10,14 +10,14 @@
 			>
 		</div>
 		<section class="mb-4">
-			<h3 class="font-medium mb-1">Petunjuk</h3>
+			<h3 class="font-medium mb-1">Instructions</h3>
 			<ul class="list-disc list-inside text-sm">
 				<li>
-					File harus berisi data dan formatnya sesuai dengan template yang telah
-					disediakan
+					File must contain data and its format must be in accordance with the
+					provided template
 				</li>
 				<li>
-					File yang diupload harus berupa file excel dengan ekstensi .xlsx
+					The uploaded file must be an excel file with the .xlsx extension
 				</li>
 			</ul>
 		</section>
@@ -39,7 +39,7 @@
 				type="primary"
 			>
 				<i class="el-icon-upload"></i>
-				<div class="el-upload__text">Pilih file atau arahkan file ke sini</div>
+				<div class="el-upload__text">Choose a file or drag file here</div>
 			</el-upload>
 		</section>
 		<section class="mt-6">
