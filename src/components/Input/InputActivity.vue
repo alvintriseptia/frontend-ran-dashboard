@@ -87,14 +87,15 @@
 			<el-form-item
 				label="Week Executed"
 				:label-width="formLabelWidth"
-				prop="weekExecuted"
+				prop="dateExecuted"
 				v-if="parseInt(formInputActivity.status) === 1"
 			>
 				<el-date-picker
-					v-model="formInputActivity.weekExecuted"
-					type="week"
-					format="Week WW"
-					placeholder="Pick a week"
+					v-model="formInputActivity.dateExecuted"
+					value-format="yyyy-MM-dd"
+					type="date"
+					placeholder="Pick a day"
+					:picker-options="pickerOptions"
 				>
 				</el-date-picker>
 			</el-form-item>
@@ -112,6 +113,12 @@ import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
 import { debounce } from "vue-debounce";
+
+const pickerOptions = {
+	disabledDate(time) {
+		return time.getTime() > Date.now();
+	},
+};
 
 // Target Quartal Options
 const quarterOptions = [
@@ -156,7 +163,7 @@ const formInputActivity = ref({
 	targetQuartal: "",
 	remark: "",
 	statusActivity: "",
-	weekExecuted: "",
+	dateExecuted: "",
 });
 
 const ruleFormRef = ref(null);
@@ -181,7 +188,7 @@ const rules = ref({
 		},
 	],
 	status: [{ required: true, message: "Please input status", trigger: "blur" }],
-	weekExecuted: [
+	dateExecuted: [
 		{
 			required: true,
 			message: "Please input week executed",
@@ -195,9 +202,9 @@ watch(
 	() => formInputActivity.value.status,
 	(val) => {
 		if (val === 0) {
-			rules.value.weekExecuted = null;
+			rules.value.dateExecuted = null;
 		} else {
-			rules.value.weekExecuted = [
+			rules.value.dateExecuted = [
 				{
 					required: true,
 					message: "Please input week executed",
@@ -309,7 +316,7 @@ function onSubmit() {
 			body.append("remark", formInputActivity.value.remark);
 			body.append("done", parseInt(formInputActivity.value.status));
 			if (parseInt(formInputActivity.value.status) === 1) {
-				body.append("weekExecuted", formInputActivity.value.weekExecuted);
+				body.append("dateExecuted", formInputActivity.value.dateExecuted);
 			}
 
 			// console.log(activityStatusParams);
@@ -330,7 +337,7 @@ function onSubmit() {
 							targetQuartal: "",
 							remark: "",
 							statusActivity: "",
-							weekExecuted: "",
+							dateExecuted: "",
 						};
 						ruleFormRef.value.model.deskripsiActivity = "";
 						ruleFormRef.value.model.siteID = "";
