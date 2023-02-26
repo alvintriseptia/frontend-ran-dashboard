@@ -1,34 +1,37 @@
 <template>
-	<main>
-		<Card title="Accounts">
-			<template #header>
-				<OutlinedButton @onClick="showInput()" class="mr-4">
-					Add New Account
-				</OutlinedButton>
-			</template>
-			<AccountTable
-				@onSelect="handleRemoveButton"
-				:data="accounts.data"
-				@onReset="handleShowModalAccount"
-				@onEdit="handleShowModalAccount"
-			/>
-		</Card>
+  <main>
+    <Card title="Accounts">
+      <template #header>
+        <OutlinedButton
+          class="mr-4"
+          @onClick="showInput()"
+        >
+          Add New Account
+        </OutlinedButton>
+      </template>
+      <AccountTable
+        :data="accounts.data"
+        @onSelect="handleRemoveButton"
+        @onReset="handleShowModalAccount"
+        @onEdit="handleShowModalAccount"
+      />
+    </Card>
 
-		<ModalAccount
-			:isModalVisible="isShowModalAccount"
-			:nsDepartmentOptions="nsDepartmentOptions"
-			:row="row"
-			:type="type"
-			@onSubmit="handleConfirmModal"
-			@onCancel="handleCancelModal"
-		/>
+    <ModalAccount
+      :is-modal-visible="isShowModalAccount"
+      :ns-department-options="nsDepartmentOptions"
+      :row="row"
+      :type="type"
+      @onSubmit="handleConfirmModal"
+      @onCancel="handleCancelModal"
+    />
 
-		<InputAccount
-			:isShow="isShowInput"
-			@closeInput="closeInput"
-			:nsDepartmentOptions="nsDepartmentOptions"
-		/>
-	</main>
+    <InputAccount
+      :is-show="isShowInput"
+      :ns-department-options="nsDepartmentOptions"
+      @closeInput="closeInput"
+    />
+  </main>
 </template>
 
 <script setup>

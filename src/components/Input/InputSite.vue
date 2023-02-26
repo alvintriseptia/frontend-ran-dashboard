@@ -1,100 +1,119 @@
 <template>
-	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
-		:class="isShowInput ? 'right-0' : '-right-full'"
-	>
-		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">
-				{{ type === "input" ? "Input Site" : "Edit Site" }}
-			</h2>
-			<OutlinedButton size="sm" @onClick="handleCloseInput"
-				>&#10006;</OutlinedButton
-			>
-		</div>
-		<el-alert
-			v-if="siteCount > 0"
-			title="Warning!"
-			type="warning"
-			show-icon
-			@close="siteCount = 0"
-		>
-			<p>
-				There are <strong>{{ siteCount }}</strong> Plan Activity related to this
-				site.
-			</p>
-			<p class="mt-1 mb-2">
-				Please make sure you have reviewed all of them before you update this
-				site
-			</p>
-			<router-link
-				:to="{ name: 'activities-site', params: { siteId: siteID } }"
-				target="_blank"
-			>
-				<el-button type="warning" size="small">Review</el-button>
-			</router-link>
-		</el-alert>
-		<el-form
-			:model="ruleForm"
-			:rules="rules"
-			ref="ruleFormRef"
-			label-position="top"
-		>
-			<el-form-item label="Site ID" :label-width="formLabelWidth" prop="siteID">
-				<el-input v-model="ruleForm.siteID" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item
-				label="Site Name"
-				:label-width="formLabelWidth"
-				prop="siteName"
-			>
-				<el-input v-model="ruleForm.siteName" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item
-				label="NS Department"
-				:label-width="formLabelWidth"
-				prop="namaNS"
-			>
-				<Select
-					v-model="ruleForm.namaNS"
-					:options="nsDepartmentOptions"
-					placeholder="Select NS Department"
-					@onChange="onUpdateNS"
-					:defaultValue="ruleForm.namaNS"
-				/>
-			</el-form-item>
-			<el-form-item
-				label="DO Sub-Department"
-				:label-width="formLabelWidth"
-				prop="namaDO"
-				><Select
-					v-model="ruleForm.namaDO"
-					:options="doSubDepartmentOptions"
-					placeholder="Select DO Sub-Department"
-					@onChange="onUpdateDO"
-					:defaultValue="ruleForm.namaDO"
-				/>
-			</el-form-item>
-			<el-form-item
-				label="Kabupaten"
-				:label-width="formLabelWidth"
-				prop="namaKabupaten"
-			>
-				<Select
-					v-model="ruleForm.namaKabupaten"
-					:options="kabupatenOptions"
-					:isMultiple="false"
-					placeholder="Select Kabupaten"
-					@onChange="onUpdateKabupaten"
-					:defaultValue="ruleForm.namaKabupaten"
-				/>
-			</el-form-item>
-			<div class="mt-8">
-				<Button @onClick="onSubmit()">
-					{{ type === "input" ? "Input" : "Update" }} Data
-				</Button>
-			</div>
-		</el-form>
-	</div>
+  <div
+    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50"
+    :class="isShowInput ? 'right-0' : '-right-full'"
+  >
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg lg:text-xl font-bold">
+        {{ type === "input" ? "Input Site" : "Edit Site" }}
+      </h2>
+      <OutlinedButton
+        size="sm"
+        @onClick="handleCloseInput"
+      >
+        &#10006;
+      </OutlinedButton>
+    </div>
+    <el-alert
+      v-if="siteCount > 0"
+      title="Warning!"
+      type="warning"
+      show-icon
+      @close="siteCount = 0"
+    >
+      <p>
+        There are <strong>{{ siteCount }}</strong> Plan Activity related to this
+        site.
+      </p>
+      <p class="mt-1 mb-2">
+        Please make sure you have reviewed all of them before you update this
+        site
+      </p>
+      <router-link
+        :to="{ name: 'plan-activities-site', params: { siteId: siteID } }"
+        target="_blank"
+      >
+        <el-button
+          type="warning"
+          size="small"
+        >
+          Review
+        </el-button>
+      </router-link>
+    </el-alert>
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      label-position="top"
+    >
+      <el-form-item
+        label="Site ID"
+        :label-width="formLabelWidth"
+        prop="siteID"
+      >
+        <el-input
+          v-model="ruleForm.siteID"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Site Name"
+        :label-width="formLabelWidth"
+        prop="siteName"
+      >
+        <el-input
+          v-model="ruleForm.siteName"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="NS Department"
+        :label-width="formLabelWidth"
+        prop="nsId"
+      >
+        <Select
+          v-model="ruleForm.nsId"
+          :options="nsDepartmentOptions"
+          placeholder="Select NS Department"
+          :default-value="ruleForm.nsId"
+          @onChange="onUpdateNS"
+        />
+      </el-form-item>
+      <el-form-item
+        label="DO Sub-Department"
+        :label-width="formLabelWidth"
+        prop="doID"
+      >
+        <Select
+          v-model="ruleForm.doID"
+          :options="doSubDepartmentOptions"
+          placeholder="Select DO Sub-Department"
+          :default-value="ruleForm.doID"
+          @onChange="onUpdateDO"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Kabupaten"
+        :label-width="formLabelWidth"
+        prop="kabupatenID"
+      >
+        <Select
+          v-model="ruleForm.kabupatenID"
+          :options="kabupatenOptions"
+          :is-multiple="false"
+          placeholder="Select Kabupaten"
+          :default-value="ruleForm.kabupatenID"
+          @onChange="onUpdateKabupaten"
+        />
+      </el-form-item>
+      <div class="mt-8">
+        <Button @onClick="onSubmit()">
+          {{ type === "input" ? "Input" : "Update" }} Data
+        </Button>
+      </div>
+    </el-form>
+  </div>
 </template>
 
 <script setup>
@@ -144,9 +163,9 @@ const type = computed(() => props.type);
 const ruleForm = ref({
 	siteID: "",
 	siteName: "",
-	namaDO: "",
-	namaNS: "",
-	namaKabupaten: "",
+	doID: "",
+	nsId: "",
+	kabupatenID: "",
 });
 const siteID = ref("");
 const siteCount = ref(0);
@@ -156,48 +175,44 @@ onMounted(() => {
 	watch(
 		() => props.currentData,
 		(newVal) => {
-			if (newVal.siteID) {
-				if (type.value === "edit") {
-					const { data, status, message } = useFetch({
-						url: `/api/activity-plan/count-by-site-id/${newVal.siteID}`,
-					});
-					const unwatch = watch(
-						[data, status, message],
-						([newData, newStatus, newMessage]) => {
-							if (newStatus === "success" && newData) {
-								siteCount.value = parseInt(newData);
-								unwatch();
-							} else if (newStatus === "error" && newMessage) {
-								Notification.error({
-									title: "Error",
-									message: newMessage,
-								});
-								unwatch();
-							}
+			if (newVal.siteID && type.value === "edit") {
+				const { data, status, message } = useFetch({
+					url: `/api/activity-plan/count-by-site-id/${newVal.siteID}`,
+				});
+				const unwatch = watch(
+					[data, status, message],
+					([newData, newStatus, newMessage]) => {
+						if (newStatus === "success" && (newData || newData === 0)) {
+							siteCount.value = parseInt(newData);
+							unwatch();
+						} else if (newStatus === "error" && newMessage) {
+							Notification.error({
+								title: "Error",
+								message: newMessage,
+							});
+							unwatch();
 						}
-					);
-				}
+					}
+				);
 
-				if (newVal.siteID) {
-					siteID.value = newVal.siteID;
-					ruleForm.value = {
-						siteID: newVal.siteID,
-						siteName: newVal.siteName,
-						namaDO: newVal.doID,
-						namaNS: newVal.nsID,
-						namaKabupaten: newVal.kabupatenID,
-					};
-				} else {
-					ruleForm.value = {
-						siteID: "",
-						siteName: "",
-						namaDO: "",
-						namaNS: "",
-						namaKabupaten: "",
-					};
-					siteCount.value = 0;
-					siteID.value = "";
-				}
+				siteID.value = newVal.siteID;
+				ruleForm.value = {
+					siteID: newVal.siteID,
+					siteName: newVal.siteName,
+					doID: newVal.doID,
+					nsId: newVal.nsID,
+					kabupatenID: newVal.kabupatenID,
+				};
+			} else {
+				ruleForm.value = {
+					siteID: "",
+					siteName: "",
+					doID: "",
+					nsId: "",
+					kabupatenID: "",
+				};
+				siteCount.value = 0;
+				siteID.value = "";
 			}
 		}
 	);
@@ -219,13 +234,13 @@ const rules = {
 			trigger: "blur",
 		},
 	],
-	namaDO: [
+	doID: [
 		{ required: true, message: "Please input DO name", trigger: "blur" },
 	],
-	namaNS: [
+	nsId: [
 		{ required: true, message: "Please input NS name", trigger: "blur" },
 	],
-	namaKabupaten: [
+	kabupatenID: [
 		{
 			required: true,
 			message: "Please input kabupaten name",
@@ -235,17 +250,17 @@ const rules = {
 };
 
 function onUpdateNS(value) {
-	ruleForm.value.namaNS = value;
-	ruleFormRef.value.model.namaNS = value;
+	ruleForm.value.nsId = value;
+	ruleFormRef.value.model.nsId = value;
 }
 function onUpdateDO(value) {
-	ruleForm.value.namaDO = value;
-	ruleFormRef.value.model.namaDO = value;
+	ruleForm.value.doID = value;
+	ruleFormRef.value.model.doID = value;
 }
 
 function onUpdateKabupaten(value) {
-	ruleForm.value.namaKabupaten = value;
-	ruleFormRef.value.model.namaKabupaten = value;
+	ruleForm.value.kabupatenID = value;
+	ruleFormRef.value.model.kabupatenID = value;
 }
 
 function onSubmit() {
@@ -259,9 +274,9 @@ function onSubmit() {
 				body.append("newId", ruleForm.value.siteID);
 			}
 			body.append("name", ruleForm.value.siteName);
-			body.append("ns", ruleForm.value.namaNS);
-			body.append("do", ruleForm.value.namaDO);
-			body.append("kabupaten", ruleForm.value.namaKabupaten);
+			body.append("ns", ruleForm.value.nsId);
+			body.append("do", ruleForm.value.doID);
+			body.append("kabupaten", ruleForm.value.kabupatenID);
 
 			// console.log(activityStatusParams);
 			const { data, status, message } = useFetch({
@@ -278,18 +293,18 @@ function onSubmit() {
 						ruleForm.value = {
 							siteID: "",
 							siteName: "",
-							namaDO: "",
-							namaNS: "",
-							namaKabupaten: "",
+							doID: "",
+							nsId: "",
+							kabupatenID: "",
 						};
 
-						ruleFormRef.value.model.namaDO = "";
-						ruleFormRef.value.model.namaNS = "";
-						ruleFormRef.value.model.namaKabupaten = "";
+						ruleFormRef.value.model.doID = "";
+						ruleFormRef.value.model.nsId = "";
+						ruleFormRef.value.model.kabupatenID = "";
 
 						ruleFormRef.value.resetFields();
 
-						emit("closeInput", { ...newData, type });
+						emit("closeInput", { ...newData, type: type.value });
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {

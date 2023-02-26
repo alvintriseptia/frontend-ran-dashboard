@@ -1,17 +1,19 @@
 <template>
-	<div
-		class="shadow-lg px-4 py-2 border border-gray-200 rounded-lg w-[200px] md:w-[250px] bg-white"
-	>
-		<h2 class="text-lg font-semibold mb-2">{{ props.programName }}</h2>
-		<Doughnut
-			:chart-options="chartOptions"
-			:chart-data="chartData"
-			:chart-id="chartId"
-			:width="120"
-			:height="120"
-			:plugins="chartPlugins"
-		/>
-	</div>
+  <div
+    class="shadow-lg px-4 py-2 border border-gray-200 rounded-lg w-[200px] md:w-[250px] bg-white"
+  >
+    <h2 class="text-lg font-semibold mb-2">
+      {{ props.programName }}
+    </h2>
+    <Doughnut
+      :chart-options="chartOptions"
+      :chart-data="chartData"
+      :chart-id="chartId"
+      :width="120"
+      :height="120"
+      :plugins="chartPlugins"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -53,7 +55,7 @@ const chartData = {
 						color: function (ctx) {
 							return ctx.dataset.backgroundColor;
 						},
-						font: { size: 12 },
+						font: { size: 10 },
 						offset: 0,
 						formatter: function (value, ctx) {
 							return ctx.chart.data.labels[ctx.dataIndex] + ": " + value;

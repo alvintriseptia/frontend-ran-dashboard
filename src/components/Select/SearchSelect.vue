@@ -1,25 +1,26 @@
 <template>
-	<el-select
-		v-model="value"
-		:multiple="isMultiple"
-		filterable
-		remote
-		v-bind:allow-create="allowCreate"
-		reserve-keyword
-		:placeholder="placeholder"
-		remote-show-suffix
-		:remote-method="remoteMethod"
-		:loading="loading"
-		@change="onChange"
-	>
-		<el-option
-			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
-			v-loading="loading"
-		/>
-	</el-select>
+  <el-select
+    v-model="value"
+    :multiple="isMultiple"
+    filterable
+    remote
+    :allow-create="allowCreate"
+    reserve-keyword
+    :placeholder="placeholder"
+    remote-show-suffix
+    :remote-method="remoteMethod"
+    :loading="loading"
+    autocomplete="off"
+    @change="onChange"
+  >
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      v-loading="loading"
+      :label="item.label"
+      :value="item.value"
+    />
+  </el-select>
 </template>
 
 <script setup>

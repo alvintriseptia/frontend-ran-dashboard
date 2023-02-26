@@ -1,88 +1,116 @@
 <template>
-	<div>
-		<Card title="Sites" :alert="alertCard">
-			<template #header>
-				<OutlinedButton @onClick="showInput('input')" class="mr-4"
-					>Input
-				</OutlinedButton>
-				<OutlinedButton @onClick="showImportSites">Import</OutlinedButton>
-				<Button @onClick="handleExportSites" class="ml-4"> Export </Button>
-			</template>
+  <div>
+    <Card
+      title="Sites"
+      :alert="alertCard"
+    >
+      <template #header>
+        <OutlinedButton
+          class="mr-4"
+          @onClick="showInput('input')"
+        >
+          Input
+        </OutlinedButton>
+        <OutlinedButton @onClick="showImportSites">
+          Import
+        </OutlinedButton>
+        <Button
+          class="ml-4"
+          @onClick="handleExportSites"
+        >
+          Export
+        </Button>
+      </template>
 
-			<section class="my-4 flex items-center justify-between">
-				<el-input
-					class="max-w-[200px]"
-					placeholder="Search Site"
-					v-model="searchSite"
-					@input="handleSearchSites"
-					clearable
-				>
-				</el-input>
-				<div class="flex items-center">
-					<div class="flex items-center">
-						<p class="text-xs mr-2">Rows per page</p>
-						<div class="max-w-[80px]">
-							<Select
-								:options="limits"
-								@onChange="handleLimitChange"
-								placeholder="Rows per page"
-								defaultValue="10"
-							/>
-						</div>
-					</div>
-					<el-pagination
-						:page-size="sitesParams.limit"
-						:pager-count="5"
-						layout="prev, pager, next"
-						:total="sites.totalData"
-						@current-change="handleCurrentChange"
-					>
-					</el-pagination>
-				</div>
-			</section>
-			<section>
-				<SiteTable
-					@onSelect="handleRemoveButton"
-					:data="sites.data"
-					@onRemove="handleShowModalConfirmation"
-					@onEdit="handleEdit"
-					:loading="sites.loading"
-					@onSort="handleSitesSortChange"
-					:numberStart="
-						sitesParams.page * sitesParams.limit - sitesParams.limit + 1
-					"
-				/>
-			</section>
-		</Card>
+      <section class="my-4 flex items-center justify-between">
+        <el-input
+          v-model="searchSite"
+          class="max-w-[200px]"
+          placeholder="Search Site"
+          clearable
+          @input="handleSearchSites"
+        />
+        <div class="flex items-center">
+          <div class="flex items-center">
+            <p class="text-xs mr-2">
+              Rows per page
+            </p>
+            <div class="max-w-[80px]">
+              <Select
+                :options="limits"
+                placeholder="Rows per page"
+                default-value="10"
+                @onChange="handleLimitChange"
+              />
+            </div>
+          </div>
+          <el-pagination
+            :page-size="sitesParams.limit"
+            :pager-count="5"
+            layout="prev, pager, next"
+            :total="sites.totalData"
+            @current-change="handleCurrentChange"
+          />
+        </div>
+      </section>
+      <section>
+        <SiteTable
+          :data="sites.data"
+          :loading="sites.loading"
+          :number-start="
+            sitesParams.page * sitesParams.limit - sitesParams.limit + 1
+          "
+          @onSelect="handleRemoveButton"
+          @onRemove="handleShowModalConfirmation"
+          @onEdit="handleEdit"
+          @onSort="handleSitesSortChange"
+        />
+      </section>
+    </Card>
 
-		<!-- Dialog -->
-		<ImportExcel
-			:isShow="isShowImportSites"
-			title="Import Sites"
-			url="/api/site/upload"
-			@closeImportExcel="closeImportSites"
-			urlTemplate="Site Template.xlsx"
-		/>
+    <!-- Dialog -->
 
-		<ModalConfirmation
-			title="Confirmation"
-			:isModalVisible="isShowModalConfirmation"
-			:message="messageDialog"
-			:description="descriptionDialog"
-			@onSubmit="handleConfirmModal"
-			@onCancel="handleCancelModal"
-		/>
+    <!-- IMPORT EXCEL -->
+    <ImportExcel
+      :is-show="isShowImportSites"
+      title="Import Sites"
+      url="/api/site/upload"
+      url-template="Site Template.xlsx"
+      @closeImportExcel="closeImportSites"
+    />
 
-		<InputSite
-			:isShow="isShowInput"
-			@closeInput="closeInput"
-			:type="isEdit ? 'edit' : 'input'"
-			:currentData="currentData"
-			:nsDepartmentOptions="nsDepartmentOptions"
-			:doSubDepartmentOptions="doSubDepartmentOptions"
-			:kabupatenOptions="kabupatenOptions"
-		/>
-	</div>
+    <!-- CONFIRMATION UPDATE OR DELETE -->
+    <ModalConfirmation
+      title="Confirmation"
+      :is-modal-visible="isShowModalConfirmation"
+      :message="messageDialog"
+      :description="descriptionDialog"
+      @onSubmit="handleConfirmModal"
+      @onCancel="handleCancelModal"
+    />
+
+    <!-- ADD OR EDIT FORM -->
+    <InputSite
+      :is-show="isShowInput"
+      :type="isEdit ? 'edit' : 'input'"
+      :current-data="currentData"
+      :ns-department-options="nsDepartmentOptions"
+      :do-sub-department-options="doSubDepartmentOptions"
+      :kabupaten-options="kabupatenOptions"
+      @closeInput="closeInput"
+    />
+
+    <!-- BULK UPDATE -->
+	
+
+    <!-- Bulk Update -->
+    <ModalBulkUpdateSite
+      :is-modal-visible="isShowModalBulkUpdateSite"
+      :data="dataBulkUpdate"
+      @onCancel="closeModalBulkUpdateSite"
+      @onSubmit="bulkUpdateSite"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -94,7 +122,7 @@ import {
 	ModalConfirmation,
 	InputSite,
 	Select,
-	Button,
+	Button,ModalBulkUpdateSite,
 } from "@/components";
 import { ref, onMounted, watch } from "vue";
 import { useFetch } from "@/composables";
@@ -102,6 +130,8 @@ import { debounce } from "vue-debounce";
 import { Notification, Loading } from "element-ui";
 import axios from "axios";
 
+
+// ===================================== DATA SITES =====================================
 // Sites
 const sitesParams = ref({
 	site: "",
@@ -179,6 +209,8 @@ const limits = [
 	},
 ];
 
+
+// ===================================== FILTER SITES =====================================
 // handle search
 const searchSite = ref("");
 const handleSearchSites = debounce((val) => {
@@ -199,6 +231,7 @@ const handleSearchSites = debounce((val) => {
 	}
 }, "400ms");
 
+// ===================================== INPUT SITES =====================================
 // Menu Input
 const isShowInput = ref(false);
 const isEdit = ref(false);
@@ -259,12 +292,14 @@ const handleEdit = (data) => {
 	}
 };
 
+
+// ===================================== IMPORT SITES =====================================
 // Menu Import Sites
 const isShowImportSites = ref(false);
 const alertCard = ref(null);
 
 const showImportSites = () => {
-	if (isShowImportSites) {
+	if (isShowImportSites.value) {
 		isShowImportSites.value = false;
 	}
 	isShowImportSites.value = true;
@@ -273,14 +308,18 @@ const showImportSites = () => {
 const closeImportSites = (result) => {
 	isShowImportSites.value = false;
 	if (result) {
-		// console.log(result);
+		if (result.data.updateable.length > 0) {
+			dataBulkUpdate.value = result.data.updateable;
+			showModalBulkUpdateSite();
+		}
+
 		if (result.isRefresh) {
 			alertCard.value = {
 				type:
 					!result.message || result.message.length === 0
 						? "success"
 						: "warning",
-				title: result.data,
+				title: result.data.successMessage,
 				description: result.message,
 			};
 			sitesParams.value = {
@@ -290,7 +329,7 @@ const closeImportSites = (result) => {
 		} else if (result.message) {
 			alertCard.value = {
 				type: "warning",
-				title: result.data,
+				title: result.data.successMessage,
 				description: result.message,
 			};
 		}
@@ -299,7 +338,7 @@ const closeImportSites = (result) => {
 	}
 };
 
-// ==========================
+// ===================================== DELETE SITES =====================================
 // Delete Button
 const handleRemoveButton = (data) => {
 	if (data.multipleSelection.length > 0) {
@@ -311,6 +350,45 @@ const handleRemoveButton = (data) => {
 	}
 };
 
+const handleDelete = () => {
+	isShowModalConfirmation.value = false;
+	const url = "/api/site/" + row.value.siteID;
+
+	const { status, message } = useFetch({
+		url: url,
+		method: "DELETE",
+	});
+
+	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
+		if (newStatus === "success") {
+			sites.value.data.splice(index.value, 1);
+
+			const message = `Site ${row.value.siteID} has been deleted`;
+
+			// reset modal
+			deletedCount.value = 0;
+			row.value = null;
+			index.value = null;
+			type.value = null;
+
+			Notification.success({
+				title: "Success",
+				message: message,
+			});
+
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
+			Notification.error({
+				title: "Error",
+				message: newError,
+			});
+
+			unwatch();
+		}
+	});
+};
+
+// ===================================== MODAL CONFIRMATION =====================================
 // Modal Confirmation
 const isShowModalConfirmation = ref(false);
 const row = ref(null);
@@ -341,7 +419,7 @@ const handleShowModalConfirmation = (result) => {
 			const unwatch = watch(
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
-					if (newStatus === "success" && newData) {
+					if (newStatus === "success" && (newData || newData === 0)) {
 						if (parseInt(newData) > 0) {
 							deletedCount.value = parseInt(newData);
 							if (result.type === "site") {
@@ -415,45 +493,8 @@ const handleConfirmModal = () => {
 	}
 };
 
-const handleDelete = () => {
-	isShowModalConfirmation.value = false;
-	const url = "/api/site/" + row.value.siteID;
 
-	const { status, message } = useFetch({
-		url: url,
-		method: "DELETE",
-	});
-
-	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
-		if (newStatus === "success") {
-			sites.value.data.splice(index.value, 1);
-
-			const message = `Site ${row.value.siteID} has been deleted`;
-
-			// reset modal
-			deletedCount.value = 0;
-			row.value = null;
-			index.value = null;
-			type.value = null;
-
-			Notification.success({
-				title: "Success",
-				message: message,
-			});
-
-			unwatch();
-		} else if (newStatus === "error" && newMessage) {
-			Notification.error({
-				title: "Error",
-				message: newError,
-			});
-
-			unwatch();
-		}
-	});
-};
-
-// ==========================
+// ===================================== DATA NS, DO, AND KABUPATEN =====================================
 
 // NS Department
 const urlNsDepartment = ref(null);
@@ -517,6 +558,61 @@ onMounted(async () => {
 		}
 	});
 });
+
+// ========================= BULK UPDATE SITE =========================
+const dataBulkUpdate = ref([]);
+const isShowModalBulkUpdateSite = ref(false);
+
+const showModalBulkUpdateSite = () => {
+	isShowModalBulkUpdateSite.value = true;
+};
+
+const closeModalBulkUpdateSite = () => {
+	// reset data bulk update
+	dataBulkUpdate.value = [];
+	isShowModalBulkUpdateSite.value = false;
+};
+
+// bulk update Site
+const bulkUpdateSite = (result) => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
+
+	const { data, status, message } = useFetch({
+		url: "/api/site",
+		method: "PUT",
+		body: {
+			data: result,
+		},
+	});
+
+	const unwatch = watch([data, status, message], ([newData ,newStatus, newMessage]) => {
+		if (newStatus === "success" && newData) {
+			dataBulkUpdate.value = [];
+			Loading.service().close();
+			closeModalBulkUpdateSite();
+			Notification.success({
+				title: "Success",
+				message: newData,
+			});
+
+			unwatch();
+		} else if (newStatus === "error" && newMessage) {
+			Loading.service().close();
+			Notification.error({
+				title: "Error",
+				message: newMessage,
+			});
+
+			unwatch();
+		}
+	});
+};
+
 
 // ========================= EXPORT EXCEL =========================
 const handleExportSites = async () => {

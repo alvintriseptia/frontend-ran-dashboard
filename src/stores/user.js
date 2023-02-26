@@ -68,7 +68,6 @@ export const userStore = new Store({
 			try {
 				const response = await axios.post("/api/auth/logout");
 				if (response.data.status === "success") {
-					commit("setUser", null);
 					window.location.replace("/");
 				} else {
 					Notification.error({

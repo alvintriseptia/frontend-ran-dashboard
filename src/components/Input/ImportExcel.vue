@@ -1,53 +1,70 @@
 <template>
-	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
-		:class="isShow ? 'right-0' : '-right-full'"
-	>
-		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">{{ title }}</h2>
-			<OutlinedButton size="sm" @onClick="emit('closeImportExcel')"
-				>&#10006;</OutlinedButton
-			>
-		</div>
-		<section class="mb-4">
-			<h3 class="font-medium mb-1">Instructions</h3>
-			<ul class="list-disc list-inside text-sm">
-				<li>
-					File must contain data and its format must be in accordance with the
-					provided template
-				</li>
-				<li>
-					The uploaded file must be an excel file with the .xlsx extension
-				</li>
-			</ul>
-		</section>
-		<section class="mb-6">
-			<h3 class="font-medium mb-1">Template</h3>
-			<OutlinedButton>
-				<a :href="urlTemplate" download>Download Template</a>
-			</OutlinedButton>
-		</section>
-		<section>
-			<el-upload
-				action="/"
-				:auto-upload="false"
-				drag
-				:on-change="handleChange"
-				:on-remove="handleRemove"
-				:file-list="files"
-				accept=".xlsx"
-				type="primary"
-			>
-				<i class="el-icon-upload"></i>
-				<div class="el-upload__text">Choose a file or drag file here</div>
-			</el-upload>
-		</section>
-		<section class="mt-6">
-			<Button :disabled="excelFile.value ? true : false" @onClick="handleImport"
-				>Import</Button
-			>
-		</section>
-	</div>
+  <div
+    class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 import-activity"
+    :class="isShow ? 'right-0' : '-right-full'"
+  >
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg lg:text-xl font-bold">
+        {{ title }}
+      </h2>
+      <OutlinedButton
+        size="sm"
+        @onClick="emit('closeImportExcel')"
+      >
+        &#10006;
+      </OutlinedButton>
+    </div>
+    <section class="mb-4">
+      <h3 class="font-medium mb-1">
+        Instructions
+      </h3>
+      <ul class="list-disc list-inside text-sm">
+        <li>
+          File must contain data and its format must be in accordance with the
+          provided template
+        </li>
+        <li>
+          The uploaded file must be an excel file with the .xlsx extension
+        </li>
+      </ul>
+    </section>
+    <section class="mb-6">
+      <h3 class="font-medium mb-1">
+        Template
+      </h3>
+      <OutlinedButton>
+        <a
+          :href="urlTemplate"
+          download
+        >Download Template</a>
+      </OutlinedButton>
+    </section>
+    <section>
+      <el-upload
+        action="/"
+        :auto-upload="false"
+        drag
+        :on-change="handleChange"
+        :on-remove="handleRemove"
+        :file-list="files"
+        accept=".xlsx"
+        type="primary"
+      >
+        <i class="el-icon-upload" />
+        <div class="el-upload__text">
+          Choose a file or drag file here
+        </div>
+      </el-upload>
+    </section>
+    <section class="mt-6">
+      <Button
+        :disabled="excelFile.value ? true : false"
+        @onClick="handleImport"
+      >
+        Import Data
+      </Button>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -120,7 +137,7 @@ const handleImport = () => {
 
 				Loading.service().close();
 				emit("closeImportExcel", {
-					isRefresh: newData ? true : false,
+					isRefresh: newData.successMessage ? true : false,
 					data: newData,
 					message: newMessage ? newMessage : message.value,
 				});
@@ -132,10 +149,6 @@ const handleImport = () => {
 					title: "Error",
 					message: newMessage,
 				});
-
-				unwatch();
-			} else {
-				Loading.service().close();
 
 				unwatch();
 			}
