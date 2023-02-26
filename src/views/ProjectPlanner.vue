@@ -155,7 +155,7 @@ onMounted(async () => {
 	}, 1000);
 
 	watch(projectPlanner.data, (newData) => {
-		if (newData && newData.length > 0) {
+		if (newData.weeksPerMonth && newData.rows) {
 			rows.value = newData.rows;
 			weekInMonths.value = newData.weeksPerMonth.map((item) => parseInt(item));
 			if (newData.weeksPerMonth && newData.weeksPerMonth.length > 0) {

@@ -301,38 +301,39 @@
                 @click="handleEdit(row, index)"
               >
                 Edit
-                <el-tooltip
-                  v-if="userStore.getters.role === 'admin'"
-                  class="item"
-                  effect="dark"
-                  content="Edit Plan"
-                  placement="top-start"
-                >
-                  <el-button
-                    type="'warning'"
-                    icon="el-icon-edit"
-                    size="small"
-                    circle
-                    @click="handleEdit(row, index)"
-                  />
-                </el-tooltip>
-
-                <el-tooltip
-                  v-if="userStore.getters.role === 'admin'"
-                  class="item"
-                  effect="dark"
-                  content="Delete Plan"
-                  placement="top-start"
-                >
-                  <el-button
-                    type="primary"
-                    icon="el-icon-delete"
-                    size="small"
-                    circle
-                    @click="handleRemove(row, index)"
-                  />
-                </el-tooltip>
               </el-button>
+			  
+              <el-tooltip
+                v-if="userStore.getters.role === 'admin'"
+                class="item"
+                effect="dark"
+                content="Edit Plan"
+                placement="top-start"
+              >
+                <el-button
+                  type="warning"
+                  icon="el-icon-edit"
+                  size="small"
+                  circle
+                  @click="handleEdit(row, index)"
+                />
+              </el-tooltip>
+
+              <el-tooltip
+                v-if="userStore.getters.role === 'admin'"
+                class="item"
+                effect="dark"
+                content="Delete Plan"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  icon="el-icon-delete"
+                  size="small"
+                  circle
+                  @click="handleRemove(row, index)"
+                />
+              </el-tooltip>
             </div>
           </td>
         </tr>

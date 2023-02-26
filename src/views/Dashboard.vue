@@ -155,7 +155,7 @@ import {
 	Select,
 } from "@/components";
 import { useFetch } from "@/composables";
-import {dateUtil} from "@/utils";
+import {dateUtil, options} from "@/utils";
 
 // ====================================== ChartJS ===============================================
 import {
@@ -235,29 +235,7 @@ const reloadActivitySummary = () => {
 	lastUpdatedActivitySummary.value = "Reloaded at "+ dateUtil.convertDateToLocaleString(new Date())
 }
 
-// Quarter options
-const quarters = [
-	{
-		label: "All Q",
-		value: "",
-	},
-	{
-		label: "Q1",
-		value: "Q1",
-	},
-	{
-		label: "Q2",
-		value: "Q2",
-	},
-	{
-		label: "Q3",
-		value: "Q3",
-	},
-	{
-		label: "Q4",
-		value: "Q4",
-	},
-];
+const quarters = options.quarters;
 
 // handle quarter change
 const handleQuarterUpdate = (value) => {

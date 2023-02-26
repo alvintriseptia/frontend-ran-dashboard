@@ -89,7 +89,7 @@ Dalam website ini, data activity yang digunakan adalah data yang sudah diimport 
    <img :src="$withBase('/images/admin/database_import_entry.png')" alt="entry import database" height="200" style="object-fit: contain;" />
 
 5. Biarkan pengaturan lainnya diset secara default, kemudian scroll ke bawah dan klik tombol Go
-6. Setelah selesai, data activity berhasil diimport. Anda dapat data tersebut melalui tabel activity pada database
+6. Setelah selesai, data activity berhasil diimport. Anda dapat melihat data tersebut melalui tabel activity pada database
 
 ### Input Data Activity Manual
 
@@ -321,7 +321,7 @@ Setelah proses import selesai, maka akan terjadi beberapa kondisi berikut ini:
 
 Pada halaman ini, Anda dapat melihat data-data yang akan diimport. Beberapa hal yang dapat dilakukan adalah sebagai berikut:
 
-- Apabila Anda ingin memilih apakah data tersebut akan diupdate atau tidak dengan mengklik checkbox yang terdapat di sebelah kiri data tersebut
+- Apabila Anda ingin memilih apakah data tersebut akan diupdate atau tidak, Anda dapat mengklik checkbox yang terdapat di sebelah kiri data tersebut
 - Apabila Anda ingin memilih semua data, Anda dapat mengklik button `Select All` atau `Reset` untuk membatalkan pilihan
 - Apabila Anda ingin memfilter data berdasarkan aktivitas atau site, Anda dapat mengetikkan nama aktivitas atau site yang ingin Anda cari pada input text yang terdapat di bagian kiri atas tabel.
 
@@ -331,11 +331,11 @@ Pada halaman ini, Anda dapat melihat data-data yang akan diimport. Beberapa hal 
 
    <img :src="$withBase('/images/plan-activities/import_tooltip.png')" alt="plan activities import confirm tooltip" height="150" style="object-fit: contain;" />
    
-   - Apabila Anda ingin membatalkan keseluruhan data, maka Anda dapat mengklik button `Cancel` dan mengonfirmasi pembatalan update.
+- Apabila Anda ingin membatalkan keseluruhan data, maka Anda dapat mengklik button `Cancel` dan mengonfirmasi pembatalan update.
    
    <img :src="$withBase('/images/plan-activities/import_cancel.png')" alt="plan activities import confirm cancel" height="150" style="object-fit: contain;" />
    
-   - Apabila Anda sudah yakin dengan pilihan data yang akan diupdate, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan mengupdate.
+- Apabila Anda sudah yakin dengan pilihan data yang akan diupdate, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan mengupdate.
    
    <img :src="$withBase('/images/plan-activities/import_update.png')" alt="plan activities import confirm update" height="150" style="object-fit: contain;" />
 

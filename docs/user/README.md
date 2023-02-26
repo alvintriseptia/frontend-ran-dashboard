@@ -130,7 +130,7 @@ Pada bagian ini, Anda dapat melihat lebih detail informasi progress dari aktivit
 Pada halaman ini, Anda dapat melihat seluruh aktivitas yang ada di Squad Operation & Availability. Selain itu, Anda juga dapat melakukan beberapa hal seperti:
 
 - Filter & Sorting tabel per kolom
-- Update status dari `plan activity`
+- Update status dari `plan activity` baik satu per satu maupun secara massal
 - Mengedit data `plan activity`
 
 Untuk lebih lanjut, mari simak penjelasan berikut ini:
@@ -159,7 +159,7 @@ Apabila Anda ingin melihat hasil filter yang telah Anda buat, Anda dapat mengkli
 
 Setelah melakukan filter, data-data yang ditampilkan pada tabel akan berubah sesuai dengan filter yang Anda buat. Begitupun dengan data pada pencarian filter, data tersebut juga akan berubah menyesuaikan kondisi filter yang Anda buat.
 
-### 2. Update status dari `plan activity`
+### 2. Update status `plan activity`
 
 <img :src="$withBase('/images/plan-activities/update_status.png')" alt="plan activities update status" height="300" style="object-fit: contain;" />
 
@@ -169,7 +169,26 @@ Apabila berhasil melakukan update status, maka status yang Anda pilih akan berub
 
 <img :src="$withBase('/images/plan-activities/update_status_success_user.png')" alt="plan activities update status success" height="200" style="object-fit: contain;" />
 
-### 3. Mengedit data `plan activity`
+### 3. Update status `plan activity` secara massal
+
+Sebelum ingin melakukan update status secara massal, Anda harus memilih data yang ingin Anda update statusnya dengan mengklik checkbox yang terdapat di sebelah kiri data tersebut. Selain mengklik satu per satu, Anda juga dapat mengklik button `Select All` untuk memilih semua data yang ada pada tabel di halaman tersebut atau mengklik button `Reset Checkbox` untuk membatalkan pilihan data yang telah Anda buat pada tabel di halaman tersebut.
+
+<img :src="$withBase('/images/plan-activities/bulk_button.png')" alt="plan activities checked button" height="350" style="object-fit: contain;" />
+
+Setelah memilih data yang ingin diupdate, Anda dapat mengklik button `Update Status` dan akan muncul modal untuk melakukan update status secara massal.
+
+---
+
+<img :src="$withBase('/images/plan-activities/bulk_update_status.png')" alt="plan activities update status massal" height="400" style="object-fit: contain;" />
+
+Pada modal tersebut akan muncul preview data yang akan dihapus. Anda dapat mengubah data-data site yang telah Anda pilih sebelumnya melalui form input yang terdapat pada modal tersebut. Setelah itu, Anda dapat memilih status <strong style="color:rgb(22, 163, 74);">Done</strong>, atau <strong style="color:#FF7723;">Not Yet</strong> pada masing-masing aktivitas yang telah Anda pilih. Apabila Anda mengklik status <strong style="color:rgb(22, 163, 74);">Done</strong>, maka Anda harus mengisi tanggal dieksekusinya status tersebut.
+
+Jika semua status yang Anda pilih sudah sesuai, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan melakukan update status secara massal. Apabila Anda ingin membatalkan update status, Anda dapat mengklik button `Cancel`. Setelah melakukan update status, maka akan muncul notifikasi sukses dan secara otomatis data pada tabel akan berubah sesuai dengan data yang telah Anda update.
+
+<img :src="$withBase('/images/plan-activities/bulk_update_status_success.png')" alt="plan activities update status massal success" height="300" style="object-fit: contain;" />
+
+
+### 4. Mengedit data `plan activity`
 
 <img :src="$withBase('/images/plan-activities/table_action_user.jpeg')" alt="table action" height="300" style="object-fit: contain;" />
 

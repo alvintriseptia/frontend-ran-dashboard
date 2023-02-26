@@ -72,18 +72,15 @@
         :label-width="formLabelWidth"
         prop="targetQuartal"
       >
-        <el-select
+        <Select
           v-model="formInputActivity.targetQuartal"
-          placeholder="Select Quartal"
+          :options="options.quarters"
+          :is-multiple="false"
+          placeholder="Select Target Quartal"
+          :default-value="formInputActivity.targetQuartal"
           class="w-full"
-        >
-          <el-option
-            v-for="item in quarterOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+          @onChange="onUpdateQuartal"
+        />
       </el-form-item>
 
       <el-form-item
@@ -130,41 +127,18 @@
 </template>
 
 <script setup>
-import { OutlinedButton, Button, RemoteSearchSelect } from "@/components";
+import { OutlinedButton, Button, RemoteSearchSelect, Select } from "@/components";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
 import { debounce } from "vue-debounce";
+import { options } from "@/utils";
 
 const pickerOptions = {
 	disabledDate(time) {
 		return time.getTime() > Date.now();
 	},
 };
-
-// Target Quartal Options
-const quarterOptions = [
-	{
-		value: "All",
-		label: "All",
-	},
-	{
-		value: "Q1",
-		label: "Q1",
-	},
-	{
-		value: "Q2",
-		label: "Q2",
-	},
-	{
-		value: "Q3",
-		label: "Q3",
-	},
-	{
-		value: "Q4",
-		label: "Q4",
-	},
-];
 
 // Status Options
 const statusOptions = [
@@ -284,6 +258,12 @@ function handleUpdateActivity(value) {
 	// set manual value deskripsi activity to ruleFormRef
 	ruleFormRef.value.model.deskripsiActivity = value;
 }
+
+const onUpdateQuartal = (value) => {
+	formUpdateActivity.value.targetQuartal = value;
+	ruleFormRef.value.model.targetQuartal = value;
+};
+
 
 // Sites
 // acitivity params

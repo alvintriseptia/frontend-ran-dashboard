@@ -109,17 +109,15 @@
         :label-width="formLabelWidth"
         prop="targetQuartal"
       >
-        <el-select
+        <Select
           v-model="formUpdateActivity.targetQuartal"
-          placeholder="Select Quartal"
-        >
-          <el-option
-            v-for="item in quarterOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+          :options="options.quarters"
+          :is-multiple="false"
+          placeholder="Select Target Quartal"
+          :default-value="formUpdateActivity.targetQuartal"
+          class="w-full"
+          @onChange="onUpdateQuartal"
+        />
       </el-form-item>
 
       <div class="mt-8">
@@ -132,35 +130,12 @@
 </template>
 
 <script setup>
-import { OutlinedButton, Button } from "@/components";
+import { OutlinedButton, Button, Select } from "@/components";
 import { computed, ref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
 import { userStore } from "@/stores";
-
-// Target Quartal Options
-const quarterOptions = [
-	{
-		value: "All",
-		label: "All",
-	},
-	{
-		value: "Q1",
-		label: "Q1",
-	},
-	{
-		value: "Q2",
-		label: "Q2",
-	},
-	{
-		value: "Q3",
-		label: "Q3",
-	},
-	{
-		value: "Q4",
-		label: "Q4",
-	},
-];
+import { options } from "@/utils";
 
 // Form Input
 const formUpdateActivity = ref({
@@ -257,6 +232,12 @@ const props = defineProps({
 });
 const isShowInput = computed(() => props.isShow);
 
+// handle quartal
+const onUpdateQuartal = (value) => {
+	formUpdateActivity.value.targetQuartal = value;
+	ruleFormRef.value.model.targetQuartal = value;
+};
+
 // methods
 function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
@@ -291,6 +272,8 @@ function onSubmit() {
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
 						emit("closeFormUpdateActivity", newData);
+
+						ruleFormRef.value.model.targetQuartal = "";
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
