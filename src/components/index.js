@@ -41,9 +41,8 @@ export {
 import Card from "./Layout/Card.vue";
 import LoadingSpinner from "./Layout/LoadingSpinner.vue";
 import APIResponseLayout from "./Layout/APIResponseLayout.vue";
-import Form from "./Layout/Form.vue";
 import Lazy from "./Layout/Lazy.vue";
-export { Card, LoadingSpinner, APIResponseLayout, Form, Lazy };
+export { Card, LoadingSpinner, APIResponseLayout, Lazy };
 
 // =================================================================================================================== //
 // List Item
@@ -58,7 +57,15 @@ import InputActivity from "./Input/InputActivity.vue";
 import UpdateActivity from "./Input/UpdateActivity.vue";
 import InputSite from "./Input/InputSite.vue";
 import InputAccount from "./Input/InputAccount.vue";
-export { ImportExcel, InputActivity, UpdateActivity, InputSite, InputAccount };
+import LoginForm from "./Input/LoginForm.vue";
+export {
+	ImportExcel,
+	InputActivity,
+	UpdateActivity,
+	InputSite,
+	InputAccount,
+	LoginForm,
+};
 
 // =================================================================================================================== //
 // Nav Menu
@@ -73,7 +80,8 @@ import ModalActivity from "./Dialog/ModalActivity.vue";
 import ModalConfirmation from "./Dialog/ModalConfirmation.vue";
 import ModalStatus from "./Dialog/ModalStatus.vue";
 import ModalBulkDelete from "./Dialog/ModalBulkDelete.vue";
-import ModalBulkUpdate from "./Dialog/ModalBulkUpdate.vue";
+import ModalBulkUpdatePlan from "./Dialog/ModalBulkUpdatePlan.vue";
+import ModalBulkUpdateSite from "./Dialog/ModalBulkUpdateSite.vue";
 import PopOverInput from "./Dialog/PopOverInput.vue";
 import PopOverAccount from "./Dialog/PopOverAccount.vue";
 export {
@@ -85,5 +93,6 @@ export {
 	PopOverAccount,
 	ModalStatus,
 	ModalBulkDelete,
-	ModalBulkUpdate,
+	ModalBulkUpdatePlan,
+	ModalBulkUpdateSite,
 };

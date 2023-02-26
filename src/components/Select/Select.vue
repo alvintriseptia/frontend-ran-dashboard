@@ -1,18 +1,18 @@
 <template>
-	<el-select
-		v-model="value"
-		filterable
-		:placeholder="placeholder"
-		@change="handleChange"
-		autocomplete="off"
-	>
-		<el-option
-			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
-		/>
-	</el-select>
+  <el-select
+    v-model="value"
+    filterable
+    :placeholder="placeholder"
+    autocomplete="off"
+    @change="handleChange"
+  >
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+    />
+  </el-select>
 </template>
 
 <script setup>

@@ -1,26 +1,27 @@
 <template>
-	<el-select
-		v-model="value"
-		:multiple="isMultiple"
-		filterable
-		remote
-		reserve-keyword
-		:placeholder="placeholder"
-		remote-show-suffix
-		:remote-method="remoteMethod"
-		:loading="loading"
-		@change="onChange"
-		:collapse-tags="collapseTags"
-	>
-		<el-option
-			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
-			v-loading="loading"
-			type
-		/>
-	</el-select>
+  <el-select
+    v-model="value"
+    :multiple="isMultiple"
+    filterable
+    remote
+    reserve-keyword
+    :placeholder="placeholder"
+    remote-show-suffix
+    autocomplete="off"
+    :remote-method="remoteMethod"
+    :loading="loading"
+    :collapse-tags="collapseTags"
+    @change="onChange"
+  >
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      v-loading="loading"
+      :label="item.label"
+      :value="item.value"
+      type
+    />
+  </el-select>
 </template>
 
 <script setup>
@@ -38,11 +39,11 @@ const props = defineProps({
 		default: () => [],
 	},
 	defaultValue: {
-		type: Array | String,
+		type: [Array, String],
 		default: () => [],
 	},
 	modelValue: {
-		type: Array | String,
+		type: [Array, String],
 		default: () => [],
 	},
 	placeholder: {
@@ -63,11 +64,11 @@ const props = defineProps({
 	},
 	onUpdate: {
 		type: Function,
-		default: () => {},
+		default: () => { },
 	},
 	onChange: {
 		type: Function,
-		default: () => {},
+		default: () => { },
 	},
 	collapseTags: {
 		type: Boolean,
@@ -81,27 +82,29 @@ const emit = defineEmits(["onUpdate", "onChange"]);
 // onMounted, to set the initial value
 onMounted(() => {
 	options.value = computed(() => {
-		if (props.defaultValue.length > 0) {
-			value.value = props.defaultValue;
-		}
 		return props.options
 			? props.options.map((item) => {
-					const label = props.labelOption
-						.split(",")
-						.map((e) => item[e])
-						.join(" - ");
-					return {
-						value: item[props.valueOption],
-						label: label,
-					};
-			  })
+				const label = props.labelOption
+					.split(",")
+					.map((e) => item[e])
+					.join(" - ");
+				return {
+					value: item[props.valueOption],
+					label: label,
+				};
+			})
 			: [];
 	});
 
 	watch(
-		() => props.modelValue,
-		(val) => {
-			value.value = val;
+		[() => props.modelValue, () => props.options],
+		([val, options]) => {
+			if (val) {
+				value.value = val;
+			}
+			if (options && props.defaultValue.length > 0) {
+				value.value = props.defaultValue;
+			}
 		}
 	);
 });

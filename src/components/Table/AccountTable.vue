@@ -1,109 +1,112 @@
 <template>
-	<section class="overflow-x-auto min-h-[400px]">
-		<table v-loading="loading">
-			<thead class="bg-gray-100 border-b">
-				<tr>
-					<th
-						v-for="(header, index) in tableHeader"
-						:key="header.value"
-						class="text-sm font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
-						:class="{
-							'w-[40%]': header.value !== 'No' && header.value !== 'active',
-							'w-[20%]': header.value === 'active',
-							'w-[5%]': header.value === 'No',
-							'bg-gray-200': index % 2 === 0,
-						}"
-					>
-						{{ header.label }}
-					</th>
+  <section class="overflow-x-auto min-h-[400px]">
+    <table v-loading="loading">
+      <thead class="bg-gray-100 border-b">
+        <tr>
+          <th
+            v-for="(header, index) in tableHeader"
+            :key="header.value"
+            class="text-sm font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
+            :class="{
+              'w-[40%]': header.value !== 'No' && header.value !== 'active',
+              'w-[20%]': header.value === 'active',
+              'w-[5%]': header.value === 'No',
+              'bg-gray-200': index % 2 === 0,
+            }"
+          >
+            {{ header.label }}
+          </th>
 
-					<!-- Action Column -->
-					<th
-						class="text-sm font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px] bg-gray-200"
-					>
-						Action
-					</th>
-				</tr>
-			</thead>
+          <!-- Action Column -->
+          <th
+            class="text-sm font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px] bg-gray-200"
+          >
+            Action
+          </th>
+        </tr>
+      </thead>
 
-			<!-- IF EMPTY -->
-			<div
-				class="absolute left-1/2"
-				v-if="(!data || data.length === 0) && !loading"
-			>
-				<el-empty description="No Data"> </el-empty>
-			</div>
+      <!-- IF EMPTY -->
+      <div
+        v-if="(!data || data.length === 0) && !loading"
+        class="absolute left-1/2"
+      >
+        <el-empty description="No Data" />
+      </div>
 
-			<!-- IF NOT EMPTY -->
-			<tbody v-else-if="data && data.length > 0 && !loading">
-				<tr v-for="(row, index) in data" class="border-b">
-					<!-- Index Number -->
-					<td
-						class="text-sm p-2 whitespace-nowrap text-gray-900 text-center border-r"
-					>
-						{{ numberFormat.digitFormat(index + 1) }}
-					</td>
+      <!-- IF NOT EMPTY -->
+      <tbody v-else-if="data && data.length > 0 && !loading">
+        <tr
+          v-for="(row, index) in data"
+          :key="row.username"
+          class="border-b"
+        >
+          <!-- Index Number -->
+          <td
+            class="text-sm p-2 whitespace-nowrap text-gray-900 text-center border-r"
+          >
+            {{ numberFormat.digitFormat(index + 1) }}
+          </td>
 
-					<!-- Username -->
-					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.username }}
-					</td>
+          <!-- Username -->
+          <td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
+            {{ row.username }}
+          </td>
 
-					<!-- NS -->
-					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
-						{{ row.namaNS }}
-					</td>
+          <!-- NS -->
+          <td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
+            {{ row.namaNS }}
+          </td>
 
-					<!-- Is Active -->
-					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
-						<PopOverAccount
-							v-if="convertUtil.toBoolean(row.admin) === false"
-							:active="row.active"
-							@onUpdate="(result) => handleActive(row, result)"
-						/>
-					</td>
+          <!-- Is Active -->
+          <td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
+            <PopOverAccount
+              v-if="convertUtil.toBoolean(row.admin) === false"
+              :active="row.active"
+              @onUpdate="(result) => handleActive(row, result)"
+            />
+          </td>
 
-					<!-- Action -->
-					<td class="text-sm text-gray-900 p-2 whitespace-nowrap">
-						<div
-							class="flex justify-center gap-x-2"
-							v-if="convertUtil.toBoolean(row.admin) === false"
-						>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								content="Edit Account"
-								placement="top-start"
-							>
-								<el-button
-									@click="handleEdit(row, index)"
-									type="warning"
-									icon="el-icon-edit"
-									size="small"
-									circle
-								></el-button>
-							</el-tooltip>
-							<el-tooltip
-								class="item"
-								effect="dark"
-								content="Reset Password"
-								placement="top-start"
-							>
-								<el-button
-									@click="handleReset(row, index)"
-									type="primary"
-									icon="el-icon-key"
-									size="small"
-									circle
-								>
-								</el-button>
-							</el-tooltip>
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</section>
+          <!-- Action -->
+          <td class="text-sm text-gray-900 p-2 whitespace-nowrap">
+            <div
+              v-if="convertUtil.toBoolean(row.admin) === false"
+              class="flex justify-center gap-x-2"
+            >
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="Edit Account"
+                placement="top-start"
+              >
+                <el-button
+                  type="warning"
+                  icon="el-icon-edit"
+                  size="small"
+                  circle
+                  @click="handleEdit(row, index)"
+                />
+              </el-tooltip>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="Reset Password"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  icon="el-icon-key"
+                  size="small"
+                  circle
+                  @click="handleReset(row, index)"
+                />
+              </el-tooltip>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </template>
 
 <script setup>
@@ -127,7 +130,7 @@ const tableHeader = [
 		value: "namaNS",
 	},
 	{
-		label: "Is Active",
+		label: "Status",
 		value: "active",
 	},
 ];

@@ -67,6 +67,23 @@ const resetDateFormat = (date) => {
 	return result;
 };
 
+const convertDateToLocaleString = (date) => {
+	const d = new Date(date);
+	if (d instanceof Date && !isNaN(d)) {
+		//if is still today, return hour
+		if (d.toDateString() === new Date().toDateString()) {
+			return d.toLocaleString("en-US", {
+				hour: "numeric",
+				minute: "numeric",
+				hour12: true,
+			});
+		} else {
+			return d.toLocaleString();
+		}
+	} else {
+		return "";
+	}
+};
 const monthNames = [
 	"January",
 	"February",
@@ -90,4 +107,5 @@ export default {
 	convertDateToDDMMMYY,
 	convertDateToMMMDDYY,
 	resetDateFormat,
+	convertDateToLocaleString,
 };

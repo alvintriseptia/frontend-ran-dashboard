@@ -1,147 +1,150 @@
 <template>
-	<div>
-		<section class="grid grid-cols-12 gap-y-8 md:gap-4">
-			<Card title="Programs Summary" class="col-span-12 lg:col-span-9">
-				<template #header
-					><el-tooltip
-						class="item"
-						effect="dark"
-						content="Reload"
-						placement="top-start"
-					>
-						<el-button
-							size="small"
-							@click="programSummary.doFetch"
-							icon="el-icon-refresh-right"
-							class="bg-red-500 text-white"
-							circle
-						></el-button>
-					</el-tooltip>
-				</template>
-				<el-container
-					class="flex flex-wrap gap-y-6 md:gap-6 justify-center items-center min-h-[400px]"
-				>
-					<APIResponseLayout
-						v-if="!programSummary.data || programSummary.data.length === 0"
-						:error="programSummary.message"
-						:loading="programSummary.loading"
-						@refreshFunction="programSummary.doFetch"
-						:data="programSummary.data"
-					/>
-					<ProgramChart
-						v-else
-						v-for="(item, index) in programSummary.data"
-						:key="index"
-						:chart-id="index.toString()"
-						:programName="item.namaProgram"
-						:doneActivity="parseInt(item.done)"
-						:notYetActivity="parseInt(item.notYet)"
-					/>
-				</el-container>
-			</Card>
-			<Card
-				title="Top 10 Recent Activities"
-				class="col-span-12 lg:col-span-3"
-				maxHeight="calc(100vh - 4rem - 2.5rem - 2.5rem - 2.5rem)"
-			>
-				<template #header
-					><el-tooltip
-						class="item"
-						effect="dark"
-						content="Reload"
-						placement="top-start"
-					>
-						<el-button
-							size="small"
-							@click="logActivities.doFetch"
-							icon="el-icon-refresh-right"
-							circle
-							class="bg-red-500 text-white"
-						></el-button>
-					</el-tooltip>
-				</template>
-				<APIResponseLayout
-					v-if="!logActivities.data || logActivities.data.length === 0"
-					:error="logActivities.message"
-					:loading="logActivities.loading"
-					@refreshFunction="logActivities.doFetch"
-					:data="logActivities.data"
-				/>
-				<ActivityItem
-					v-else
-					v-for="(item, index) in logActivities.data"
-					:key="index"
-					:program="item.namaProgram"
-					:subProgram="item.namaSubprogram ? item.namaSubprogram : ''"
-					:siteId="item.siteID"
-					:siteName="item.siteName"
-					:isDone="item.status.toLowerCase() === 'done'"
-					:activity="item.deskripsiActivity"
-					:updatedAt="item.updatedAt"
-					:isLastItem="index === logActivities.data.length - 1"
-				/>
-			</Card>
-		</section>
+  <div>
+    <section class="grid grid-cols-12 gap-y-8 md:gap-4">
+      <Card
+        title="Programs Summary"
+        class="col-span-12 lg:col-span-9"
+      >
+        <template #header>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="lastUpdatedProgramSummary"
+            placement="top-start"
+          >
+            <el-button
+              size="small"
+              icon="el-icon-refresh-right"
+              class="bg-red-500 text-white"
+              circle
+              @click="reloadProgramSummary"
+            />
+          </el-tooltip>
+        </template>
+        <el-container
+          class="flex flex-wrap gap-y-6 md:gap-6 justify-center items-center min-h-[400px]"
+        >
+          <APIResponseLayout
+            v-if="!programSummary.data || programSummary.data.length === 0"
+            :error="programSummary.message"
+            :loading="programSummary.loading"
+            :data="programSummary.data"
+            @refreshFunction="programSummary.doFetch"
+          />
+          <ProgramChart
+            v-for="(item, index) in programSummary.data"
+            v-else
+            :key="index"
+            :chart-id="index.toString()"
+            :program-name="item.namaProgram"
+            :done-activity="parseInt(item.done)"
+            :not-yet-activity="parseInt(item.notYet)"
+          />
+        </el-container>
+      </Card>
+      <Card
+        title="Top 10 Recent Activities"
+        class="col-span-12 lg:col-span-3"
+        max-height="calc(100vh - 4rem - 2.5rem - 2.5rem - 2.5rem)"
+      >
+        <template #header>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="lastUpdatedLogActivities"
+            placement="top-start"
+          >
+            <el-button
+              size="small"
+              icon="el-icon-refresh-right"
+              circle
+              class="bg-red-500 text-white"
+              @click="reloadLogActivities"
+            />
+          </el-tooltip>
+        </template>
+        <APIResponseLayout
+          v-if="!logActivities.data || logActivities.data.length === 0"
+          :error="logActivities.message"
+          :loading="logActivities.loading"
+          :data="logActivities.data"
+          @refreshFunction="logActivities.doFetch"
+        />
+        <ActivityItem
+          v-for="(item, index) in logActivities.data"
+          v-else
+          :key="index"
+          :program="item.namaProgram"
+          :sub-program="item.namaSubprogram ? item.namaSubprogram : ''"
+          :site-id="item.siteID"
+          :site-name="item.siteName"
+          :is-done="item.status.toLowerCase() === 'done'"
+          :activity="item.deskripsiActivity"
+          :updated-at="item.updatedAt"
+          :is-last-item="index === logActivities.data.length - 1"
+        />
+      </Card>
+    </section>
 
-		<section class="my-10">
-			<Card
-				title="Activities Summary"
-				subtitle="Note: the value represents → done activities/target activities"
-			>
-				<template #header
-					><el-tooltip
-						class="item"
-						effect="dark"
-						content="Reload"
-						placement="top-start"
-					>
-						<el-button
-							size="small"
-							@click="activitySummary.doFetch"
-							icon="el-icon-refresh-right"
-							circle
-							class="bg-red-500 text-white"
-						></el-button>
-					</el-tooltip>
-				</template>
-				<div class="flex gap-x-4 mb-6">
-					<SearchSelect
-						:options="programOptions"
-						:isMultiple="false"
-						placeholder="Pilih Program"
-						@onUpdate="handleProgramUpdate"
-					/>
-					<SearchSelect
-						:options="subProgramOptions"
-						:isMultiple="false"
-						placeholder="Pilih Sub Program"
-						@onUpdate="handleSubProgramUpdate"
-					/>
-					<Select
-						:options="quarters"
-						placeholder="Pilih Kuartal"
-						@onChange="handleQuarterUpdate"
-					/>
-				</div>
-				<ActivitySummaryTable
-					v-if="activitySummary.data"
-					:data="activitySummary.data"
-				/>
-				<APIResponseLayout
-					v-else
-					:error="activitySummary.message"
-					:loading="activitySummary.loading"
-					@refreshFunction="activitySummary.doFetch"
-					:data="activitySummary.data"
-				/>
-			</Card>
-		</section>
-	</div>
+    <section class="my-10">
+      <Card
+        title="Activities Summary"
+        subtitle="Note: the value represents → done activities/target activities"
+      >
+        <template #header>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="lastUpdatedActivitySummary"
+            placement="top-start"
+          >
+            <el-button
+              size="small"
+              icon="el-icon-refresh-right"
+              circle
+              class="bg-red-500 text-white"
+              @click="reloadActivitySummary"
+            />
+          </el-tooltip>
+        </template>
+        <div class="flex gap-x-4 mb-6">
+          <SearchSelect
+            :options="programOptions"
+            :is-multiple="false"
+            placeholder="Pilih Program"
+            @onUpdate="handleProgramUpdate"
+          />
+          <SearchSelect
+            :options="subProgramOptions"
+            :is-multiple="false"
+            placeholder="Pilih Sub Program"
+            @onUpdate="handleSubProgramUpdate"
+          />
+          <Select
+            :options="quarters"
+            placeholder="Pilih Kuartal"
+            @onChange="handleQuarterUpdate"
+          />
+        </div>
+        <ActivitySummaryTable
+          v-if="activitySummary.data"
+          :data="activitySummary.data"
+        />
+        <APIResponseLayout
+          v-else
+          :error="activitySummary.message"
+          :loading="activitySummary.loading"
+          :data="activitySummary.data"
+          @refreshFunction="activitySummary.doFetch"
+        />
+      </Card>
+    </section>
+  </div>
 </template>
 
 <script setup>
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { ref, onMounted, watch, unref } from "vue";
+import { ref, onMounted, watch } from "vue";
 import {
 	ProgramChart,
 	Card,
@@ -152,7 +155,9 @@ import {
 	Select,
 } from "@/components";
 import { useFetch } from "@/composables";
+import {dateUtil} from "@/utils";
 
+// ====================================== ChartJS ===============================================
 import {
 	Chart as ChartJS,
 	Title,
@@ -175,17 +180,40 @@ ChartJS.register(
 	ChartDataLabels
 );
 
+
+// ====================================== Program Summary ===============================================
+
 // Program Summary
 const programSummary = ref(
 	useFetch({ url: "/api/activity-plan/program-progress" })
 );
+
+// Last updated
+const lastUpdatedProgramSummary = ref("Reloaded at "+ dateUtil.convertDateToLocaleString(new Date()))
+
+// Reload program summary	
+const reloadProgramSummary = () => {
+	programSummary.value.doFetch();
+	lastUpdatedProgramSummary.value = "Reloaded at "+ dateUtil.convertDateToLocaleString(new Date())
+}
+
+// ====================================== Top 10 Recent Activities ===============================================
 
 // Weekly Log Activities
 const logActivities = ref(
 	useFetch({ url: "/api/activity-plan/latest-plan-update" })
 );
 
-// Activity Summary
+// Last updated
+const lastUpdatedLogActivities = ref("Reloaded at "+ dateUtil.convertDateToLocaleString(new Date()))
+
+// Reload log activities
+const reloadLogActivities = () => {
+	logActivities.value.doFetch();
+	lastUpdatedLogActivities.value = "Reloaded at "+ dateUtil.convertDateToLocaleString(new Date())
+}
+
+// ====================================== Activity Summary ===============================================
 // Activity summary params
 const activitySummaryParams = ref({
 	program: "1",
@@ -197,6 +225,15 @@ const activitySummary = useFetch({
 	url: "/api/activity-plan/activity-progress-by-do",
 	params: activitySummaryParams,
 });
+
+// Last updated
+const lastUpdatedActivitySummary = ref("Reloaded at "+ dateUtil.convertDateToLocaleString(new Date()))
+
+// Reload activity summary
+const reloadActivitySummary = () => {
+	activitySummary.doFetch();
+	lastUpdatedActivitySummary.value = "Reloaded at "+ dateUtil.convertDateToLocaleString(new Date())
+}
 
 // Quarter options
 const quarters = [

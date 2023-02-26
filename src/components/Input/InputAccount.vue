@@ -1,82 +1,99 @@
 <template>
-	<div
-		class="w-full md:w-[400px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
-		:class="isShowInput ? 'right-0' : '-right-full'"
-	>
-		<div class="flex justify-between items-center mb-6">
-			<h2 class="text-lg lg:text-xl font-bold">Add New Account</h2>
-			<OutlinedButton size="sm" @onClick="handleCloseInput"
-				>&#10006;</OutlinedButton
-			>
-		</div>
+  <div
+    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
+    :class="isShowInput ? 'right-0' : '-right-full'"
+  >
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-lg lg:text-xl font-bold">
+        Add New Account
+      </h2>
+      <OutlinedButton
+        size="sm"
+        @onClick="handleCloseInput"
+      >
+        &#10006;
+      </OutlinedButton>
+    </div>
 
-		<el-form
-			:model="ruleForm"
-			:rules="rules"
-			ref="ruleFormRef"
-			label-position="top"
-		>
-			<el-form-item
-				label="Username"
-				:label-width="formLabelWidth"
-				prop="username"
-			>
-				<el-input v-model="ruleForm.username" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item
-				label="Password"
-				:label-width="formLabelWidth"
-				prop="password"
-			>
-				<el-input
-					v-model="ruleForm.password"
-					autocomplete="off"
-					show-password
-				></el-input>
-			</el-form-item>
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      label-position="top"
+    >
+      <el-form-item
+        label="Username"
+        :label-width="formLabelWidth"
+        prop="username"
+      >
+        <el-input
+          v-model="ruleForm.username"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Password"
+        :label-width="formLabelWidth"
+        prop="password"
+      >
+        <el-input
+          v-model="ruleForm.password"
+          autocomplete="off"
+          show-password
+        />
+      </el-form-item>
 
-			<el-form-item
-				label="Confirm Password"
-				:label-width="formLabelWidth"
-				prop="confirmPassword"
-			>
-				<el-input
-					v-model="ruleForm.confirmPassword"
-					show-password
-					autocomplete="off"
-				></el-input>
-			</el-form-item>
+      <el-form-item
+        label="Confirm Password"
+        :label-width="formLabelWidth"
+        prop="confirmPassword"
+      >
+        <el-input
+          v-model="ruleForm.confirmPassword"
+          show-password
+          autocomplete="off"
+        />
+      </el-form-item>
 
-			<el-form-item
-				label="NS Department"
-				:label-width="formLabelWidth"
-				prop="namaNS"
-			>
-				<Select
-					v-model="ruleForm.namaNS"
-					:options="nsDepartmentOptions"
-					placeholder="Select NS Department"
-					@onChange="onUpdateNS"
-					:defaultValue="ruleForm.namaNS"
-				/>
-			</el-form-item>
+      <el-form-item
+        label="NS Department"
+        :label-width="formLabelWidth"
+        prop="namaNS"
+      >
+        <Select
+          v-model="ruleForm.namaNS"
+          :options="nsDepartmentOptions"
+          placeholder="Select NS Department"
+          :default-value="ruleForm.namaNS"
+          @onChange="onUpdateNS"
+        />
+      </el-form-item>
 
-			<el-form-item label="Status" :label-width="formLabelWidth" prop="status">
-				<el-select v-model="ruleForm.active" placeholder="Select Status">
-					<el-option
-						v-for="item in statusOptions"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					></el-option>
-				</el-select>
-			</el-form-item>
+      <el-form-item
+        label="Status"
+        :label-width="formLabelWidth"
+        prop="status"
+      >
+        <el-select
+          v-model="ruleForm.active"
+          placeholder="Select Status"
+        >
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-			<div class="mt-8">
-				<Button @onClick="onSubmit()"> Add New Account </Button>
-			</div>
-		</el-form>
-	</div>
+      <div class="mt-8">
+        <Button @onClick="onSubmit()">
+          Add New Account
+        </Button>
+      </div>
+    </el-form>
+  </div>
 </template>
 
 <script setup>
@@ -100,7 +117,7 @@ const statusOptions = [
 	},
 	{
 		value: 0,
-		label: "Inactive",
+		label: "Deactive",
 	},
 ];
 

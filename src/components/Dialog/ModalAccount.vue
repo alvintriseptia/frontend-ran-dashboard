@@ -1,97 +1,106 @@
 <template>
-	<el-dialog
-		:title="type === 'reset' ? 'Reset Password' : 'Edit Account'"
-		:visible.sync="dialogFormVisible"
-		@close="onCancel"
-		@closed="() => {}"
-		:close-on-click-modal="false"
-	>
-		<el-form
-			ref="ruleFormRef"
-			:model="form"
-			:rules="type === 'reset' ? rulesResetPassword : rulesEditAccount"
-		>
-			<el-form-item
-				label="Username"
-				:label-width="formLabelWidth"
-				prop="username"
-			>
-				<el-input
-					:disabled="type === 'reset'"
-					v-model="form.username"
-					autocomplete="off"
-				></el-input>
-			</el-form-item>
+  <el-dialog
+    :title="type === 'reset' ? 'Reset Password' : 'Edit Account'"
+    :visible.sync="dialogFormVisible"
+    :close-on-click-modal="false"
+    @close="onCancel"
+    @closed="() => {}"
+  >
+    <el-form
+      ref="ruleFormRef"
+      :model="form"
+      :rules="type === 'reset' ? rulesResetPassword : rulesEditAccount"
+    >
+      <el-form-item
+        label="Username"
+        :label-width="formLabelWidth"
+        prop="username"
+      >
+        <el-input
+          v-model="form.username"
+          :disabled="type === 'reset'"
+          autocomplete="off"
+        />
+      </el-form-item>
 
-			<el-form-item
-				v-if="type === 'reset'"
-				label="Password"
-				:label-width="formLabelWidth"
-				prop="password"
-			>
-				<el-input
-					v-model="form.password"
-					autocomplete="off"
-					show-password
-				></el-input>
+      <el-form-item
+        v-if="type === 'reset'"
+        label="Password"
+        :label-width="formLabelWidth"
+        prop="password"
+      >
+        <el-input
+          v-model="form.password"
+          autocomplete="off"
+          show-password
+        />
 
-				<p class="text-xs">
-					<strong>Note: </strong> Make sure your password is saved in your
-					password manager.
-				</p>
-			</el-form-item>
+        <p class="text-xs">
+          <strong>Note: </strong> Make sure your password is saved in your
+          password manager.
+        </p>
+      </el-form-item>
 
-			<el-form-item
-				v-if="type === 'reset'"
-				label="Confirm Password"
-				:label-width="formLabelWidth"
-				prop="confirmPassword"
-			>
-				<el-input
-					v-model="form.confirmPassword"
-					show-password
-					autocomplete="off"
-				></el-input>
-			</el-form-item>
+      <el-form-item
+        v-if="type === 'reset'"
+        label="Confirm Password"
+        :label-width="formLabelWidth"
+        prop="confirmPassword"
+      >
+        <el-input
+          v-model="form.confirmPassword"
+          show-password
+          autocomplete="off"
+        />
+      </el-form-item>
 
-			<el-form-item
-				v-if="type === 'edit'"
-				label="NS Department"
-				:label-width="formLabelWidth"
-				prop="namaNS"
-			>
-				<Select
-					v-model="form.namaNS"
-					:options="nsDepartmentOptions"
-					placeholder="Select NS Department"
-					@onChange="onUpdateNS"
-					:defaultValue="form.namaNS"
-				/>
-			</el-form-item>
+      <el-form-item
+        v-if="type === 'edit'"
+        label="NS Department"
+        :label-width="formLabelWidth"
+        prop="namaNS"
+      >
+        <Select
+          v-model="form.namaNS"
+          :options="nsDepartmentOptions"
+          placeholder="Select NS Department"
+          :default-value="form.namaNS"
+          @onChange="onUpdateNS"
+        />
+      </el-form-item>
 
-			<el-form-item
-				v-if="type === 'edit'"
-				label="Status"
-				:label-width="formLabelWidth"
-				prop="active"
-			>
-				<el-select v-model="form.active" placeholder="Select Status">
-					<el-option
-						v-for="item in statusOptions"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					></el-option>
-				</el-select>
-			</el-form-item>
-		</el-form>
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="onCancel">Cancel</el-button>
-			<el-button type="primary" @click="onSubmit">{{
-				type === "reset" ? "Reset" : "Update"
-			}}</el-button>
-		</span>
-	</el-dialog>
+      <el-form-item
+        v-if="type === 'edit'"
+        label="Status"
+        :label-width="formLabelWidth"
+        prop="active"
+      >
+        <el-select
+          v-model="form.active"
+          placeholder="Select Status"
+        >
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button @click="onCancel">Cancel</el-button>
+      <el-button
+        type="primary"
+        @click="onSubmit"
+      >{{
+        type === "reset" ? "Reset" : "Update"
+      }}</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -261,14 +270,6 @@ function onSubmit() {
 			watch([data, status, message], ([newData, newStatus, newMessage]) => {
 				if (newStatus === "success" && newData) {
 					ruleFormRef.value.model.namaNS = "";
-					form.value = {
-						username: "",
-						password: "",
-						confirmPassword: "",
-						namaNS: "",
-						active: 1,
-					};
-
 					emit("onSubmit", newData);
 				} else if (newStatus === "error" && newMessage) {
 					Notification.error({
