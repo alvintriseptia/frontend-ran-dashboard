@@ -74,30 +74,41 @@ Di awal, password untuk akun admin sudah diatur secara default. Jika Anda ingin 
 9. Jika sudah sesuai, klik tombol `Go`
 10. Setelah itu pengaturan akun admin berhasil diubah, Anda dapat mengakses website dengan menggunakan kredensial yang baru.
 
-### Melakukan Import Data Activity
+### Melakukan Import Data Activity, Program, dan Subprogram
 
-Dalam website ini, data activity yang digunakan adalah data yang sudah diimport dari database yang ada di server. Oleh karena itu, user tidak dapat menambahkan data activity secara manual. Sebagai admin, Anda dapat melakukan import data activity melalui database dengan mengikuti langkah-langkah berikut:
+Dalam website ini, data activity, program, dan subprogram yang digunakan adalah data yang sudah diimport dari database yang ada di server. Oleh karena itu, user tidak dapat menambahkan data-data tersebut secara manual. Sebagai admin, Anda dapat melakukan import data tersebut melalui database dengan mengikuti langkah-langkah berikut:
 
-1. Buka kembali `localhost/phpmyadmin`
+1. Buka website `phpmyadmin`
 2. Pada bagian kiri, klik nama database yang tadinya sudah dibuat.
-3. Pada bagian kanan, klik menu Import
+3. Silahkan pilih salah satu tabel antara `activity`, `program`, atau `subprogram`. Sebagai contoh, kita akan melakukan import data pada tabel `activity`
+
+   <img :src="$withBase('/images/admin/database_import_table.png')" alt="table import" height="300" style="object-fit: contain;" />
+
+4. Pada bagian kanan, klik menu Import
 
    <img :src="$withBase('/images/admin/database_import.png')" alt="import database" height="200" style="object-fit: contain;" />
 
-4. Pilih file csv yang akan diimport, Anda dapat mengunduh template csv pada link berikut: [activity.csv]()
+5. Pilih file csv yang akan diimport, Anda dapat mengunduh template csv pada link berikut: 
+   - [activity.csv](/documents/activity.csv)
+   - [program.csv](/documents/program.csv)
+   - [subprogram.csv](documents/subprogram.csv)
 
    <img :src="$withBase('/images/admin/database_import_entry.png')" alt="entry import database" height="200" style="object-fit: contain;" />
 
-5. Biarkan pengaturan lainnya diset secara default, kemudian scroll ke bawah dan klik tombol Go
-6. Setelah selesai, data activity berhasil diimport. Anda dapat melihat data tersebut melalui tabel activity pada database
+6. Pada bagian `Format`, pilih `CSV`
 
-### Input Data Activity Manual
+   <img :src="$withBase('/images/admin/database_import_csv.png')" alt="csv import database" height="200" style="object-fit: contain;" />
 
-Selain itu, Anda juga dapat melakukan input data activity secara manual melalui database. **Akan tetapi, perlu dipastikan bahwa sebelumnya data pada tabel program dan subprogram telah terisi**. Hal ini disebabkan dalam menginput data activity secara manual, diperlukan data-data program dan subprogram yang sudah ada di server.
+7. Biarkan pengaturan lainnya diset secara default, kemudian scroll ke bawah dan klik tombol Go
+8. Setelah selesai, data activity berhasil diimport. Anda dapat melihat data tersebut melalui tabel activity pada database
 
-Anda dapat melakukan input data program dan subprogram secara manual dengan langkah-langkah yang mirip seperti di bawah. Namun, jika Anda telah mengikuti langkah-langkah pada bagian [Melakukan Import Data Activity](#melakukan-import-data-activity), Anda dapat langsung menginput data activity dengan cara berikut:
+### Menginput Data Secara Manual
 
-1. Buka kembali `localhost/phpmyadmin`
+Selain itu, Anda juga dapat melakukan input data activity secara manual melalui database. **Akan tetapi, untuk menginput data activity perlu dipastikan bahwa sebelumnya data pada tabel program dan subprogram telah terisi**. Hal ini disebabkan dalam menginput data activity secara manual, diperlukan data-data program dan subprogram yang sudah ada di database.
+
+Anda dapat melakukan input data activity, program, dan subprogram secara manual dengan langkah-langkah di bawah ini. Sebagai contoh, kita akan melakukan input data activity secara manual.
+
+1. Buka website `phpmyadmin`
 2. Pada bagian kiri, klik nama database yang tadinya sudah dibuat. Kemudian, klik tabel `activity`
 
    <img :src="$withBase('/images/admin/table_activity_hover.png')" alt="table activity" height="300" style="object-fit: contain;" />
@@ -126,7 +137,7 @@ Anda dapat melakukan input data program dan subprogram secara manual dengan lang
 
 ### Next Step
 
-Setelah melakukan konfigurasi database, Anda sudah dapat mengakses website dengan menggunakan akun admin. Untuk tahu cara mengakses website, Anda dapat memulai dengan mengikuti [Halaman Login](#halaman-login)
+Setelah melakukan konfigurasi database, Anda sudah dapat mengakses website dengan menggunakan akun admin. Untuk mengetahui cara mengakses website, Anda dapat memulai dengan mengikuti [Halaman Login](#halaman-login)
 
 ## II. Halaman Login
 
