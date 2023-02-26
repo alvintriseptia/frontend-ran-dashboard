@@ -1,6 +1,6 @@
 # RAN Dashboard
 
-## How to run
+## How to install
 
 1. Clone the repository
 
@@ -14,8 +14,14 @@ git clone https://gitlab.com/pkl-telkomsel/frontend-ran-dashboard.git
 npm install
 ```
 
-3. Run the application
+## How to run website
 
 ```
 npm run dev
+```
+
+## How to run documentation
+
+```
+npm run docs:dev
 ```
