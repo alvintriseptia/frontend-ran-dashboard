@@ -136,13 +136,13 @@ const handleCollapse = () => {
 };
 
 function getDefaultActiveIndex(currentPath) {
-	if (currentPath.includes("/project-planner")) {
+	if (currentPath.includes(navLinks.project_planner)) {
 		return "2";
-	} else if (currentPath.includes("/plan-activities")) {
+	} else if (currentPath.includes(navLinks.plan_activities)) {
 		return "3";
-	} else if (currentPath.includes("/sites")) {
+	} else if (currentPath.includes(navLinks.sites)){
 		return "4";
-	} else if (currentPath.includes("/accounts")) {
+	} else if (currentPath.includes(navLinks.accounts)) {
     return "5";
   }
 	return "1";
