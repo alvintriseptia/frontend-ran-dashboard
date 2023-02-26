@@ -48,7 +48,7 @@
       <el-menu-item index="2">
         <router-link :to="navLinks.project_planner">
           <div @click="isCollapse = !isCollapse">
-            <i class="el-icon-document" />
+            <i class="el-icon-s-data" />
             <span slot="title"> Project Planner </span>
           </div>
         </router-link>
