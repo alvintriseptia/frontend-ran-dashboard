@@ -55,7 +55,10 @@
             Update Status
           </el-button>
         </transition>
-        <transition name="el-fade-in">
+        <transition
+          v-if="userStore.getters.role === 'admin'"
+          name="el-fade-in"
+        >
           <el-button
             v-show="isShowButtonCheckbox"
             icon="el-icon-delete"
@@ -130,6 +133,7 @@
 
     <!-- Bulk Delete -->
     <ModalBulkDelete
+      v-if="userStore.getters.role === 'admin'"
       :is-modal-visible="isShowModalBulkDelete"
       :activities="planActivityChecked"
       @onCancel="closeModalBulkDelete"
@@ -198,7 +202,6 @@
 
     <!-- Form Activity -->
     <UpdateActivity
-      v-if="userStore.getters.role === 'admin'"
       :is-show="isShowFormUpdateActivity"
       :row="formUpdateActivity"
       @closeFormUpdateActivity="closeFormUpdateActivity"

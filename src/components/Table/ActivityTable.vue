@@ -292,35 +292,47 @@
           <!-- Action -->
           <td class="text-xs text-gray-900 p-2 whitespace-nowrap">
             <div class="flex justify-center gap-x-2">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="Edit Plan"
-                placement="top-start"
+              <el-button
+                v-if="userStore.getters.role !== 'admin'"
+                type="text"
+                icon="el-icon-edit"
+                size="small"
+                circle
+                @click="handleEdit(row, index)"
               >
-                <el-button
-                  type="warning"
-                  icon="el-icon-edit"
-                  size="small"
-                  circle
-                  @click="handleEdit(row, index)"
-                />
-              </el-tooltip>
+                Edit
+                <el-tooltip
+                  v-if="userStore.getters.role === 'admin'"
+                  class="item"
+                  effect="dark"
+                  content="Edit Plan"
+                  placement="top-start"
+                >
+                  <el-button
+                    type="'warning'"
+                    icon="el-icon-edit"
+                    size="small"
+                    circle
+                    @click="handleEdit(row, index)"
+                  />
+                </el-tooltip>
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="Delete Plan"
-                placement="top-start"
-              >
-                <el-button
-                  type="primary"
-                  icon="el-icon-delete"
-                  size="small"
-                  circle
-                  @click="handleRemove(row, index)"
-                />
-              </el-tooltip>
+                <el-tooltip
+                  v-if="userStore.getters.role === 'admin'"
+                  class="item"
+                  effect="dark"
+                  content="Delete Plan"
+                  placement="top-start"
+                >
+                  <el-button
+                    type="primary"
+                    icon="el-icon-delete"
+                    size="small"
+                    circle
+                    @click="handleRemove(row, index)"
+                  />
+                </el-tooltip>
+              </el-button>
             </div>
           </td>
         </tr>

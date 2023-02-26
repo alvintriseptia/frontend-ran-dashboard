@@ -1,25 +1,31 @@
 <template>
-	<el-dialog
-		:title="title"
-		:visible.sync="dialogVisible"
-		@close="emit('onCancel')"
-		:append-to-body="appendToBody"
-	>
-		<p class="font-semibold text-sm mb-4 text-center">{{ message }}</p>
-		<slot name="content" />
+  <el-dialog
+    :title="title"
+    :visible.sync="dialogVisible"
+    :append-to-body="appendToBody"
+    @close="emit('onCancel')"
+  >
+    <p class="font-semibold text-sm mb-4 text-center">
+      {{ message }}
+    </p>
+    <slot name="content" />
 
-		<p class="text-center">{{ description }}</p>
+    <p class="text-center">
+      {{ description }}
+    </p>
 
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="emit('onCancel')">Cancel</el-button>
-			<el-button
-				:disabled="isDisabled"
-				type="primary"
-				@click="emit('onSubmit')"
-				>{{ count > 0 ? count : "Confirm" }}</el-button
-			>
-		</span>
-	</el-dialog>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button @click="emit('onCancel')">Cancel</el-button>
+      <el-button
+        :disabled="isDisabled"
+        type="primary"
+        @click="emit('onSubmit')"
+      >{{ count > 0 ? count : "Confirm" }}</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script setup>

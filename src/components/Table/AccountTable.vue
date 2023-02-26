@@ -130,7 +130,7 @@ const tableHeader = [
 		value: "namaNS",
 	},
 	{
-		label: "Is Active",
+		label: "Status",
 		value: "active",
 	},
 ];

@@ -6,7 +6,7 @@
           class="mr-4"
           @onClick="showInput()"
         >
-          Add New Account
+          Add Account
         </OutlinedButton>
       </template>
       <AccountTable
@@ -77,7 +77,7 @@ const closeInput = (result) => {
 
 		Notification.success({
 			title: "Success",
-			message: "Site has been added",
+			message: "Account has been added",
 		});
 	}
 };

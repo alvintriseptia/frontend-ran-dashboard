@@ -1,77 +1,142 @@
 <template>
-	<el-dialog
-		title="Edit Activity"
-		:visible.sync="dialogFormVisible"
-		@close="onCancel"
-		@closed="() => {}"
-	>
-		<section class="mb-8">
-			<div class="flex gap-x-6">
-				<div>
-					<h4 class="font-semibold">Program</h4>
-					<h4 class="font-semibold">Sub Program</h4>
-					<h4 class="font-semibold">Site ID</h4>
-					<h4 class="font-semibold">Site Name</h4>
-				</div>
-				<div>
-					<h4 class="font-semibold">:</h4>
-					<h4 class="font-semibold">:</h4>
-					<h4 class="font-semibold">:</h4>
-					<h4 class="font-semibold">:</h4>
-				</div>
-				<div>
-					<h4 class="font-semibold">{{ row.namaProgram }}</h4>
-					<h4 class="font-semibold">{{ row.namaSubprogram }}</h4>
-					<h4 class="font-semibold">{{ row.siteID }}</h4>
-					<h4 class="font-semibold">{{ row.siteName }}</h4>
-				</div>
-			</div>
-			<p class="text-sm text-gray-500 mt-2">
-				{{ row.deskripsiActivity }}
-			</p>
-		</section>
-		<el-form :model="form" :rules="rules" ref="ruleForm" label-position="top">
-			<el-form-item
-				v-if="userStore.getters.role === 'admin'"
-				label="Budget"
-				:label-width="formLabelWidth"
-			>
-				<el-input v-model="form.budget" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item
-				v-if="userStore.getters.role === 'admin'"
-				type="number"
-				label="Cost"
-				:label-width="formLabelWidth"
-				prop="cost"
-			>
-				<el-input v-model="form.cost" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="PIC" :label-width="formLabelWidth">
-				<el-input v-model="form.pic" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="Additional Info" :label-width="formLabelWidth">
-				<el-input v-model="form.additionalInfo" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="Remark" :label-width="formLabelWidth">
-				<el-input v-model="form.remark" autocomplete="off"></el-input>
-			</el-form-item>
-			<el-form-item label="Target Quartal" :label-width="formLabelWidth">
-				<el-select v-model="form.targetQuartal" placeholder="Select Quartal">
-					<el-option
-						v-for="item in options"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					></el-option>
-				</el-select>
-			</el-form-item>
-		</el-form>
-		<span slot="footer" class="dialog-footer">
-			<el-button @click="onCancel">Cancel</el-button>
-			<el-button type="primary" @click="onSubmit">Update</el-button>
-		</span>
-	</el-dialog>
+  <el-dialog
+    title="Edit Activity"
+    :visible.sync="dialogFormVisible"
+    @close="onCancel"
+    @closed="() => {}"
+  >
+    <section class="mb-8">
+      <div class="flex gap-x-6">
+        <div>
+          <h4 class="font-semibold">
+            Program
+          </h4>
+          <h4 class="font-semibold">
+            Sub Program
+          </h4>
+          <h4 class="font-semibold">
+            Site ID
+          </h4>
+          <h4 class="font-semibold">
+            Site Name
+          </h4>
+        </div>
+        <div>
+          <h4 class="font-semibold">
+            :
+          </h4>
+          <h4 class="font-semibold">
+            :
+          </h4>
+          <h4 class="font-semibold">
+            :
+          </h4>
+          <h4 class="font-semibold">
+            :
+          </h4>
+        </div>
+        <div>
+          <h4 class="font-semibold">
+            {{ row.namaProgram }}
+          </h4>
+          <h4 class="font-semibold">
+            {{ row.namaSubprogram }}
+          </h4>
+          <h4 class="font-semibold">
+            {{ row.siteID }}
+          </h4>
+          <h4 class="font-semibold">
+            {{ row.siteName }}
+          </h4>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500 mt-2">
+        {{ row.deskripsiActivity }}
+      </p>
+    </section>
+    <el-form
+      ref="ruleForm"
+      :model="form"
+      :rules="rules"
+      label-position="top"
+    >
+      <el-form-item
+        v-if="userStore.getters.role === 'admin'"
+        label="Budget"
+        :label-width="formLabelWidth"
+      >
+        <el-input
+          v-model="form.budget"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        v-if="userStore.getters.role === 'admin'"
+        type="number"
+        label="Cost"
+        :label-width="formLabelWidth"
+        prop="cost"
+      >
+        <el-input
+          v-model="form.cost"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="PIC"
+        :label-width="formLabelWidth"
+      >
+        <el-input
+          v-model="form.pic"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Additional Info"
+        :label-width="formLabelWidth"
+      >
+        <el-input
+          v-model="form.additionalInfo"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Remark"
+        :label-width="formLabelWidth"
+      >
+        <el-input
+          v-model="form.remark"
+          autocomplete="off"
+        />
+      </el-form-item>
+      <el-form-item
+        label="Target Quartal"
+        :label-width="formLabelWidth"
+      >
+        <el-select
+          v-model="form.targetQuartal"
+          placeholder="Select Quartal"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button @click="onCancel">Cancel</el-button>
+      <el-button
+        type="primary"
+        @click="onSubmit"
+      >Update</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script setup>
