@@ -185,7 +185,6 @@ onMounted(() => {
 		() => props.isModalVisible,
 		(val) => {
 			console.log("new value");
-			console.log(activities.value);
 			data.value = new Map(activities.value);
 			console.log(data.value);
 			totalPlan.value = countTotalPlan(activities.value);

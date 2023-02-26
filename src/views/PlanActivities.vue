@@ -177,15 +177,15 @@
             </div>
             <div class="font-normal">
               <p>
-                {{ rowModalConfirmation.namaProgram }}
+                {{ rowModalConfirmation.namaProgram || '-' }}
               </p>
               <p>
-                {{ rowModalConfirmation.namaSubprogram }}
+                {{ rowModalConfirmation.namaSubprogram || '-' }}
               </p>
-              <p>{{ rowModalConfirmation.siteID }}</p>
-              <p>{{ rowModalConfirmation.siteName }}</p>
+              <p>{{ rowModalConfirmation.siteID || '-' }}</p>
+              <p>{{ rowModalConfirmation.siteName || '-' }}</p>
               <p>
-                {{ rowModalConfirmation.deskripsiActivity }}
+                {{ rowModalConfirmation.deskripsiActivity || '-' }}
               </p>
             </div>
           </div>
@@ -632,11 +632,14 @@ const updatePlanActivityChecked = (result) => {
 		[data, status, message],
 		([newData, newStatus, newMessage]) => {
 			if (newStatus === "success" && newData) {
+				console.log(newData);
 				// Update all checked data with response
 				activities.value.data.forEach((row) => {
+					console.log(row);
 					const filterData = newData.find(
-						(item) => item.activityId === row.activityID
+						(item) => parseInt(item.activityId) === parseInt(row.activityID)
 					);
+					console.log(filterData);
 					if (
 						filterData &&
 						filterData.sitesUpdated.includes(row.siteID)
@@ -882,6 +885,8 @@ const handleShowModalConfirmation = (result) => {
 	isShowModalConfirmation.value = true;
 	rowModalConfirmation.value = result.row;
 	indexModalConfirmation.value = result.index;
+
+	console.log(rowModalConfirmation.value);
 };
 
 const handleCancelModalConfirmation = () => {

@@ -82,6 +82,10 @@ const emit = defineEmits(["onUpdate", "onChange"]);
 // onMounted, to set the initial value
 onMounted(() => {
 	options.value = computed(() => {
+		if (props.options && props.defaultValue.length > 0) {
+			// eslint-disable-next-line vue/no-side-effects-in-computed-properties
+			value.value = props.defaultValue;
+		}
 		return props.options
 			? props.options.map((item) => {
 				const label = props.labelOption
@@ -97,19 +101,14 @@ onMounted(() => {
 	});
 
 	watch(
-		[() => props.modelValue, () => props.options],
-		([val, options]) => {
+		() => props.modelValue,
+		(val) => {
 			if (val) {
 				value.value = val;
-			}
-			if (options && props.defaultValue.length > 0) {
-				value.value = props.defaultValue;
 			}
 		}
 	);
 });
-
-// check if the value is changed
 
 // Define methods
 // remoteMethod is used to search the options

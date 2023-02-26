@@ -41,10 +41,10 @@
       <el-form-item
         label="Site"
         :label-width="formLabelWidth"
-        prop="siteID"
+        prop="siteId"
       >
         <RemoteSearchSelect
-          :model-value="formInputActivity.siteID"
+          :model-value="formInputActivity.siteId"
           :options="unref(searchSites.data)"
           class="w-full"
           :is-multiple="false"
@@ -57,6 +57,32 @@
       </el-form-item>
 
       <el-form-item
+        label="PIC"
+        :label-width="formLabelWidth"
+        prop="pic"
+      >
+        <el-input
+          v-model="formInputActivity.pic"
+          autocomplete="off"
+          placeholder="PIC"
+        />
+      </el-form-item>
+
+      <el-form-item
+        label="Additional Info"
+        :label-width="formLabelWidth"
+        prop="additionalInfo"
+      >
+        <el-input
+          v-model="formInputActivity.additionalInfo"
+          autocomplete="off"
+          placeholder="Additional Info"
+          type="textarea"
+          :rows="2"
+        />
+      </el-form-item>
+
+      <el-form-item
         label="Remark"
         :label-width="formLabelWidth"
         prop="remark"
@@ -64,6 +90,32 @@
         <el-input
           v-model="formInputActivity.remark"
           autocomplete="off"
+          placeholder="Remark"
+        />
+      </el-form-item>
+
+      <el-form-item
+        label="Budget"
+        :label-width="formLabelWidth"
+        prop="budget"
+      >
+        <el-input
+          v-model="formInputActivity.budget"
+          autocomplete="off"
+          placeholder="Budget"
+        />
+      </el-form-item>
+
+      <el-form-item
+        type="number"
+        label="Cost"
+        :label-width="formLabelWidth"
+        prop="cost"
+      >
+        <el-input
+          v-model="formInputActivity.cost"
+          autocomplete="off"
+          placeholder="Cost"
         />
       </el-form-item>
 
@@ -77,7 +129,6 @@
           :options="options.quarters"
           :is-multiple="false"
           placeholder="Select Target Quartal"
-          :default-value="formInputActivity.targetQuartal"
           class="w-full"
           @onChange="onUpdateQuartal"
         />
@@ -104,7 +155,7 @@
 
       <el-form-item
         v-if="parseInt(formInputActivity.status) === 1"
-        label="Week Executed"
+        label="Date Executed"
         :label-width="formLabelWidth"
         prop="dateExecuted"
       >
@@ -127,7 +178,12 @@
 </template>
 
 <script setup>
-import { OutlinedButton, Button, RemoteSearchSelect, Select } from "@/components";
+import {
+	OutlinedButton,
+	Button,
+	RemoteSearchSelect,
+	Select,
+} from "@/components";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
@@ -155,10 +211,14 @@ const statusOptions = [
 // Form Input
 const formInputActivity = ref({
 	deskripsiActivity: "",
-	siteID: "",
-	targetQuartal: "",
+	additionalInfo: "",
 	remark: "",
-	statusActivity: "",
+	targetQuartal: "",
+	siteId: "",
+	pic: "",
+	budget: "",
+	cost: "",
+	status: "",
 	dateExecuted: "",
 });
 
@@ -173,7 +233,7 @@ const rules = ref({
 			trigger: "blur",
 		},
 	],
-	siteID: [
+	siteId: [
 		{ required: true, message: "Please input site ID", trigger: "blur" },
 	],
 	targetQuartal: [
@@ -189,6 +249,17 @@ const rules = ref({
 			required: true,
 			message: "Please input week executed",
 			trigger: "blur",
+		},
+	],
+	cost: [
+		{
+			validator: (rule, value, callback) => {
+				if (value && !Number(value)) {
+					callback(new Error("Please input number"));
+				} else {
+					callback();
+				}
+			},
 		},
 	],
 });
@@ -260,10 +331,9 @@ function handleUpdateActivity(value) {
 }
 
 const onUpdateQuartal = (value) => {
-	formUpdateActivity.value.targetQuartal = value;
+	formInputActivity.value.targetQuartal = value;
 	ruleFormRef.value.model.targetQuartal = value;
 };
-
 
 // Sites
 // acitivity params
@@ -299,9 +369,9 @@ onMounted(async () => {
 
 // handle on update
 function handleUpdateSite(value) {
-	formInputActivity.value.siteID = value;
+	formInputActivity.value.siteId = value;
 	// set manual value deskripsi activity to ruleFormRef
-	ruleFormRef.value.model.siteID = value;
+	ruleFormRef.value.model.siteId = value;
 }
 
 // methods
@@ -313,7 +383,11 @@ function onSubmit() {
 				"activityId",
 				parseInt(formInputActivity.value.deskripsiActivity)
 			);
-			body.append("siteId", formInputActivity.value.siteID);
+			body.append("siteId", formInputActivity.value.siteId);
+			body.append("additionalInfo", formInputActivity.value.additionalInfo);
+			body.append("pic", formInputActivity.value.pic);
+			body.append("budget", formInputActivity.value.budget);
+			body.append("cost", formInputActivity.value.cost);
 			body.append("targetQuartal", formInputActivity.value.targetQuartal);
 			body.append("remark", formInputActivity.value.remark);
 			body.append("done", parseInt(formInputActivity.value.status));
@@ -335,14 +409,18 @@ function onSubmit() {
 						//reset form
 						formInputActivity.value = {
 							deskripsiActivity: "",
-							siteID: "",
-							targetQuartal: "",
+							additionalInfo: "",
 							remark: "",
-							statusActivity: "",
+							targetQuartal: "",
+							siteId: "",
+							pic: "",
+							budget: "",
+							cost: "",
+							status: "",
 							dateExecuted: "",
 						};
 						ruleFormRef.value.model.deskripsiActivity = "";
-						ruleFormRef.value.model.siteID = "";
+						ruleFormRef.value.model.siteId = "";
 						ruleFormRef.value.resetFields();
 
 						emit("closeInputActivities", newData);

@@ -35,10 +35,10 @@
       <el-form-item
         label="Site"
         :label-width="formLabelWidth"
-        prop="siteID"
+        prop="siteId"
       >
         <el-input
-          v-model="formUpdateActivity.siteID"
+          v-model="formUpdateActivity.siteId"
           autocomplete="off"
           :disabled="true"
         />
@@ -52,6 +52,7 @@
         <el-input
           v-model="formUpdateActivity.pic"
           autocomplete="off"
+          placeholder="PIC"
         />
       </el-form-item>
 
@@ -65,6 +66,7 @@
           autocomplete="off"
           type="textarea"
           :rows="2"
+          placeholder="Additional Info"
         />
       </el-form-item>
 
@@ -76,6 +78,7 @@
         <el-input
           v-model="formUpdateActivity.remark"
           autocomplete="off"
+          placeholder="Remark"
         />
       </el-form-item>
 
@@ -88,6 +91,7 @@
         <el-input
           v-model="formUpdateActivity.budget"
           autocomplete="off"
+          placeholder="Budget"
         />
       </el-form-item>
 
@@ -101,6 +105,7 @@
         <el-input
           v-model="formUpdateActivity.cost"
           autocomplete="off"
+          placeholder="Cost"
         />
       </el-form-item>
 
@@ -161,12 +166,11 @@ watch(
 	(newVal) => {
 		formUpdateActivity.value = {
 			deskripsiActivity: newVal.deskripsiActivity,
-			siteID: newVal.siteID,
+			siteId: newVal.siteID,
 			additionalInfo: newVal.additionalInfo,
 			remark: newVal.remark,
 			targetQuartal: newVal.targetQuartal,
 			activityId: newVal.activityID,
-			siteId: newVal.siteID,
 			pic: newVal.namaPIC,
 			budget: userStore.getters.role === "admin" ? newVal.budget : "",
 			cost:
@@ -190,7 +194,7 @@ const rules = ref({
 			trigger: "blur",
 		},
 	],
-	siteID: [
+	siteId: [
 		{ required: true, message: "Please input site ID", trigger: "blur" },
 	],
 	targetQuartal: [
