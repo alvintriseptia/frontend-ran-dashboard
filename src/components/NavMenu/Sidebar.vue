@@ -38,7 +38,7 @@
     </div>
     <div v-if="!isMobile ? true : !isCollapse">
       <el-menu-item index="1">
-        <router-link to="/">
+        <router-link :to="navLinks.dashboard">
           <div @click="isCollapse = !isCollapse">
             <i class="el-icon-menu" />
             <span slot="title"> Dashboard </span>
@@ -46,7 +46,7 @@
         </router-link>
       </el-menu-item>
       <el-menu-item index="2">
-        <router-link to="/project-planner">
+        <router-link :to="navLinks.project_planner">
           <div @click="isCollapse = !isCollapse">
             <i class="el-icon-document" />
             <span slot="title"> Project Planner </span>
@@ -54,7 +54,7 @@
         </router-link>
       </el-menu-item>
       <el-menu-item index="3">
-        <router-link to="/plan-activities">
+        <router-link :to="navLinks.plan_activities">
           <div @click="isCollapse = !isCollapse">
             <i class="el-icon-reading" />
             <span slot="title"> Plan Activities </span>
@@ -65,7 +65,7 @@
         v-if="userStore.getters.role === 'admin'"
         index="4"
       >
-        <router-link to="/sites">
+        <router-link :to="navLinks.sites">
           <div @click="isCollapse = !isCollapse">
             <i class="el-icon-place" />
             <span slot="title"> Sites </span>
@@ -76,15 +76,28 @@
         v-if="userStore.getters.role === 'admin'"
         index="5"
       >
-        <router-link to="/accounts">
+        <router-link :to="navLinks.accounts">
           <div @click="isCollapse = !isCollapse">
             <i class="el-icon-setting" />
             <span slot="title"> Accounts </span>
           </div>
         </router-link>
       </el-menu-item>
+      <el-menu-item
+        index="6"
+      >
+        <a
+          :href="navLinks.manual_guide"
+          target="_blank"
+        >
+          <div @click="isCollapse = !isCollapse">
+            <i class="el-icon-document" />
+            <span slot="title"> Manual Guide </span>
+          </div>
+        </a>
+      </el-menu-item>
       <hr>
-      <el-menu-item index="6">
+      <el-menu-item index="7">
         <div>
           <button @click="userStore.dispatch('logout')">
             <i class="el-icon-d-arrow-left" />
@@ -104,6 +117,15 @@ import telkomsel from "@/assets/images/telkomsel.png";
 import telkomselLogo from "@/assets/images/telkomsel-logo.png";
 
 const { isMobile } = useWindow();
+
+const navLinks = {
+  "dashboard": "/",
+  "project_planner": "/project-planner",
+  "plan_activities": "/plan-activities",
+  "sites": "/sites",
+  "accounts": "/accounts",
+  "manual_guide": "http://localhost:8080",
+}
 
 const isCollapse = ref(true);
 

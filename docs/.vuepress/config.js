@@ -11,7 +11,7 @@ module.exports = {
 			"/user/": "auto" /* automatically generate single-page sidebars */,
 		},
 		nav: [
-			{ text: "Dashboard", link: "localhost:5773" },
+			{ text: "Dashboard", link: "localhost:5173" },
 			{ text: "Home", link: "/" },
 			{
 				text: "Guide",
