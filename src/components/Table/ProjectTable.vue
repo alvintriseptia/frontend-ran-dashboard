@@ -1,19 +1,16 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-	<el-table
+	<LazyTable
+		v-loading="loading"
 		:data="data"
-		:fixed="false"
-		nowrap="nowrap"
-		:style="{ fontSize: '12px' }"
-		:header-cell-style="{
+		:headerCellStyle="{
 			textAlign: 'center',
 			background: colorsTheme.lightGray,
 			padding: '0px',
 		}"
-		:cell-class-name="cellClassChecker"
-		row-class-name="no-hover-table"
-		lazy
-		max-height="700"
+		:cellClassChecker="cellClassChecker"
+		:unrender="true"
+		:renderOnIdle="true"
 	>
 		<el-table-column label="NO" :width="40" fixed="left">
 			<template #default="{ $index }">
@@ -105,14 +102,15 @@
 				</div>
 			</template>
 		</el-table-column>
-	</el-table>
+	</LazyTable>
 </template>
 
 <script setup>
 // Import Data
 import { dateUtil, colorsTheme, numberFormat } from "@/utils";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { userStore } from "@/stores";
+import { LazyTable } from "@/components";
 
 // Define Props
 const props = defineProps({

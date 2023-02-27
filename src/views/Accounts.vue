@@ -145,8 +145,11 @@ const handleConfirmModalConfirmation = () => {
 
 				isShowModalConfirmation.value = false;
 
+				console.log(newData);
+
 				const newReset = convertUtil.toBoolean(rowReset.value.reset) ? 0 : 1;
 				accounts.value.data[indexReset.value].reset = newReset;
+				accounts.value.data[indexReset.value].updatedAt = newData.updatedAt;
 				unwatch();
 			} else if (newStatus === "error" && newMessage) {
 				Notification.error({
@@ -183,7 +186,6 @@ const handleConfirmModalAccount = (result) => {
 	accounts.value.data[indexEdit.value].username = result.username;
 	accounts.value.data[indexEdit.value].nsID = result.nsID;
 	accounts.value.data[indexEdit.value].namaNS = result.namaNS;
-	accounts.value.data[indexEdit.value].active = result.active;
 	accounts.value.data[indexEdit.value].updatedAt = result.updatedAt;
 
 	Notification.success({

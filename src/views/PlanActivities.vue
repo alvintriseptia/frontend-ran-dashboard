@@ -1,222 +1,214 @@
 <template>
-  <Card
-    title="Plan Activites"
-    :alert="alertCard"
-  >
-    <template #header>
-      <OutlinedButton
-        v-if="userStore.getters.role === 'admin'"
-        class="mr-4"
-        @onClick="showInputActivities"
-      >
-        Input
-      </OutlinedButton>
-      <OutlinedButton
-        v-if="userStore.getters.role === 'admin'"
-        @onClick="showImportActivities"
-      >
-        Import
-      </OutlinedButton>
-      <Button
-        v-if="userStore.getters.role === 'admin'"
-        class="ml-4"
-        @onClick="handleExportPlanActivities"
-      >
-        Export
-      </Button>
-    </template>
+	<Card title="Plan Activites" :alert="alertCard">
+		<template #header>
+			<OutlinedButton
+				v-if="userStore.getters.role === 'admin'"
+				class="mr-4"
+				@onClick="showInputActivities"
+			>
+				Input
+			</OutlinedButton>
+			<OutlinedButton
+				v-if="userStore.getters.role === 'admin'"
+				@onClick="showImportActivities"
+			>
+				Import
+			</OutlinedButton>
+			<Button
+				v-if="userStore.getters.role === 'admin'"
+				class="ml-4"
+				@onClick="handleExportPlanActivities"
+			>
+				Export
+			</Button>
+		</template>
 
-    <section class="my-4 flex justify-between items-center">
-      <div class="flex items-center gap-x-2">
-        <el-button
-          icon="el-icon-success"
-          size="mini"
-          type="success"
-          @click="selectAllPlanActivity"
-        >
-          Select All
-        </el-button>
-        <el-button
-          icon="el-icon-remove"
-          size="mini"
-          type="danger"
-          @click="resetPlanActivityChecked"
-        >
-          Reset Checkbox
-        </el-button>
-        <transition name="el-fade-in">
-          <el-button
-            v-show="isShowButtonCheckbox"
-            icon="el-icon-magic-stick"
-            size="mini"
-            type="warning"
-            @click="showModalStatus"
-          >
-            Update Status
-          </el-button>
-        </transition>
-        <transition
-          v-if="userStore.getters.role === 'admin'"
-          name="el-fade-in"
-        >
-          <el-button
-            v-show="isShowButtonCheckbox"
-            icon="el-icon-delete"
-            size="mini"
-            type="danger"
-            @click="showModalBulkDelete"
-          >
-            Delete Selected
-          </el-button>
-        </transition>
-      </div>
-      <div class="flex items-center ml-auto">
-        <p class="text-xs mr-2">
-          Rows per page
-        </p>
-        <div class="max-w-[80px]">
-          <Select
-            :options="limits"
-            placeholder="Rows per page"
-            default-value="10"
-            @onChange="handleLimitChange"
-          />
-        </div>
-        <el-pagination
-          ref="pagination"
-          :page-size="activitiesParams.limit"
-          :pager-count="5"
-          layout="prev, pager, next"
-          :total="activities.totalData"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-    </section>
+		<section class="my-4 flex justify-between items-center">
+			<div class="flex items-center gap-x-2">
+				<el-button
+					icon="el-icon-success"
+					size="mini"
+					type="success"
+					@click="selectAllPlanActivity"
+				>
+					Select All
+				</el-button>
+				<el-button
+					icon="el-icon-remove"
+					size="mini"
+					type="danger"
+					@click="resetPlanActivityChecked"
+				>
+					Reset Checkbox
+				</el-button>
+				<transition name="el-fade-in">
+					<el-button
+						v-show="isShowButtonCheckbox"
+						icon="el-icon-magic-stick"
+						size="mini"
+						type="warning"
+						@click="showModalStatus"
+					>
+						Update Status
+					</el-button>
+				</transition>
+				<transition v-if="userStore.getters.role === 'admin'" name="el-fade-in">
+					<el-button
+						v-show="isShowButtonCheckbox"
+						icon="el-icon-delete"
+						size="mini"
+						type="danger"
+						@click="showModalBulkDelete"
+					>
+						Delete Selected
+					</el-button>
+				</transition>
+			</div>
+			<div class="flex items-center ml-auto">
+				<p class="text-xs mr-2">Rows per page</p>
+				<div class="max-w-[80px]">
+					<Select
+						:options="limits"
+						placeholder="Rows per page"
+						default-value="10"
+						@onChange="handleLimitChange"
+					/>
+				</div>
+				<el-pagination
+					ref="pagination"
+					:page-size="activitiesParams.limit"
+					:pager-count="5"
+					layout="prev, pager, next"
+					:total="activities.totalData"
+					@current-change="handleCurrentChange"
+				/>
+			</div>
+		</section>
 
-    <section class="min-h-[400px]">
-      <ActivityTable
-        v-if="activities.data"
-        ref="activityTable"
-        :data="activities.data"
-        :loading="activities.loading"
-        :filter-data="activities.filterData"
-        :number-start="
-          activitiesParams.page * activitiesParams.limit -
-            activitiesParams.limit +
-            1
-        "
-        :plan-activity-checked="planActivityChecked"
-        @onFilter="handleFilterChange"
-        @onSort="handleSortChange"
-        @onBulkUpdate="handlePlanActivityChecked"
-        @onRemove="handleShowModalConfirmation"
-        @onEdit="handleShowFormUpdateActivity"
-      />
-      <APIResponseLayout
-        v-else
-        :loading="activities.loading"
-        :error="activities.message"
-        :data="activities.data"
-        @refreshFunction="activities.doFetch"
-      />
-    </section>
+		<section class="min-h-[400px]">
+			<ActivityTable
+				v-if="activities.data"
+				ref="activityTable"
+				:data="activities.data"
+				:loading="activities.loading"
+				:filter-data="activities.filterData"
+				:number-start="
+					activitiesParams.page * activitiesParams.limit -
+					activitiesParams.limit +
+					1
+				"
+				:plan-activity-checked="planActivityChecked"
+				@onFilter="handleFilterChange"
+				@onSort="handleSortChange"
+				@onBulkUpdate="handlePlanActivityChecked"
+				@onRemove="handleShowModalConfirmation"
+				@onEdit="handleShowFormUpdateActivity"
+			/>
+			<APIResponseLayout
+				v-else
+				:loading="activities.loading"
+				:error="activities.message"
+				:data="activities.data"
+				@refreshFunction="activities.doFetch"
+			/>
+		</section>
 
-    <!-- DIALOG -->
-    <!-- Bulk Update -->
-    <ModalStatus
-      :is-modal-visible="isShowModalStatus"
-      :activities="planActivityChecked"
-      @onCancel="closeModalStatus"
-      @onSubmit="updatePlanActivityChecked"
-      @onBulkUpdate="handlePlanActivityChecked"
-    />
+		<!-- DIALOG -->
+		<!-- Bulk Update -->
+		<ModalStatus
+			:is-modal-visible="isShowModalStatus"
+			:activities="planActivityChecked"
+			@onCancel="closeModalStatus"
+			@onSubmit="updatePlanActivityChecked"
+			@onBulkUpdate="handlePlanActivityChecked"
+		/>
 
-    <!-- Bulk Delete -->
-    <ModalBulkDelete
-      v-if="userStore.getters.role === 'admin'"
-      :is-modal-visible="isShowModalBulkDelete"
-      :activities="planActivityChecked"
-      @onCancel="closeModalBulkDelete"
-      @onSubmit="deletePlanActivityChecked"
-      @onBulkUpdate="handlePlanActivityChecked"
-    />
+		<!-- Bulk Delete -->
+		<ModalBulkDelete
+			v-if="userStore.getters.role === 'admin'"
+			:is-modal-visible="isShowModalBulkDelete"
+			:activities="planActivityChecked"
+			@onCancel="closeModalBulkDelete"
+			@onSubmit="deletePlanActivityChecked"
+			@onBulkUpdate="handlePlanActivityChecked"
+		/>
 
-    <!-- Bulk Update -->
-    <ModalBulkUpdatePlan
-      :is-modal-visible="isShowModalBulkUpdatePlan"
-      :data="dataBulkUpdate"
-      @onCancel="closeModalBulkUpdatePlan"
-      @onSubmit="bulkUpdatePlanActivity"
-    />
+		<!-- Bulk Update -->
+		<ModalBulkUpdatePlan
+			:is-modal-visible="isShowModalBulkUpdatePlan"
+			:data="dataBulkUpdate"
+			@onCancel="closeModalBulkUpdatePlan"
+			@onSubmit="bulkUpdatePlanActivity"
+		/>
 
-    <!-- Delete Confirmation -->
-    <ModalConfirmation
-      v-if="userStore.getters.role === 'admin'"
-      title="Confirmation"
-      :is-modal-visible="isShowModalConfirmation"
-      message="Are you sure want to delete this plan?"
-      @onSubmit="handleConfirmModalConfirmation"
-      @onCancel="handleCancelModalConfirmation"
-    >
-      <template #content>
-        <section v-if="rowModalConfirmation">
-          <div class="flex gap-x-4 font-semibold text-xs">
-            <div>
-              <p>Program</p>
-              <p>Sub Program</p>
-              <p>Site ID</p>
-              <p>Site Name</p>
-              <p>Activity</p>
-            </div>
-            <div>
-              <p>:</p>
-              <p>:</p>
-              <p>:</p>
-              <p>:</p>
-              <p>:</p>
-            </div>
-            <div class="font-normal">
-              <p>
-                {{ rowModalConfirmation.namaProgram || '-' }}
-              </p>
-              <p>
-                {{ rowModalConfirmation.namaSubprogram || '-' }}
-              </p>
-              <p>{{ rowModalConfirmation.siteID || '-' }}</p>
-              <p>{{ rowModalConfirmation.siteName || '-' }}</p>
-              <p>
-                {{ rowModalConfirmation.deskripsiActivity || '-' }}
-              </p>
-            </div>
-          </div>
-        </section>
-      </template>
-    </ModalConfirmation>
+		<!-- Delete Confirmation -->
+		<ModalConfirmation
+			v-if="userStore.getters.role === 'admin'"
+			title="Confirmation"
+			:is-modal-visible="isShowModalConfirmation"
+			message="Are you sure want to delete this plan?"
+			@onSubmit="handleConfirmModalConfirmation"
+			@onCancel="handleCancelModalConfirmation"
+		>
+			<template #content>
+				<section v-if="rowModalConfirmation">
+					<div class="flex gap-x-4 font-semibold text-xs">
+						<div>
+							<p>Program</p>
+							<p>Sub Program</p>
+							<p>Site ID</p>
+							<p>Site Name</p>
+							<p>Activity</p>
+						</div>
+						<div>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+							<p>:</p>
+						</div>
+						<div class="font-normal">
+							<p>
+								{{ rowModalConfirmation.namaProgram || "-" }}
+							</p>
+							<p>
+								{{ rowModalConfirmation.namaSubprogram || "-" }}
+							</p>
+							<p>{{ rowModalConfirmation.siteID || "-" }}</p>
+							<p>{{ rowModalConfirmation.siteName || "-" }}</p>
+							<p>
+								{{ rowModalConfirmation.deskripsiActivity || "-" }}
+							</p>
+						</div>
+					</div>
+				</section>
+			</template>
+		</ModalConfirmation>
 
-    <!-- Form Activity -->
-    <InputActivity
-      v-if="userStore.getters.role === 'admin'"
-      :is-show="isShowInputActivities"
-      @closeInputActivities="closeInputActivities"
-    />
+		<!-- Form Activity -->
+		<InputActivity
+			v-if="userStore.getters.role === 'admin'"
+			:is-show="isShowInputActivities"
+			@closeInputActivities="closeInputActivities"
+		/>
 
-    <!-- Form Activity -->
-    <UpdateActivity
-      :is-show="isShowFormUpdateActivity"
-      :row="formUpdateActivity"
-      @closeFormUpdateActivity="closeFormUpdateActivity"
-    />
+		<!-- Form Activity -->
+		<UpdateActivity
+			:is-show="isShowFormUpdateActivity"
+			:row="formUpdateActivity"
+			@closeFormUpdateActivity="closeFormUpdateActivity"
+		/>
 
-    <!-- Import Activities -->
-    <ImportExcel
-      v-if="userStore.getters.role === 'admin'"
-      :is-show="isShowImportActivities"
-      title="Import Plan Activities"
-      url="/api/activity-plan/upload"
-      url-template="/Plan Activity Template.xlsx"
-      @closeImportExcel="closeImportActivities"
-    />
-  </Card>
+		<!-- Import Activities -->
+		<ImportExcel
+			v-if="userStore.getters.role === 'admin'"
+			:is-show="isShowImportActivities"
+			title="Import Plan Activities"
+			url="/api/activity-plan/upload"
+			url-template="/Plan Activity Template.xlsx"
+			@closeImportExcel="closeImportActivities"
+		/>
+	</Card>
 </template>
 
 <script setup>
@@ -256,7 +248,6 @@ const showImportActivities = () => {
 
 const closeImportActivities = (result) => {
 	isShowImportActivities.value = false;
-	console.log(result);
 	if (result) {
 		if (result.data.updateable.length > 0) {
 			dataBulkUpdate.value = result.data.updateable;
@@ -444,8 +435,6 @@ const toggleButtonCheckbox = () => {
 	} else {
 		isShowButtonCheckbox.value = false;
 	}
-
-	console.log(planActivityChecked.value);
 };
 
 const planActivityChecked = ref(new Map());
@@ -632,23 +621,19 @@ const updatePlanActivityChecked = (result) => {
 		[data, status, message],
 		([newData, newStatus, newMessage]) => {
 			if (newStatus === "success" && newData) {
-				console.log(newData);
 				// Update all checked data with response
 				activities.value.data.forEach((row) => {
-					console.log(row);
 					const filterData = newData.find(
 						(item) => parseInt(item.activityId) === parseInt(row.activityID)
 					);
-					console.log(filterData);
-					if (
-						filterData &&
-						filterData.sitesUpdated.includes(row.siteID)
-					) {
+					if (filterData && filterData.sitesUpdated.includes(row.siteID)) {
 						row.status = filterData.status;
 						row.weekExecuted = filterData.weekExecuted
 							? parseInt(filterData.weekExecuted)
 							: "";
-						row.dateExecuted = filterData.dateExecuted ? filterData.dateExecuted : "";
+						row.dateExecuted = filterData.dateExecuted
+							? filterData.dateExecuted
+							: "";
 						row.updatedBy = filterData.updatedBy;
 					}
 				});
@@ -708,27 +693,30 @@ const bulkUpdatePlanActivity = (result) => {
 		},
 	});
 
-	const unwatch = watch([data, status, message], ([newData, newStatus, newMessage]) => {
-		if (newStatus === "success" && newData) {
-			dataBulkUpdate.value = [];
-			Loading.service().close();
-			closeModalBulkUpdatePlan();
-			Notification.success({
-				title: "Success",
-				message: newData,
-			});
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				dataBulkUpdate.value = [];
+				Loading.service().close();
+				closeModalBulkUpdatePlan();
+				Notification.success({
+					title: "Success",
+					message: newData,
+				});
 
-			unwatch();
-		} else if (newStatus === "error" && newMessage) {
-			Loading.service().close();
-			Notification.error({
-				title: "Error",
-				message: newMessage,
-			});
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Loading.service().close();
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
 
-			unwatch();
+				unwatch();
+			}
 		}
-	});
+	);
 };
 
 // ========================= UPDATE PLAN ACTIVITY =========================
@@ -881,12 +869,9 @@ const rowModalConfirmation = ref(null);
 const indexModalConfirmation = ref(null);
 
 const handleShowModalConfirmation = (result) => {
-	console.log(result);
 	isShowModalConfirmation.value = true;
 	rowModalConfirmation.value = result.row;
 	indexModalConfirmation.value = result.index;
-
-	console.log(rowModalConfirmation.value);
 };
 
 const handleCancelModalConfirmation = () => {

@@ -211,10 +211,11 @@ function handleActive(row) {
 		([newData, newStatus, newMessage]) => {
 			if (newStatus === "success" && newData) {
 				row.active = active.toString();
+				row.updatedAt = newData.updatedAt;
 
 				Notification.success({
 					title: "Success",
-					message: newData,
+					message: "Account status has been updated",
 				});
 
 				unwatch();

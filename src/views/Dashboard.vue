@@ -236,7 +236,6 @@ const tableStructure = ref([]);
 
 watch(activitySummary.data, (newVal) => {
 	if (newVal) {
-		console.log(newVal);
 		tableData.value = [];
 		tableStructure.value = [];
 

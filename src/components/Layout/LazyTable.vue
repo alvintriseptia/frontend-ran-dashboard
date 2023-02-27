@@ -1,11 +1,19 @@
 <template>
-	<component
-		:is="tag"
+	<el-table
 		ref="targetEl"
-		:style="`min-height:${fixedMinHeight ? fixedMinHeight : minHeight}px`"
+		:data="data"
+		:fixed="false"
+		nowrap="nowrap"
+		:style="`min-height:${
+			fixedMinHeight ? fixedMinHeight : minHeight
+		}px; font-size: 12px;`"
+		:header-cell-style="headerCellStyle"
+		:cell-class-name="cellClassChecker"
+		row-class-name="no-hover-table"
+		max-height="700"
 	>
 		<slot v-if="shouldRender" />
-	</component>
+	</el-table>
 </template>
 
 <script>
@@ -26,14 +34,25 @@ export default {
 	props: {
 		renderOnIdle: Boolean,
 		unrender: Boolean,
-		minHeight: Number,
+		minHeight: {
+			type: Number,
+			default: 400,
+		},
 		unrenderDelay: {
 			type: Number,
-			default: 10000,
+			default: 300,
 		},
-		tag: {
-			type: String,
-			default: "div",
+		cellClassChecker: {
+			type: Function,
+			default: () => {},
+		},
+		headerCellStyle: {
+			type: Object,
+			default: () => ({}),
+		},
+		data: {
+			type: Array,
+			default: () => [],
 		},
 	},
 	setup(props) {
@@ -52,7 +71,7 @@ export default {
 					// if we're dealing underndering lets add a waiting period of 200ms before rendering. If a component enters the viewport and also leaves it within 200ms it will not render at all. This saves work and improves performance when user scrolls very fast
 					renderTimer = setTimeout(
 						() => (shouldRender.value = true),
-						props.unrender ? 200 : 0
+						props.unrender ? 300 : 0
 					);
 					shouldRender.value = true;
 					if (!props.unrender) {

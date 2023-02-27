@@ -1,73 +1,57 @@
 <template>
-  <section>
-    <Card
-      title="Monthly Progress Activity"
-      class="min-h-[400px]"
-    >
-      <APIResponseLayout
-        v-if="
-          progressActivity.data.value === null ||
-            progressActivity.data.value === []
-        "
-        :loading="progressActivity.loading"
-        :error="progressActivity.message"
-        :data="progressActivity.data"
-      />
-      <BarChart
-        v-else
-        :chart-options="chartOptions"
-        :chart-data="chartData"
-      />
-    </Card>
+	<section>
+		<Card title="Monthly Progress Activity" class="min-h-[400px]">
+			<APIResponseLayout
+				v-if="
+					progressActivity.data.value === null ||
+					progressActivity.data.value === []
+				"
+				:loading="progressActivity.loading"
+				:error="progressActivity.message"
+				:data="progressActivity.data"
+			/>
+			<BarChart v-else :chart-options="chartOptions" :chart-data="chartData" />
+		</Card>
 
-    <Card
-      title="Project Planner"
-      class="mt-8"
-    >
-      <section
-        class="flex flex-col gap-y-4 md:flex-row md:gap-x-4 mb-4 items-center"
-      >
-        <div class="w-32">
-          <Select
-            placeholder="Select Week"
-            :options="totalWeeks"
-            :default-value="'Week ' + currentWeek.toString()"
-            @onChange="updateWeekHighlighted"
-          />
-        </div>
-        <div
-          v-for="item in dataLabel"
-          :key="item.label"
-          class="flex items-center gap-x-2"
-        >
-          <div
-            class="w-4 h-4"
-            :class="item.color"
-          />
-          <span class="text-gray-900">{{ item.label }}</span>
-        </div>
-      </section>
-      <section class="min-h-[400px]">
-        <APIResponseLayout
-          v-if="rows.length === 0"
-          :error="projectPlanner.message"
-          :loading="projectPlanner.loading.value"
-          @refreshFunction="projectPlanner.doFetch"
-        />
-        <transition
-          v-else
-          name="el-fade-in"
-        >
-          <ProjectTable
-            :week-highlighted="weekHighlighted"
-            :data="rows"
-            :loading="projectPlanner.loading.value"
-            :week-in-months="weekInMonths"
-          />
-        </transition>
-      </section>
-    </Card>
-  </section>
+		<Card title="Project Planner" class="mt-8">
+			<section
+				class="flex flex-col gap-y-4 md:flex-row md:gap-x-4 mb-4 items-center"
+			>
+				<div class="w-32">
+					<Select
+						placeholder="Select Week"
+						:options="totalWeeks"
+						:default-value="'Week ' + currentWeek.toString()"
+						@onChange="updateWeekHighlighted"
+					/>
+				</div>
+				<div
+					v-for="item in dataLabel"
+					:key="item.label"
+					class="flex items-center gap-x-2"
+				>
+					<div class="w-4 h-4" :class="item.color" />
+					<span class="text-gray-900">{{ item.label }}</span>
+				</div>
+			</section>
+			<section class="min-h-[400px]">
+				<APIResponseLayout
+					v-if="rows.length === 0"
+					:error="projectPlanner.message"
+					:loading="projectPlanner.loading.value"
+					@refreshFunction="projectPlanner.doFetch"
+				/>
+				<transition v-else name="el-fade-in">
+					<ProjectTable
+						:week-highlighted="weekHighlighted"
+						:data="rows"
+						:loading="projectPlanner.loading.value"
+						:week-in-months="weekInMonths"
+					/>
+				</transition>
+			</section>
+		</Card>
+	</section>
 </template>
 
 <script setup>

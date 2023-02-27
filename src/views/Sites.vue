@@ -1,116 +1,100 @@
 <template>
-  <div>
-    <Card
-      title="Sites"
-      :alert="alertCard"
-    >
-      <template #header>
-        <OutlinedButton
-          class="mr-4"
-          @onClick="showInput('input')"
-        >
-          Input
-        </OutlinedButton>
-        <OutlinedButton @onClick="showImportSites">
-          Import
-        </OutlinedButton>
-        <Button
-          class="ml-4"
-          @onClick="handleExportSites"
-        >
-          Export
-        </Button>
-      </template>
+	<div>
+		<Card title="Sites" :alert="alertCard">
+			<template #header>
+				<OutlinedButton class="mr-4" @onClick="showInput('input')">
+					Input
+				</OutlinedButton>
+				<OutlinedButton @onClick="showImportSites"> Import </OutlinedButton>
+				<Button class="ml-4" @onClick="handleExportSites"> Export </Button>
+			</template>
 
-      <section class="my-4 flex items-center justify-between">
-        <el-input
-          v-model="searchSite"
-          class="max-w-[200px]"
-          placeholder="Search Site"
-          clearable
-          @input="handleSearchSites"
-        />
-        <div class="flex items-center">
-          <div class="flex items-center">
-            <p class="text-xs mr-2">
-              Rows per page
-            </p>
-            <div class="max-w-[80px]">
-              <Select
-                :options="limits"
-                placeholder="Rows per page"
-                default-value="10"
-                @onChange="handleLimitChange"
-              />
-            </div>
-          </div>
-          <el-pagination
-            :page-size="sitesParams.limit"
-            :pager-count="5"
-            layout="prev, pager, next"
-            :total="sites.totalData"
-            @current-change="handleCurrentChange"
-          />
-        </div>
-      </section>
-      <section>
-        <SiteTable
-          :data="sites.data"
-          :loading="sites.loading"
-          :number-start="
-            sitesParams.page * sitesParams.limit - sitesParams.limit + 1
-          "
-          @onSelect="handleRemoveButton"
-          @onRemove="handleShowModalConfirmation"
-          @onEdit="handleEdit"
-          @onSort="handleSitesSortChange"
-        />
-      </section>
-    </Card>
+			<section class="my-4 flex items-center justify-between">
+				<el-input
+					v-model="searchSite"
+					class="max-w-[200px]"
+					placeholder="Search Site"
+					clearable
+					@input="handleSearchSites"
+				/>
+				<div class="flex items-center">
+					<div class="flex items-center">
+						<p class="text-xs mr-2">Rows per page</p>
+						<div class="max-w-[80px]">
+							<Select
+								:options="limits"
+								placeholder="Rows per page"
+								default-value="10"
+								@onChange="handleLimitChange"
+							/>
+						</div>
+					</div>
+					<el-pagination
+						:page-size="sitesParams.limit"
+						:pager-count="5"
+						layout="prev, pager, next"
+						:total="sites.totalData"
+						@current-change="handleCurrentChange"
+					/>
+				</div>
+			</section>
+			<section>
+				<SiteTable
+					:data="sites.data"
+					:loading="sites.loading"
+					:number-start="
+						sitesParams.page * sitesParams.limit - sitesParams.limit + 1
+					"
+					@onSelect="handleRemoveButton"
+					@onRemove="handleShowModalConfirmation"
+					@onEdit="handleEdit"
+					@onSort="handleSitesSortChange"
+				/>
+			</section>
+		</Card>
 
-    <!-- Dialog -->
+		<!-- Dialog -->
 
-    <!-- IMPORT EXCEL -->
-    <ImportExcel
-      :is-show="isShowImportSites"
-      title="Import Sites"
-      url="/api/site/upload"
-      url-template="Site Template.xlsx"
-      @closeImportExcel="closeImportSites"
-    />
+		<!-- IMPORT EXCEL -->
+		<ImportExcel
+			:is-show="isShowImportSites"
+			title="Import Sites"
+			url="/api/site/upload"
+			url-template="Site Template.xlsx"
+			@closeImportExcel="closeImportSites"
+		/>
 
-    <!-- CONFIRMATION UPDATE OR DELETE -->
-    <ModalConfirmation
-      title="Confirmation"
-      :is-modal-visible="isShowModalConfirmation"
-      :message="messageDialog"
-      :description="descriptionDialog"
-      @onSubmit="handleConfirmModal"
-      @onCancel="handleCancelModal"
-    />
+		<!-- CONFIRMATION UPDATE OR DELETE -->
+		<ModalConfirmation
+			title="Confirmation"
+			:is-modal-visible="isShowModalConfirmation"
+			:message="messageDialog"
+			:description="descriptionDialog"
+			@onSubmit="handleConfirmModal"
+			@onCancel="handleCancelModal"
+		/>
 
-    <!-- ADD OR EDIT FORM -->
-    <InputSite
-      :is-show="isShowInput"
-      :type="isEdit ? 'edit' : 'input'"
-      :current-data="currentData"
-      :ns-department-options="nsDepartmentOptions"
-      :do-sub-department-options="doSubDepartmentOptions"
-      :kabupaten-options="kabupatenOptions"
-      @closeInput="closeInput"
-    />
+		<!-- ADD OR EDIT FORM -->
+		<InputSite
+			:is-show="isShowInput"
+			:type="isEdit ? 'edit' : 'input'"
+			:current-data="currentData"
+			:ns-department-options="nsDepartmentOptions"
+			:do-sub-department-options="doSubDepartmentOptions"
+			:kabupaten-options="kabupatenOptions"
+			@closeInput="closeInput"
+		/>
 
-    <!-- BULK UPDATE -->
-	
+		<!-- BULK UPDATE -->
 
-    <!-- Bulk Update -->
-    <ModalBulkUpdateSite
-      :is-modal-visible="isShowModalBulkUpdateSite"
-      :data="dataBulkUpdate"
-      @onCancel="closeModalBulkUpdateSite"
-      @onSubmit="bulkUpdateSite"
-    />
-  </div>
+		<!-- Bulk Update -->
+		<ModalBulkUpdateSite
+			:is-modal-visible="isShowModalBulkUpdateSite"
+			:data="dataBulkUpdate"
+			@onCancel="closeModalBulkUpdateSite"
+			@onSubmit="bulkUpdateSite"
+		/>
+	</div>
 </template>
 
 <script setup>
@@ -122,14 +106,14 @@ import {
 	ModalConfirmation,
 	InputSite,
 	Select,
-	Button,ModalBulkUpdateSite,
+	Button,
+	ModalBulkUpdateSite,
 } from "@/components";
 import { ref, onMounted, watch } from "vue";
 import { useFetch } from "@/composables";
 import { debounce } from "vue-debounce";
 import { Notification, Loading } from "element-ui";
 import axios from "axios";
-
 
 // ===================================== DATA SITES =====================================
 // Sites
@@ -208,7 +192,6 @@ const limits = [
 		label: "100",
 	},
 ];
-
 
 // ===================================== FILTER SITES =====================================
 // handle search
@@ -291,7 +274,6 @@ const handleEdit = (data) => {
 		showInput("edit");
 	}
 };
-
 
 // ===================================== IMPORT SITES =====================================
 // Menu Import Sites
@@ -401,7 +383,6 @@ const deletedCount = ref(0);
 
 const handleShowModalConfirmation = (result) => {
 	if (result) {
-		console.log(result);
 		row.value = result.row;
 		index.value = result.index;
 		type.value = result.type;
@@ -492,7 +473,6 @@ const handleConfirmModal = () => {
 		isShowModalConfirmation.value = false;
 	}
 };
-
 
 // ===================================== DATA NS, DO, AND KABUPATEN =====================================
 
@@ -590,29 +570,31 @@ const bulkUpdateSite = (result) => {
 		},
 	});
 
-	const unwatch = watch([data, status, message], ([newData ,newStatus, newMessage]) => {
-		if (newStatus === "success" && newData) {
-			dataBulkUpdate.value = [];
-			Loading.service().close();
-			closeModalBulkUpdateSite();
-			Notification.success({
-				title: "Success",
-				message: newData,
-			});
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				dataBulkUpdate.value = [];
+				Loading.service().close();
+				closeModalBulkUpdateSite();
+				Notification.success({
+					title: "Success",
+					message: newData,
+				});
 
-			unwatch();
-		} else if (newStatus === "error" && newMessage) {
-			Loading.service().close();
-			Notification.error({
-				title: "Error",
-				message: newMessage,
-			});
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Loading.service().close();
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
 
-			unwatch();
+				unwatch();
+			}
 		}
-	});
+	);
 };
-
 
 // ========================= EXPORT EXCEL =========================
 const handleExportSites = async () => {
