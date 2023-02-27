@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-	<section class="overflow-x-auto min-h-[300px] w-full">
+	<section v-loading="loading" class="overflow-x-auto min-h-[300px] w-full">
 		<table class="table-fixed">
 			<thead class="bg-gray-100 border-b">
 				<tr>
@@ -92,10 +92,15 @@ const props = defineProps({
 		type: Array,
 		default: () => [],
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const tableStructure = computed(() => props.tableStructure);
 const tableData = computed(() => props.tableData);
+const loading = computed(() => props.loading);
 
 // Define Methods
 // cellClassChecker will check the current cell to be highlighted
@@ -107,7 +112,6 @@ function cellClassChecker({ row }) {
 }
 
 function convertLabel(title) {
-	console.log(title);
 	if (title === "title") {
 		return "Activity";
 	} else if (title === "grandTotal") {

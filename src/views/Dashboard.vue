@@ -118,7 +118,7 @@
 						@onUpdate="handleSubProgramUpdate"
 					/>
 					<Select
-						:options="quarters"
+						:options="quarterOptions"
 						placeholder="Pilih Kuartal"
 						@onChange="handleQuarterUpdate"
 					/>
@@ -129,6 +129,7 @@
 					"
 					:tableData="activitySummary.data.value?.tableData || []"
 					:tableStructure="activitySummary.data.value?.tableStructure || []"
+					:loading="activitySummary.loading"
 				/>
 				<APIResponseLayout
 					v-else
@@ -261,7 +262,23 @@ const reloadActivitySummary = () => {
 		"Reloaded at " + dateUtil.convertDateToLocaleString(new Date());
 };
 
-const quarters = options.quarters;
+const quarterOptions = ref([]);
+
+watch(activitySummary.data, (newVal) => {
+	if (newVal) {
+		console.log(newVal);
+		quarterOptions.value = newVal.filters.targetQuartal.map((item) => {
+			return {
+				label: item,
+				value: item,
+			};
+		});
+	} else {
+		quarterOptions.value = [];
+	}
+
+	console.log(quarterOptions);
+});
 
 // handle quarter change
 const handleQuarterUpdate = (value) => {
