@@ -180,10 +180,11 @@ const handleCancelModal = () => {
 };
 
 const handleConfirmModalAccount = (result) => {
-	accounts.value.data[index.value].username = result.username;
-	accounts.value.data[index.value].nsID = result.nsID;
-	accounts.value.data[index.value].namaNS = result.namaNS;
-	accounts.value.data[index.value].active = result.active;
+	accounts.value.data[indexEdit.value].username = result.username;
+	accounts.value.data[indexEdit.value].nsID = result.nsID;
+	accounts.value.data[indexEdit.value].namaNS = result.namaNS;
+	accounts.value.data[indexEdit.value].active = result.active;
+	accounts.value.data[indexEdit.value].updatedAt = result.updatedAt;
 
 	Notification.success({
 		title: "Success",

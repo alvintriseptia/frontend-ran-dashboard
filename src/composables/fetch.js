@@ -28,7 +28,7 @@ export function useFetch({
 				headers: unref(headers),
 				method,
 				data: unref(body),
-				timeout: 60000 // wait 60 seconds before timing out
+				timeout: 60000, // wait 60 seconds before timing out
 			})
 				.then((res) => {
 					// if status error

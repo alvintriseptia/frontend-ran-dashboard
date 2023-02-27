@@ -28,17 +28,6 @@
 					@onChange="onUpdateNS"
 				/>
 			</el-form-item>
-
-			<el-form-item label="Status" :label-width="formLabelWidth" prop="active">
-				<el-select v-model="form.active" placeholder="Select Status">
-					<el-option
-						v-for="item in statusOptions"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					/>
-				</el-select>
-			</el-form-item>
 		</el-form>
 		<span slot="footer" class="dialog-footer">
 			<el-button @click="onCancel">Cancel</el-button>
@@ -75,13 +64,11 @@ function onCancel() {
 
 const dialogFormVisible = computed(() => props.isModalVisible);
 const username = computed(() => props.row.username);
+const userUuid = computed(() => props.row.uuid);
 
 const form = ref({
 	username: props.row.username,
-	password: "",
-	confirmPassword: "",
 	namaNS: props.row.nsID,
-	active: parseInt(props.row.active),
 });
 
 // Rule Form Ref
@@ -89,46 +76,6 @@ const ruleFormRef = ref(null);
 const formLabelWidth = "150px";
 
 // Form Rules
-const rulesResetPassword = {
-	password: [
-		{ required: true, message: "Please input password", trigger: "blur" },
-		{
-			validator: (rule, value, callback) => {
-				//"Password must contain at least 1 uppercase, 1 lowercase, and 1 number"
-				const regexExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-				if (value.length < 8) {
-					callback(new Error("Password must be at least 8 characters"));
-				} else if (!regexExp.test(value)) {
-					callback(
-						new Error(
-							"Password must contain at least 1 uppercase, 1 lowercase, and 1 number"
-						)
-					);
-				} else {
-					callback();
-				}
-			},
-		},
-	],
-	confirmPassword: [
-		{
-			required: true,
-			message: "Please input confirm password",
-			trigger: "blur",
-		},
-		{
-			validator: (rule, value, callback) => {
-				if (value === form.value.password) {
-					callback();
-				} else {
-					callback(new Error("Please input same password"));
-				}
-			},
-			trigger: "blur",
-		},
-	],
-};
-
 const rulesEditAccount = {
 	username: [
 		{ required: true, message: "Please input username", trigger: "blur" },
@@ -136,7 +83,6 @@ const rulesEditAccount = {
 	namaNS: [
 		{ required: true, message: "Please input NS name", trigger: "blur" },
 	],
-	active: [{ required: true, message: "Please input status", trigger: "blur" }],
 };
 
 // watch props row
@@ -156,18 +102,6 @@ watch(
 	}
 );
 
-// Status Options
-const statusOptions = [
-	{
-		value: 1,
-		label: "Active",
-	},
-	{
-		value: 0,
-		label: "Deactive",
-	},
-];
-
 function onUpdateNS(value) {
 	form.value.namaNS = value;
 	ruleFormRef.value.model.namaNS = value;
@@ -179,10 +113,10 @@ function onSubmit() {
 			const body = new FormData();
 			let url = "";
 
-			body.append("username", username.value);
-			body.append("newUsername", form.value.username);
+			body.append("uuid", userUuid.value);
+			body.append("oldUsername", username.value);
+			body.append("username", form.value.username);
 			body.append("ns", form.value.namaNS);
-			body.append("active", form.value.active);
 			url = "/api/auth/user/" + username.value;
 
 			const { data, status, message } = useFetch({

@@ -7,5 +7,6 @@ module.exports = {
 		"vue/max-attributes-per-line": "off",
 		"vue/singleline-html-element-content-newline": "off",
 		"vue/html-self-closing": "off",
+		"vue/attribute-hyphenation": "off",
 	},
 };

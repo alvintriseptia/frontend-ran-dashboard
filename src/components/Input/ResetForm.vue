@@ -70,7 +70,7 @@
 					to="/login"
 					class="text-center block text-sm font-semibold text-secondary hover:text-orange-600 mt-4"
 				>
-					Back to login
+					Back to Login
 				</router-link>
 			</div>
 		</section>
