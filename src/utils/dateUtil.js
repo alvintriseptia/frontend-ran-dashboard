@@ -23,6 +23,27 @@ const convertDateToMMMDDYY = (date) => {
 	}
 };
 
+const convertDateToMMMDDYYHHMM = (date) => {
+	const d = new Date(date);
+	if (d instanceof Date && !isNaN(d)) {
+		const day = d.getDate();
+		// get month name
+		const month = d.toLocaleString("default", { month: "short" });
+		const year = d.getFullYear();
+
+		const hours = d.getHours();
+		let minutes = d.getMinutes();
+		// if minutes < 10, add 0
+		if(parseInt(minutes) < 10){
+			minutes = '0' + minutes;
+		}
+
+		return `${month}, ${day} ${year} ${hours}:${minutes}`;
+	} else {
+		return "";
+	}
+};
+
 const getWeekInYear = () => {
 	// get current date
 	const date = new Date();
@@ -108,4 +129,5 @@ export default {
 	convertDateToMMMDDYY,
 	resetDateFormat,
 	convertDateToLocaleString,
+	convertDateToMMMDDYYHHMM,
 };

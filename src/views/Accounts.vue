@@ -1,37 +1,44 @@
 <template>
-  <main>
-    <Card title="Accounts">
-      <template #header>
-        <OutlinedButton
-          class="mr-4"
-          @onClick="showInput()"
-        >
-          Add Account
-        </OutlinedButton>
-      </template>
-      <AccountTable
-        :data="accounts.data"
-        @onSelect="handleRemoveButton"
-        @onReset="handleShowModalAccount"
-        @onEdit="handleShowModalAccount"
-      />
-    </Card>
+	<main>
+		<Card title="Accounts">
+			<template #header>
+				<OutlinedButton class="mr-4" @onClick="showInput()">
+					Add Account
+				</OutlinedButton>
+				<Button @onClick="handleExportAccounts"> Export </Button>
+			</template>
+			<AccountTable
+				:data="accounts.data"
+				@onReset="handleShowModalConfirmation"
+				@onEdit="handleShowModalAccount"
+			/>
+		</Card>
 
-    <ModalAccount
-      :is-modal-visible="isShowModalAccount"
-      :ns-department-options="nsDepartmentOptions"
-      :row="row"
-      :type="type"
-      @onSubmit="handleConfirmModal"
-      @onCancel="handleCancelModal"
-    />
+		<!-- DIALOG -->
+		<ModalAccount
+			:is-modal-visible="isShowModalAccount"
+			:ns-department-options="nsDepartmentOptions"
+			:row="rowEdit"
+			@onSubmit="handleConfirmModalAccount"
+			@onCancel="handleCancelModal"
+		/>
 
-    <InputAccount
-      :is-show="isShowInput"
-      :ns-department-options="nsDepartmentOptions"
-      @closeInput="closeInput"
-    />
-  </main>
+		<!-- Reset Confirmation -->
+		<ModalConfirmation
+			title="Confirmation"
+			:is-modal-visible="isShowModalConfirmation"
+			:message="messageModalConfirmation"
+			@onSubmit="handleConfirmModalConfirmation"
+			@onCancel="handleCancelModalConfirmation"
+		/>
+
+		<!-- FORM INPUT -->
+		<InputAccount
+			:is-show="isShowInput"
+			:ns-department-options="nsDepartmentOptions"
+			@closeInput="closeInput"
+		/>
+	</main>
 </template>
 
 <script setup>
@@ -41,18 +48,24 @@ import {
 	ModalAccount,
 	OutlinedButton,
 	InputAccount,
+	ModalConfirmation,
+	Button,
 } from "@/components";
 import { ref, onMounted, watch } from "vue";
-import { Notification } from "element-ui";
+import { Loading, Notification } from "element-ui";
 import { useFetch } from "@/composables";
+import { convertUtil } from "@/utils";
+import axios from "axios";
 
-// Sites
+// ====================================== ACCOUNTS DATA ======================================
+// Data
 const accounts = ref(
 	useFetch({
 		url: "/api/auth/user/all",
 	})
 );
 
+// ====================================== ADD ACCOUNT ======================================
 // Menu Input
 const isShowInput = ref(false);
 const isEdit = ref(false);
@@ -82,32 +95,82 @@ const closeInput = (result) => {
 	}
 };
 
-// ==========================
-// Delete Button
-const removeButtonDisabled = ref(null);
-const multipleSelection = ref([]);
+// ====================================== RESET ACCOUNT ======================================
+const isShowModalConfirmation = ref(false);
+const rowReset = ref({});
+const indexReset = ref(null);
+const messageModalConfirmation = ref("");
 
-const handleRemoveButton = (data) => {
-	if (data.multipleSelection.length > 0) {
-		removeButtonDisabled.value = data.type;
-		multipleSelection.value = data.multipleSelection;
-	} else {
-		removeButtonDisabled.value = null;
-		multipleSelection.value = [];
+const handleShowModalConfirmation = (result) => {
+	if (result) {
+		rowReset.value = result.row;
+		indexReset.value = result.index;
+		isShowModalConfirmation.value = true;
+
+		const reset = convertUtil.toBoolean(rowReset.value.reset) ? 0 : 1;
+
+		if (reset) {
+			messageModalConfirmation.value = `Are you sure to reset <em>'${rowReset.value.username}'</em> account?`;
+		} else {
+			messageModalConfirmation.value = `Are you sure to cancel reset <em>'${rowReset.value.username}'</em> account?`;
+		}
 	}
 };
 
-// Modal Confirmation
+const handleCancelModalConfirmation = () => {
+	isShowModalConfirmation.value = false;
+};
+
+const handleConfirmModalConfirmation = () => {
+	const body = new FormData();
+	const reset = convertUtil.toBoolean(rowReset.value.reset) ? false : true;
+	body.append("reset", reset);
+
+	const { data, status, message } = useFetch({
+		url: "/api/auth/user/account-reset-by-admin/" + rowReset.value.uuid,
+		method: "PUT",
+		body,
+	});
+
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				Notification.success({
+					title: "Success",
+					message: reset
+						? "Account has been reset"
+						: "Account has been canceled reset",
+				});
+
+				isShowModalConfirmation.value = false;
+
+				const newReset = convertUtil.toBoolean(rowReset.value.reset) ? 0 : 1;
+				accounts.value.data[indexReset.value].reset = newReset;
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				isShowModalConfirmation.value = false;
+
+				unwatch();
+			}
+		}
+	);
+};
+
+// ===================================== EDIT ACCOUNT =====================================
 const isShowModalAccount = ref(false);
-const row = ref({});
-const index = ref(null);
-const type = ref("");
+const rowEdit = ref({});
+const indexEdit = ref(null);
 
 const handleShowModalAccount = (result) => {
 	if (result) {
-		row.value = result.row;
-		index.value = result.index;
-		type.value = result.type;
+		rowEdit.value = result.row;
+		indexEdit.value = result.index;
 		isShowModalAccount.value = true;
 	}
 };
@@ -116,29 +179,24 @@ const handleCancelModal = () => {
 	isShowModalAccount.value = false;
 };
 
-const handleConfirmModal = (result) => {
-	if (type.value === "edit") {
-		accounts.value.data[index.value].username = result.username;
-		accounts.value.data[index.value].nsID = result.nsID;
-		accounts.value.data[index.value].namaNS = result.namaNS;
-		accounts.value.data[index.value].active = result.active;
+const handleConfirmModalAccount = (result) => {
+	accounts.value.data[index.value].username = result.username;
+	accounts.value.data[index.value].nsID = result.nsID;
+	accounts.value.data[index.value].namaNS = result.namaNS;
+	accounts.value.data[index.value].active = result.active;
 
-		Notification.success({
-			title: "Success",
-			message: "Account has been updated",
-		});
-	} else {
-		Notification.success({
-			title: "Success",
-			message: "Password has been reset",
-		});
-	}
+	Notification.success({
+		title: "Success",
+		message: "Account has been updated",
+	});
+
+	rowEdit.value = {};
+	indexEdit.value = null;
 
 	isShowModalAccount.value = false;
 };
 
-// ==========================
-
+// ================================ NS Department ================================
 // NS Department
 const urlNsDepartment = ref(null);
 const nsDepartment = useFetch({
@@ -161,4 +219,51 @@ onMounted(async () => {
 		}
 	});
 });
+
+// ========================= EXPORT EXCEL =========================
+const handleExportAccounts = async () => {
+	try {
+		Loading.service({
+			lock: true,
+			text: "Loading...",
+			spinner: "el-icon-loading",
+			background: "rgba(0, 0, 0, 0.7)",
+		});
+		const url = "/api/auth/user/download";
+		const response = await axios({
+			url,
+			method: "GET",
+			responseType: "blob",
+			timeout: 60000, // wait 60 seconds before timing out
+		});
+
+		const blob = new Blob([response.data], {
+			type: "application/vnd.ms-excel",
+		});
+		const link = document.createElement("a");
+
+		link.href = window.URL.createObjectURL(blob);
+
+		const currentDate = new Date();
+		const date = currentDate.getDate();
+		const month = currentDate.getMonth() + 1;
+		const year = currentDate.getFullYear();
+
+		const filename = `accounts-${month}-${date}-${year}.xlsx`;
+		link.download = filename;
+		link.click();
+
+		Loading.service().close();
+		Notification.success({
+			title: "Success",
+			message: "Data site successfully exported",
+		});
+	} catch (error) {
+		Loading.service().close();
+		Notification.error({
+			title: "Error",
+			message: error,
+		});
+	}
+};
 </script>

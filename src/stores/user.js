@@ -37,12 +37,12 @@ export const userStore = new Store({
 							commit("setUser", response.data.data);
 							resolve(response);
 						} else {
-							commit("setUser", null);
+							commit("setUser", { role: null, username: null });
 							reject(response);
 						}
 					})
 					.catch((error) => {
-						commit("setUser", null);
+						commit("setUser", { role: null, username: null });
 						reject(error);
 					});
 			});
@@ -58,14 +58,20 @@ export const userStore = new Store({
 				if (response.data.status === "success") {
 					commit("setUser", response.data.data);
 				} else {
-					commit("setUser", null);
-					if (router.currentRoute.path !== "/login") {
+					commit("setUser", { role: null, username: null });
+					if (
+						router.currentRoute.path !== "/login" &&
+						router.currentRoute.path !== "/reset"
+					) {
 						router.push("/login");
 					}
 				}
 			} catch (error) {
-				commit("setUser", null);
-				if (router.currentRoute.path !== "/login") {
+				commit("setUser", { role: null, username: null });
+				if (
+					router.currentRoute.path !== "/login" &&
+					router.currentRoute.path !== "/reset"
+				) {
 					router.push("/login");
 				}
 			} finally {

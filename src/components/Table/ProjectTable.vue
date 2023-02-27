@@ -1,130 +1,111 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
-  <el-table
-    :data="data"
-    :fixed="false"
-    nowrap="nowrap"
-    :style="{ fontSize: '12px' }"
-    :header-cell-style="{
-      textAlign: 'center',
-      background: colorsTheme.lightGray,
-      padding: '0px',
-    }"
-    :cell-class-name="cellClassChecker"
-    row-class-name="no-hover-table"
-    lazy
-    max-height="700"
-  >
-    <el-table-column
-      label="NO"
-      :width="50"
-    >
-      <template #default="{ $index }">
-        <div class="pl-2">
-          {{ $index + 1 }}
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="program"
-      label="PROGRAM"
-      :min-width="150"
-      fixed="left"
-    />
-    <el-table-column
-      prop="subProgram"
-      label="SUB PROGRAM"
-      :min-width="200"
-      fixed="left"
-    />
-    <el-table-column
-      prop="activity"
-      label="ACTIVITY"
-      :min-width="250"
-      fixed="left"
-    />
-    <el-table-column label="TARGET">
-      <template #default="{ row }">
-        <div class="text-center">
-          {{ row.target }}
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="COMPLETE"
-      :width="90"
-    >
-      <template #default="{ row }">
-        <el-progress
-          :percentage="parseInt(row.percentage)"
-          :stroke-width="4"
-          :color="customProgressColors"
-        />
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="PERIODS"
-      :width="1000"
-    >
-      <el-table-column
-        v-for="(month, index) in dateUtil.monthNames"
-        :key="index"
-        :width="40"
-      >
-        <template #header>
-          <div :class="getMonthBgColor(index)">
-            {{ convertMonthToMMM(month) }}
-          </div>
-        </template>
-        <el-table-column
-          v-for="(week, idx) in weekInMonths[index]"
-          :key="idx"
-          :width="40"
-        >
-          <template #header>
-            <div :class="getPeriodBgColor(idx)">
-              {{ getWeekInYear(week, index) }}
-            </div>
-          </template>
-          <template #default="{ row }">
-            <div class="text-center">
-              {{
-                row.periods[getWeekInYear(week, index) - 1] === 0
-                  ? ""
-                  : row.periods[getWeekInYear(week, index) - 1]
-              }}
-            </div>
-          </template>
-        </el-table-column>
-      </el-table-column>
-    </el-table-column>
-    <el-table-column
-      prop="pic"
-      label="PIC"
-      :width="150"
-    />
-    <el-table-column
-      v-if="userStore.getters.role === 'admin'"
-      prop="budget"
-      label="BUDGET"
-      :width="100"
-    />
-    <el-table-column
-      v-if="userStore.getters.role === 'admin'"
-      prop="cost"
-      label="COST"
-      :width="150"
-    >
-      <template #default="{ row }">
-        <div class="text-right">
-          {{
-            row.cost && row.cost !== 0
-              ? numberFormat.currencyFormat(row.cost)
-              : ""
-          }}
-        </div>
-      </template>
-    </el-table-column>
-  </el-table>
+	<el-table
+		:data="data"
+		:fixed="false"
+		nowrap="nowrap"
+		:style="{ fontSize: '12px' }"
+		:header-cell-style="{
+			textAlign: 'center',
+			background: colorsTheme.lightGray,
+			padding: '0px',
+		}"
+		:cell-class-name="cellClassChecker"
+		row-class-name="no-hover-table"
+		lazy
+		max-height="700"
+	>
+		<el-table-column label="NO" :width="40" fixed="left">
+			<template #default="{ $index }">
+				<div class="text-center">
+					{{ $index + 1 }}
+				</div>
+			</template>
+		</el-table-column>
+		<el-table-column label="ACTIVITY" :width="300" fixed>
+			<template #default="{ row }">
+				<div class="px-2 break-all" v-html="row.activity" />
+			</template>
+		</el-table-column>
+		<el-table-column prop="program" label="PROGRAM" :width="150" />
+		<el-table-column label="SUB PROGRAM" :width="200">
+			<template #default="{ row }">
+				<div v-html="row.subProgram" />
+			</template>
+		</el-table-column>
+		<el-table-column label="TARGET">
+			<template #default="{ row }">
+				<div class="text-center">
+					{{ row.target }}
+				</div>
+			</template>
+		</el-table-column>
+		<el-table-column label="COMPLETE" :width="90">
+			<template #default="{ row }">
+				<el-progress
+					:percentage="parseInt(row.percentage)"
+					:stroke-width="4"
+					:color="customProgressColors"
+				/>
+			</template>
+		</el-table-column>
+		<el-table-column label="PERIODS" :width="1000">
+			<el-table-column
+				v-for="(month, index) in dateUtil.monthNames"
+				:key="index"
+				:width="40"
+			>
+				<template #header>
+					<div :class="getMonthBgColor(index)">
+						{{ convertMonthToMMM(month) }}
+					</div>
+				</template>
+				<el-table-column
+					v-for="(week, idx) in weekInMonths[index]"
+					:key="idx"
+					:width="40"
+				>
+					<template #header>
+						<div :class="getPeriodBgColor(idx)">
+							{{ getWeekInYear(week, index) }}
+						</div>
+					</template>
+					<template #default="{ row }">
+						<div class="text-center">
+							{{
+								row.periods[getWeekInYear(week, index) - 1] === 0
+									? ""
+									: row.periods[getWeekInYear(week, index) - 1]
+							}}
+						</div>
+					</template>
+				</el-table-column>
+			</el-table-column>
+		</el-table-column>
+		<el-table-column prop="pic" label="PIC" :width="150" />
+		<el-table-column
+			v-if="userStore.getters.role === 'admin'"
+			prop="budget"
+			label="BUDGET"
+			:width="100"
+		/>
+		<el-table-column
+			v-if="userStore.getters.role === 'admin'"
+			prop="cost"
+			label="COST"
+			:width="150"
+		>
+			<template #default="{ row }">
+				<div class="text-right">
+					{{
+						row.cost && row.cost !== 0
+							? numberFormat.currencyFormat(row.cost)
+							: ""
+					}}
+				</div>
+			</template>
+		</el-table-column>
+	</el-table>
 </template>
 
 <script setup>

@@ -112,3 +112,7 @@ body {
 .el-checkbox__label {
 	white-space: break-spaces !important;
 }
+
+.el-form-item--small .el-form-item__label {
+	line-height: 8px !important;
+}

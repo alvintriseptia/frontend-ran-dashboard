@@ -58,6 +58,7 @@ import UpdateActivity from "./Input/UpdateActivity.vue";
 import InputSite from "./Input/InputSite.vue";
 import InputAccount from "./Input/InputAccount.vue";
 import LoginForm from "./Input/LoginForm.vue";
+import ResetForm from "./Input/ResetForm.vue";
 export {
 	ImportExcel,
 	InputActivity,
@@ -65,6 +66,7 @@ export {
 	InputSite,
 	InputAccount,
 	LoginForm,
+	ResetForm,
 };
 
 // =================================================================================================================== //

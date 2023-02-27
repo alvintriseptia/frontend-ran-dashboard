@@ -1,106 +1,50 @@
 <template>
-  <el-dialog
-    :title="type === 'reset' ? 'Reset Password' : 'Edit Account'"
-    :visible.sync="dialogFormVisible"
-    :close-on-click-modal="false"
-    @close="onCancel"
-    @closed="() => {}"
-  >
-    <el-form
-      ref="ruleFormRef"
-      :model="form"
-      :rules="type === 'reset' ? rulesResetPassword : rulesEditAccount"
-    >
-      <el-form-item
-        label="Username"
-        :label-width="formLabelWidth"
-        prop="username"
-      >
-        <el-input
-          v-model="form.username"
-          :disabled="type === 'reset'"
-          autocomplete="off"
-        />
-      </el-form-item>
+	<el-dialog
+		:title="'Edit Account'"
+		:visible.sync="dialogFormVisible"
+		:close-on-click-modal="false"
+		@close="onCancel"
+		@closed="() => {}"
+	>
+		<el-form ref="ruleFormRef" :model="form" :rules="rulesEditAccount">
+			<el-form-item
+				label="Username"
+				:label-width="formLabelWidth"
+				prop="username"
+			>
+				<el-input v-model="form.username" autocomplete="off" />
+			</el-form-item>
 
-      <el-form-item
-        v-if="type === 'reset'"
-        label="Password"
-        :label-width="formLabelWidth"
-        prop="password"
-      >
-        <el-input
-          v-model="form.password"
-          autocomplete="off"
-          show-password
-        />
+			<el-form-item
+				label="NS Department"
+				:label-width="formLabelWidth"
+				prop="namaNS"
+			>
+				<Select
+					v-model="form.namaNS"
+					:options="nsDepartmentOptions"
+					placeholder="Select NS Department"
+					:default-value="form.namaNS"
+					@onChange="onUpdateNS"
+				/>
+			</el-form-item>
 
-        <p class="text-xs">
-          <strong>Note: </strong> Make sure your password is saved in your
-          password manager.
-        </p>
-      </el-form-item>
-
-      <el-form-item
-        v-if="type === 'reset'"
-        label="Confirm Password"
-        :label-width="formLabelWidth"
-        prop="confirmPassword"
-      >
-        <el-input
-          v-model="form.confirmPassword"
-          show-password
-          autocomplete="off"
-        />
-      </el-form-item>
-
-      <el-form-item
-        v-if="type === 'edit'"
-        label="NS Department"
-        :label-width="formLabelWidth"
-        prop="namaNS"
-      >
-        <Select
-          v-model="form.namaNS"
-          :options="nsDepartmentOptions"
-          placeholder="Select NS Department"
-          :default-value="form.namaNS"
-          @onChange="onUpdateNS"
-        />
-      </el-form-item>
-
-      <el-form-item
-        v-if="type === 'edit'"
-        label="Status"
-        :label-width="formLabelWidth"
-        prop="active"
-      >
-        <el-select
-          v-model="form.active"
-          placeholder="Select Status"
-        >
-          <el-option
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-    </el-form>
-    <span
-      slot="footer"
-      class="dialog-footer"
-    >
-      <el-button @click="onCancel">Cancel</el-button>
-      <el-button
-        type="primary"
-        @click="onSubmit"
-      >{{
-        type === "reset" ? "Reset" : "Update"
-      }}</el-button>
-    </span>
-  </el-dialog>
+			<el-form-item label="Status" :label-width="formLabelWidth" prop="active">
+				<el-select v-model="form.active" placeholder="Select Status">
+					<el-option
+						v-for="item in statusOptions"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</el-select>
+			</el-form-item>
+		</el-form>
+		<span slot="footer" class="dialog-footer">
+			<el-button @click="onCancel">Cancel</el-button>
+			<el-button type="primary" @click="onSubmit">Update</el-button>
+		</span>
+	</el-dialog>
 </template>
 
 <script setup>
@@ -123,10 +67,6 @@ const props = defineProps({
 		type: Array,
 		required: true,
 	},
-	type: {
-		type: String,
-		required: true,
-	},
 });
 
 function onCancel() {
@@ -134,7 +74,6 @@ function onCancel() {
 }
 
 const dialogFormVisible = computed(() => props.isModalVisible);
-const type = computed(() => props.type);
 const username = computed(() => props.row.username);
 
 const form = ref({
@@ -216,15 +155,6 @@ watch(
 		}
 	}
 );
-// watch props type
-watch(
-	() => props.type,
-	(newVal) => {
-		if (ruleFormRef.value) {
-			ruleFormRef.value.resetFields();
-		}
-	}
-);
 
 // Status Options
 const statusOptions = [
@@ -249,17 +179,11 @@ function onSubmit() {
 			const body = new FormData();
 			let url = "";
 
-			if (type.value === "edit") {
-				body.append("username", username.value);
-				body.append("newUsername", form.value.username);
-				body.append("ns", form.value.namaNS);
-				body.append("active", form.value.active);
-				url = "/api/auth/user/" + username.value;
-			} else if (type.value === "reset") {
-				body.append("username", username.value);
-				body.append("password", form.value.password);
-				url = "/api/auth/user/reset-password/" + username.value;
-			}
+			body.append("username", username.value);
+			body.append("newUsername", form.value.username);
+			body.append("ns", form.value.namaNS);
+			body.append("active", form.value.active);
+			url = "/api/auth/user/" + username.value;
 
 			const { data, status, message } = useFetch({
 				url: url,

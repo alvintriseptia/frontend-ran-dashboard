@@ -1,5 +1,5 @@
 <template>
-	<section class="grid grid-cols-12 h-screen overflow-y-hidden">
+	<section class="grid grid-cols-12 min-h-screen">
 		<div class="hidden lg:block lg:col-span-7 xl:col-span-8 relative">
 			<div class="w-full h-full bg-black bg-opacity-20 absolute z-10" />
 			<img
@@ -13,13 +13,13 @@
 				Manual Guide
 			</el-button>
 			<div class="flex justify-center items-center flex-1">
-				<LoginForm />
+				<ResetForm />
 			</div>
 		</div>
 	</section>
 </template>
 
 <script setup>
-import { LoginForm } from "@/components";
+import { ResetForm } from "@/components";
 import telkomselBackground from "@/assets/images/telkomsel-background.jpg";
 </script>

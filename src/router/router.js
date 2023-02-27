@@ -15,6 +15,11 @@ const routes = [
 		component: views.Login,
 	},
 	{
+		path: "/reset",
+		name: "reset",
+		component: views.ResetAccount,
+	},
+	{
 		path: "/project-planner",
 		name: "project-planner",
 		component: views.ProjectPlanner,
@@ -71,7 +76,7 @@ router.beforeEach((to, from, next) => {
 function userCheckRequireAuth(to, from, next) {
 	if (userStore.getters.isLoggedIn) {
 		// if user is logged in and tries to access login page, redirect to dashboard
-		if (to.path === "/login") {
+		if (to.path === "/login" || to.path === "/reset") {
 			next("/");
 			return;
 		}
@@ -90,7 +95,7 @@ function userCheckRequireAuth(to, from, next) {
 		return;
 	} else {
 		// if user is not logged in and tries to access any page other than login, redirect to login page
-		if (to.path !== "/login") {
+		if (to.path !== "/login" && to.path !== "/reset") {
 			next("/login");
 			return;
 		}
@@ -99,7 +104,7 @@ function userCheckRequireAuth(to, from, next) {
 
 function userCheckGeneral(to, from, next) {
 	// if user is logged in and tries to access any page other than login, redirect to login page
-	if (to.path === "/login") {
+	if (to.path === "/login" || to.path === "/reset") {
 		if (userStore.getters.user === null) {
 			userStore.dispatch("getUser").then(() => {
 				if (userStore.getters.isLoggedIn) {
