@@ -208,7 +208,7 @@ const rules = ref({
 	cost: [
 		{
 			validator: (rule, value, callback) => {
-				if (value && !Number(value)) {
+				if (!Number(value)) {
 					callback(new Error("Please input number"));
 				} else {
 					callback();

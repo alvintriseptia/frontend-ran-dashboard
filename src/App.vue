@@ -21,7 +21,7 @@
       </h1>
       <div
         v-if="userStore.getters.loading"
-        class="h-full"
+        class="h-screen flex justify-center items-center"
       >
         <LoadingSpinner />
       </div>

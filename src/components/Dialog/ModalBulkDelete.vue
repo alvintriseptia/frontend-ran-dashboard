@@ -200,11 +200,14 @@ const searchSites = ref([{}]);
 
 const handleSearchSites = debounce(async (query, activityId) => {
 	try {
-		const response = await axios.get(urlSearchSites, {
+		const response = await axios({
+			url: urlSearchSites,
+			method: "GET",
 			params: {
 				activityId,
 				site: query,
 			},
+			timeout: 60000, // wait 60 seconds before timing out
 		});
 
 		if (response.data.status === "success") {

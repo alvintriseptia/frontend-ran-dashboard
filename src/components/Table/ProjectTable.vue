@@ -17,7 +17,6 @@
     <el-table-column
       label="NO"
       :width="50"
-      fixed="left"
     >
       <template #default="{ $index }">
         <div class="pl-2">

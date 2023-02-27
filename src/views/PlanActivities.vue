@@ -944,8 +944,11 @@ const handleExportPlanActivities = async () => {
 			background: "rgba(0, 0, 0, 0.7)",
 		});
 		const url = "/api/activity-plan/download";
-		const response = await axios.get(url, {
+		const response = await axios({
+			url,
+			method: "GET",
 			responseType: "blob",
+			timeout: 60000, // wait 60 seconds before timing out
 		});
 
 		const blob = new Blob([response.data], {

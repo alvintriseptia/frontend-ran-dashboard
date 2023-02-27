@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
+    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50"
     :class="isShowInput ? 'right-0' : '-right-full'"
   >
     <div class="flex justify-between items-center mb-6">
@@ -254,9 +254,10 @@ const rules = ref({
 	cost: [
 		{
 			validator: (rule, value, callback) => {
-				if (value && !Number(value)) {
-					callback(new Error("Please input number"));
+				if(parseInt(value) === 0 || Number(value)){
+					callback();
 				} else {
+					callback(new Error("Please input number"));
 					callback();
 				}
 			},

@@ -28,6 +28,7 @@ export function useFetch({
 				headers: unref(headers),
 				method,
 				data: unref(body),
+				timeout: 60000 // wait 60 seconds before timing out
 			})
 				.then((res) => {
 					// if status error
@@ -61,7 +62,7 @@ export function useFetch({
 				.catch((err) => {
 					if (!err.response) {
 						// network error
-						message.value = "Error: Network Error";
+						message.value = err.message || "Network Error";
 					} else {
 						if (err.response.data.message === "Unauthorized") {
 							window.location.replace("/login");

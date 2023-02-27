@@ -624,8 +624,11 @@ const handleExportSites = async () => {
 			background: "rgba(0, 0, 0, 0.7)",
 		});
 		const url = "/api/site/download";
-		const response = await axios.get(url, {
+		const response = await axios({
+			url,
+			method: "GET",
 			responseType: "blob",
+			timeout: 60000, // wait 60 seconds before timing out
 		});
 
 		const blob = new Blob([response.data], {
@@ -640,7 +643,7 @@ const handleExportSites = async () => {
 		const month = currentDate.getMonth() + 1;
 		const year = currentDate.getFullYear();
 
-		const filename = `sites-${month}-${date}-${year}`;
+		const filename = `sites-${month}-${date}-${year}.xlsx`;
 		link.download = filename;
 		link.click();
 

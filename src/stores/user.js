@@ -26,8 +26,12 @@ export const userStore = new Store({
 				const form = new FormData();
 				form.append("username", username);
 				form.append("password", password);
-				axios
-					.post("/api/auth/login", form)
+				axios({
+					url: "/api/auth/login",
+					method: "POST",
+					data: form,
+					timeout: 60000, // wait 60 seconds before timing out
+				})
 					.then((response) => {
 						if (response.data.status === "success") {
 							commit("setUser", response.data.data);
@@ -46,7 +50,11 @@ export const userStore = new Store({
 		async getUser({ commit }) {
 			try {
 				commit("setLoading", true);
-				const response = await axios.get("/api/auth/user");
+				const response = await axios({
+					url: "/api/auth/user",
+					method: "GET",
+					timeout: 60000, // wait 60 seconds before timing out
+				});
 				if (response.data.status === "success") {
 					commit("setUser", response.data.data);
 				} else {
@@ -66,7 +74,11 @@ export const userStore = new Store({
 		},
 		async logout({ commit }) {
 			try {
-				const response = await axios.post("/api/auth/logout");
+				const response = await axios({
+					url: "/api/auth/logout",
+					method: "POST",
+					timeout: 60000, // wait 60 seconds before timing out
+				});
 				if (response.data.status === "success") {
 					window.location.replace("/");
 				} else {
