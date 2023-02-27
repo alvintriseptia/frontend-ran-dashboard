@@ -1,7 +1,7 @@
 <template>
 	<section class="relative">
 		<div
-			class="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-300 shadow-lg transform -skew-y-3 rounded-3xl"
+			class="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-300 shadow-lg transform -skew-y-6 rounded-3xl"
 		/>
 		<section
 			v-loading="loading"
@@ -79,6 +79,7 @@
 <script>
 import { Button } from "@/components";
 import { useFetch } from "@/composables";
+import router from "@/router/router";
 
 export default {
 	components: {
@@ -192,8 +193,10 @@ export default {
 
 								this.$notify.success({
 									title: "Success",
-									message: "User has been reset, please login again",
+									message: "Reset account success, you can login now!",
 								});
+
+								router.push("/login");
 
 								unwatch();
 							} else if (newStatus === "error" && newMessage) {

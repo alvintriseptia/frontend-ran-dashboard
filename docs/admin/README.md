@@ -88,7 +88,8 @@ Dalam website ini, data activity, program, dan subprogram yang digunakan adalah 
 
    <img :src="$withBase('/images/admin/database_import.png')" alt="import database" height="200" style="object-fit: contain;" />
 
-5. Pilih file csv yang akan diimport, Anda dapat mengunduh template csv pada link berikut: 
+5. Pilih file csv yang akan diimport, Anda dapat mengunduh template csv pada link berikut:
+
    - [activity.csv](/documents/activity.csv)
    - [program.csv](/documents/program.csv)
    - [subprogram.csv](documents/subprogram.csv)
@@ -341,14 +342,12 @@ Pada halaman ini, Anda dapat melihat data-data yang akan diimport. Beberapa hal 
 - Untuk mengetahui perbedaan data yang ada di database dan data yang akan diimport, Anda dapat mengarahkan kursor ke kolom yang berwarna <strong style="color:rgb(22, 163, 74);">hijau</strong>, maka akan muncul tooltip dari data sebelumnya seperti berikut ini:
 
    <img :src="$withBase('/images/plan-activities/import_tooltip.png')" alt="plan activities import confirm tooltip" height="150" style="object-fit: contain;" />
-   
+
 - Apabila Anda ingin membatalkan keseluruhan data, maka Anda dapat mengklik button `Cancel` dan mengonfirmasi pembatalan update.
-   
-   <img :src="$withBase('/images/plan-activities/import_cancel.png')" alt="plan activities import confirm cancel" height="150" style="object-fit: contain;" />
-   
+  <img :src="$withBase('/images/plan-activities/import_cancel.png')" alt="plan activities import confirm cancel" height="150" style="object-fit: contain;" />
+
 - Apabila Anda sudah yakin dengan pilihan data yang akan diupdate, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan mengupdate.
-   
-   <img :src="$withBase('/images/plan-activities/import_update.png')" alt="plan activities import confirm update" height="150" style="object-fit: contain;" />
+  <img :src="$withBase('/images/plan-activities/import_update.png')" alt="plan activities import confirm update" height="150" style="object-fit: contain;" />
 
 Apabila update berhasil dieksekusi, maka akan muncul notifikasi seperti berikut:
 
@@ -559,7 +558,7 @@ Anda dapat mengedit data `site` dengan mengklik Ikon <img :src="$withBase('/icon
 
 <img :src="$withBase('/images/sites/edit_warning.png')" alt="sites edit success" height="200" style="object-fit: contain;" />
 
-Apabila data `site` yang anda pilih memiliki `plan activity` yang sudah diinputkan, maka pada bagian atas form akan muncul alert yang menginformasikan berapa banyak `plan activity` yang terkait dengan `site` tersebut. Anda dapat melihat data `plan activity`  tersebut dengan mengklik button `Review`.
+Apabila data `site` yang anda pilih memiliki `plan activity` yang sudah diinputkan, maka pada bagian atas form akan muncul alert yang menginformasikan berapa banyak `plan activity` yang terkait dengan `site` tersebut. Anda dapat melihat data `plan activity` tersebut dengan mengklik button `Review`.
 
 Apabila Anda yakin ingin mengubah data `site`, Anda dapat mengubah data pada form `update site`. Jika sudah sesuai, Anda dapat mengklik button `Update Data` untuk menyimpan perubahan data dan mengonfirmasi perubahan data tersebut. Apabila berhasil, maka akan muncul notifikasi seperti berikut:
 
@@ -588,7 +587,6 @@ Pada halaman ini, Anda dapat mengelola data `accounts` yang terdaftar pada siste
 - Menonaktifkan atau mengaktifkan akun
 - Mereset password akun
 
-
 ### 1. Menambahkan akun baru
 
 Anda dapat menambahkan akun baru dengan mengklik button `Add Account` yang terdapat di bagian sebelah kanan atas tabel. Setelah itu, Anda akan diarahkan ke form `add new account`.
@@ -615,7 +613,7 @@ Anda dapat mengedit data akun dengan mengklik Ikon <img :src="$withBase('/icons/
 
 <img :src="$withBase('/images/accounts/edit.png')" alt="accounts edit" height="500" style="object-fit: contain;" />
 
-Anda dapat mengubah data `username`, `NS Department`, dan `status` akun. Apabila data yang Anda ubah sudah sesuai, Anda dapat mengklik button `Update` untuk menyimpan perubahan data dan mengonfirmasi perubahan data tersebut. Apabila berhasil, maka akan muncul notifikasi seperti berikut:
+Anda dapat mengubah data `username` dan `NS Department`. Apabila data yang Anda ubah sudah sesuai, Anda dapat mengklik button `Update` untuk menyimpan perubahan data dan mengonfirmasi perubahan data tersebut. Apabila berhasil, maka akan muncul notifikasi seperti berikut:
 
 <img :src="$withBase('/images/accounts/edit_success.png')" alt="accounts edit success" height="200" style="object-fit: contain;" />
 
@@ -629,18 +627,14 @@ Anda dapat memilih salah satu dari pilihan tersebut. Apabila berhasil, maka akan
 
 <img :src="$withBase('/images/accounts/update_status_success.png')" alt="accounts update success" height="200" style="object-fit: contain;" />
 
-### 4. Mereset password akun
+### 4. Mereset akun
 
-Ada kalanya, Anda ataupun user akan lupa dengan password akun yang telah dibuat. Untuk mengatasi hal tersebut, Anda dapat mereset password akun dengan mengklik Ikon <img :src="$withBase('/icons/key.png')" alt="icon reset" height="20" style="object-fit: contain;" /> yang terdapat di kolom Action paling kanan tabel. Setelah itu, akan muncul modal untuk mereset password akun.
+<img :src="$withBase('/images/accounts/reset.png')" alt="accounts reset" height="150" style="object-fit: contain;" />
 
-<img :src="$withBase('/images/accounts/reset.png')" alt="accounts reset password" height="400" style="object-fit: contain;" />
+Ada kalanya, User akan lupa dengan password akun yang telah mereka buat. Untuk mengatasi hal tersebut, Anda dapat mereset akun sehingga user dapat melakukan reset ulang akun mereka. Anda dapat dengan mengklik Ikon <img :src="$withBase('/icons/key.png')" alt="icon reset" height="20" style="object-fit: contain;" /> yang terdapat di kolom `Reset Account` tabel. Setelah itu, akan muncul modal untuk mengonfirmasi reset account.
 
-Anda dapat mengubah password dengan menginputkan password baru pada kolom `Password` dan mengkonfirmasi password baru pada kolom `Confirm New Password`. **Pastikan format password harus terdiri minimal dari 8 karakter dan minimal memiliki 1 huruf besar, 1 huruf kecil, dan 1 angka**.
+<img :src="$withBase('/images/accounts/reset_confirmation.png')" alt="accounts reset confirmation" height="400" style="object-fit: contain;" />
 
 Apabila berhasil, maka akan muncul notifikasi seperti berikut:
 
 <img :src="$withBase('/images/accounts/reset_success.png')" alt="accounts reset password success" height="200" style="object-fit: contain;" />
-
-::: warning Ingat!
-Jangan lupa menyimpan password baru yang telah Anda buat ke dalam password manager Anda untuk menghindari situasi yang sama berulang kali.
-:::

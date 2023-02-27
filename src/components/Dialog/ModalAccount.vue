@@ -113,11 +113,10 @@ function onSubmit() {
 			const body = new FormData();
 			let url = "";
 
-			body.append("uuid", userUuid.value);
 			body.append("oldUsername", username.value);
 			body.append("username", form.value.username);
 			body.append("ns", form.value.namaNS);
-			url = "/api/auth/user/" + username.value;
+			url = "/api/auth/user/" + userUuid.value;
 
 			const { data, status, message } = useFetch({
 				url: url,

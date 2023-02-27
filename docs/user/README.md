@@ -10,7 +10,27 @@
 
 Untuk mengakses website, Anda wajib melakukan login terlebih dahulu. Anda dapat menggunakan akun yang telah dibuat oleh admin. Jika Anda belum memiliki akun, Anda dapat menghubungi admin untuk membuatkan akun untuk Anda. Untuk login cukup mengisi kolom `username` dan `password` sebagai kredensial. Jika kredensial yang Anda masukkan benar, Anda akan diarahkan ke halaman dashboard.
 
-## II. Halaman Dashboard
+### Lupa Password
+
+<img :src="$withBase('/images/page_login_reset.png')" alt="login reset account link" height="400" style="object-fit: contain;" />
+
+Namun, bagaimana apabila Anda lupa password? **Pertama Anda harus menghubungi Admin terlebih dahulu untuk mereset akun Anda**. Setelah itu, Anda dapat mengklik link `Reset Account` yang berada di bawah button `Login`.
+
+## II. Halaman Reset Account
+
+<img :src="$withBase('/images/page_reset.jpeg')" alt="reset account" height="400" style="object-fit: contain;" />
+
+Setelah Anda mengklik link `Reset Account`, Anda akan diarahkan ke halaman reset account. Pada halaman ini, Anda dapat mengubah password Anda dengan mengisi kolom `Username`, `Password` dan `Confirm New Password`. Anda juga dapat mengubah `Username` Anda dengan mengklik checkbox `Change Username` dan mengisi kolom `New Username`. **Pastikan format password harus terdiri minimal dari 8 karakter dan minimal memiliki 1 huruf besar, 1 huruf kecil, dan 1 angka**.
+
+Setelah semua kolom terisi, Anda dapat mengklik button `Reset Account` untuk mengubah password dan username Anda. Apabila berhasil, akan muncul notifikasi success dan Anda akan diarahkan ke halaman login.
+
+<img :src="$withBase('/images/page_reset_success.png')" alt="reset account success" height="400" style="object-fit: contain;" />
+
+::: warning Ingat!
+Jangan lupa menyimpan password baru yang telah Anda buat ke dalam password manager Anda untuk menghindari situasi yang sama berulang kali.
+:::
+
+## III. Halaman Dashboard
 
 <img :src="$withBase('/images/dashboard/page.jpeg')" alt="dashboard" height="400" style="object-fit: contain;" />
 
@@ -81,7 +101,7 @@ Sama halnya dengan target quartal, secara default akan menampilkan seluruh targe
 - 3. Pada kolom terakhir, Anda dapat mengetahui grand total dari aktivitas tersebut dari keseluruhan DO
 - 4. Pada baris terakhir, Anda dapat mengetahui grand total dari DO terhadap keseluruhan aktivitas yang ada
 
-## III. Halaman Project Planner
+## IV. Halaman Project Planner
 
 <img :src="$withBase('/images/project-planner/page.jpeg')" alt="project planner" height="400" style="object-fit: contain;" />
 
@@ -123,7 +143,7 @@ Pada bagian ini, Anda dapat melihat lebih detail informasi progress dari aktivit
 - <div style="background-color:rgb(253, 186, 116); width: 10px; height: 10px; display: inline-block;"></div> <strong>Beyond Actual Start</strong>. MenAndakan bahwa aktivitas tersebut dimulai diluar rentang durasi dari rencana yang telah dijadwalkan
 - <div style="background-color:rgb(234, 88, 12); width: 10px; height: 10px; display: inline-block;"></div> <strong>Beyond Actual End</strong>. MenAndakan bahwa aktivitas tersebut selesai diluar rentang durasi dari rencana yang telah dijadwalkan
 
-## IV. Halaman Plan Activities
+## V. Halaman Plan Activities
 
 <img :src="$withBase('/images/plan-activities/page.jpeg')" alt="plan activities" height="400" style="object-fit: contain;" />
 
@@ -186,7 +206,6 @@ Pada modal tersebut akan muncul preview data yang akan dihapus. Anda dapat mengu
 Jika semua status yang Anda pilih sudah sesuai, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan melakukan update status secara massal. Apabila Anda ingin membatalkan update status, Anda dapat mengklik button `Cancel`. Setelah melakukan update status, maka akan muncul notifikasi sukses dan secara otomatis data pada tabel akan berubah sesuai dengan data yang telah Anda update.
 
 <img :src="$withBase('/images/plan-activities/bulk_update_status_success.png')" alt="plan activities update status massal success" height="300" style="object-fit: contain;" />
-
 
 ### 4. Mengedit data `plan activity`
 
