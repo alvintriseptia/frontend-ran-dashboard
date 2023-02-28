@@ -517,7 +517,7 @@
 								<hr />
 								<p class="text-xs text-gray-800 mt-1">
 									{{
-										typeof row.oldData.cost
+										typeof row.oldData.cost === 'number'
 											? numberFormat.currencyFormat(parseInt(row.oldData.cost))
 											: row.oldData.cost
 									}}
