@@ -13,8 +13,10 @@
 							'min-w-[30px]':
 								header.value === 'no' || header.value === 'checkbox',
 							'min-w-[350px]': header.value === 'deskripsiActivity',
+							'min-w-[300px]': header.value === 'additionalInfo',
 							'min-w-[150px]':
 								header.value !== 'deskripsiActivity' &&
+								header.value !== 'additionalInfo' &&
 								header.value !== 'no' &&
 								header.value !== 'checkbox',
 							'bg-gray-200': index % 2 === 0,

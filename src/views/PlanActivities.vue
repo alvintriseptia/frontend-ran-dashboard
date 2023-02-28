@@ -563,37 +563,50 @@ const showModalStatus = () => {
 	isShowModalStatus.value = true;
 };
 
-const closeModalStatus = () => {
-	// delete plan activity where sites is empty
-	planActivityChecked.value.forEach((value, key) => {
-		const sites = value.sites;
-		if (sites.length === 0) {
-			planActivityChecked.value.delete(key);
-
-			// remove checked
+const closeModalStatus = (value) => {
+	isShowModalStatus.value = false;
+	if (value === "cancel") {
+		// reset all checked
+		planActivityChecked.value.forEach((value, key) => {
 			const allCheckbox = activityTable.value.$el.querySelectorAll(
 				`input[type="checkbox"][name="checkbox-${key}"]`
 			);
 			allCheckbox.forEach((checkbox) => {
 				checkbox.checked = false;
 			});
-		} else {
-			// adjust checked with new respose
-			const allCheckbox = activityTable.value.$el.querySelectorAll(
-				`input[type="checkbox"][name="checkbox-${key}"]`
-			);
+		});
 
-			allCheckbox.forEach((checkbox) => {
-				if (sites.includes(checkbox.value)) {
-					checkbox.checked = true;
-				} else {
+		planActivityChecked.value = new Map();
+	} else {
+		// delete plan activity where sites is empty
+		planActivityChecked.value.forEach((value, key) => {
+			const sites = value.sites;
+			if (sites.length === 0) {
+				planActivityChecked.value.delete(key);
+
+				// remove checked
+				const allCheckbox = activityTable.value.$el.querySelectorAll(
+					`input[type="checkbox"][name="checkbox-${key}"]`
+				);
+				allCheckbox.forEach((checkbox) => {
 					checkbox.checked = false;
-				}
-			});
-		}
-	});
+				});
+			} else {
+				// adjust checked with new respose
+				const allCheckbox = activityTable.value.$el.querySelectorAll(
+					`input[type="checkbox"][name="checkbox-${key}"]`
+				);
 
-	isShowModalStatus.value = false;
+				allCheckbox.forEach((checkbox) => {
+					if (sites.includes(checkbox.value)) {
+						checkbox.checked = true;
+					} else {
+						checkbox.checked = false;
+					}
+				});
+			}
+		});
+	}
 
 	// decide toggle bulk update
 	toggleButtonCheckbox();
@@ -761,37 +774,50 @@ const showModalBulkDelete = () => {
 	isShowModalBulkDelete.value = true;
 };
 
-const closeModalBulkDelete = () => {
-	// delete plan activity where sites is empty
-	planActivityChecked.value.forEach((value, key) => {
-		const sites = value.sites;
-		if (sites.length === 0) {
-			planActivityChecked.value.delete(key);
-
-			// remove checked
+const closeModalBulkDelete = (value) => {
+	isShowModalBulkDelete.value = false;
+	if (value === "cancel") {
+		// reset all checked
+		planActivityChecked.value.forEach((value, key) => {
 			const allCheckbox = activityTable.value.$el.querySelectorAll(
 				`input[type="checkbox"][name="checkbox-${key}"]`
 			);
 			allCheckbox.forEach((checkbox) => {
 				checkbox.checked = false;
 			});
-		} else {
-			// adjust checked with new respose
-			const allCheckbox = activityTable.value.$el.querySelectorAll(
-				`input[type="checkbox"][name="checkbox-${key}"]`
-			);
+		});
 
-			allCheckbox.forEach((checkbox) => {
-				if (sites.includes(checkbox.value)) {
-					checkbox.checked = true;
-				} else {
+		planActivityChecked.value = new Map();
+	} else {
+		// delete plan activity where sites is empty
+		planActivityChecked.value.forEach((value, key) => {
+			const sites = value.sites;
+			if (sites.length === 0) {
+				planActivityChecked.value.delete(key);
+
+				// remove checked
+				const allCheckbox = activityTable.value.$el.querySelectorAll(
+					`input[type="checkbox"][name="checkbox-${key}"]`
+				);
+				allCheckbox.forEach((checkbox) => {
 					checkbox.checked = false;
-				}
-			});
-		}
-	});
+				});
+			} else {
+				// adjust checked with new respose
+				const allCheckbox = activityTable.value.$el.querySelectorAll(
+					`input[type="checkbox"][name="checkbox-${key}"]`
+				);
 
-	isShowModalBulkDelete.value = false;
+				allCheckbox.forEach((checkbox) => {
+					if (sites.includes(checkbox.value)) {
+						checkbox.checked = true;
+					} else {
+						checkbox.checked = false;
+					}
+				});
+			}
+		});
+	}
 
 	// decide toggle bulk update
 	toggleButtonCheckbox();

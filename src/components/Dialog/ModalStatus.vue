@@ -105,7 +105,7 @@
 			@close="isShowAlert = false"
 		/>
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="onCancel">Cancel</el-button>
+			<el-button @click="onCancel('cancel')">Cancel</el-button>
 			<el-button type="primary" @click="validateForm">Update</el-button>
 		</span>
 
@@ -213,8 +213,8 @@ function onSubmit() {
 	emit("onSubmit", dataToSubmit);
 }
 
-function onCancel() {
-	emit("onCancel");
+function onCancel(value) {
+	emit("onCancel", value);
 }
 
 const dialogFormVisible = computed(() => props.isModalVisible);
