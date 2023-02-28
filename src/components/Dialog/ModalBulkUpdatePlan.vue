@@ -517,13 +517,12 @@
 								<hr />
 								<p class="text-xs text-gray-800 mt-1">
 									{{
-										typeof row.oldData.cost === 'number'
+										typeof row.oldData.cost === "number"
 											? numberFormat.currencyFormat(parseInt(row.oldData.cost))
 											: row.oldData.cost
 									}}
 								</p>
 								<div slot="reference">
-									|| '-'
 									{{
 										typeof row.newData.cost === "number"
 											? numberFormat.currencyFormat(row.newData.cost)
