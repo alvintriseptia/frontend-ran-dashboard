@@ -140,7 +140,7 @@ const handleConfirmModalConfirmation = () => {
 					title: "Success",
 					message: reset
 						? "Account has been reset"
-						: "Account has been canceled reset",
+						: "Account has been unreset",
 				});
 
 				isShowModalConfirmation.value = false;

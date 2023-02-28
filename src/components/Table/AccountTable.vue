@@ -61,14 +61,22 @@
 					<!-- Created At -->
 					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
 						<span v-if="convertUtil.toBoolean(row.admin) === false">
-							{{ dateUtil.convertDateToMMMDDYYHHMM(row.createdAt) }}
+							{{
+								row.createdAt
+									? dateUtil.convertDateToMMMDDYYHHMM(row.createdAt)
+									: ""
+							}}
 						</span>
 					</td>
 
 					<!-- Updated At -->
 					<td class="text-sm text-gray-900 p-2 whitespace-nowrap border-r">
 						<span v-if="convertUtil.toBoolean(row.admin) === false">
-							{{ dateUtil.convertDateToMMMDDYYHHMM(row.updatedAt) }}
+							{{
+								row.updatedAt
+									? dateUtil.convertDateToMMMDDYYHHMM(row.updatedAt)
+									: ""
+							}}
 						</span>
 					</td>
 
