@@ -129,7 +129,7 @@
 					"
 					:tableData="activitySummary.data.value?.tableData || []"
 					:tableStructure="activitySummary.data.value?.tableStructure || []"
-					:loading="activitySummary.loading"
+					:loading="activitySummary.loading.value"
 				/>
 				<APIResponseLayout
 					v-else

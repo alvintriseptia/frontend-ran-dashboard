@@ -52,6 +52,7 @@ export { ActivityItem, HeaderActivityTable };
 
 // =================================================================================================================== //
 // Input
+import CurrencyInput from "./Input/CurrencyInput.vue";
 import ImportExcel from "./Input/ImportExcel.vue";
 import InputActivity from "./Input/InputActivity.vue";
 import UpdateActivity from "./Input/UpdateActivity.vue";
@@ -60,6 +61,7 @@ import InputAccount from "./Input/InputAccount.vue";
 import LoginForm from "./Input/LoginForm.vue";
 import ResetForm from "./Input/ResetForm.vue";
 export {
+	CurrencyInput,
 	ImportExcel,
 	InputActivity,
 	UpdateActivity,

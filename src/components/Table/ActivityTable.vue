@@ -1,345 +1,324 @@
 <!-- eslint-disable vue/no-v-html -->
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
-  <section class="overflow-x-auto min-h-[550px]">
-    <table
-      v-loading="loading"
-      class="table-fixed"
-    >
-      <thead class="bg-gray-100 border-b">
-        <tr>
-          <th
-            v-for="(header, index) in tableHeader"
-            :key="header.value"
-            class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
-            :class="{
-              'min-w-[30px]':
-                header.value === 'no' || header.value === 'checkbox',
-              'min-w-[250px]': header.value === 'deskripsiActivity',
-              'min-w-[150px]':
-                header.value !== 'deskripsiActivity' &&
-                header.value !== 'no' &&
-                header.value !== 'checkbox',
-              'bg-gray-200': index % 2 === 0,
-            }"
-          >
-            <div
-              v-if="header.value !== 'no' && header.value !== 'checkbox'"
-              class="flex items-center justify-between gap-x-2"
-            >
-              <div class="flex items-center gap-x-1">
-                <div
-                  :class="{
-                    'text-primary': anyCheckedValue(header),
-                  }"
-                >
-                  {{ header.label }}
-                </div>
-                <span class="flex flex-col">
-                  <button
-                    class="el-icon-caret-top -mb-[1px]"
-                    :class="{
-                      'text-primary':
-                        header.value === orderBy && sortBy === 'ASC',
-                    }"
-                    @click="sortHandler(header, 'ASC')"
-                  />
-                  <button
-                    class="el-icon-caret-bottom -mt-[1px]"
-                    :class="{
-                      'text-primary':
-                        header.value === orderBy && sortBy === 'DESC',
-                    }"
-                    @click="sortHandler(header, 'DESC')"
-                  />
-                </span>
-              </div>
-              <button
-                class="el-icon-more"
-                @click="handleShowFilter(header)"
-              />
-            </div>
+	<section class="overflow-x-auto min-h-[550px]">
+		<table v-loading="loading" class="table-fixed">
+			<thead class="bg-gray-100 border-b">
+				<tr>
+					<th
+						v-for="(header, index) in tableHeader"
+						:key="header.value"
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative"
+						:class="{
+							'min-w-[30px]':
+								header.value === 'no' || header.value === 'checkbox',
+							'min-w-[350px]': header.value === 'deskripsiActivity',
+							'min-w-[150px]':
+								header.value !== 'deskripsiActivity' &&
+								header.value !== 'no' &&
+								header.value !== 'checkbox',
+							'bg-gray-200': index % 2 === 0,
+						}"
+					>
+						<div
+							v-if="header.value !== 'no' && header.value !== 'checkbox'"
+							class="flex items-center justify-between gap-x-2"
+						>
+							<div class="flex items-center gap-x-1">
+								<div
+									:class="{
+										'text-primary': anyCheckedValue(header),
+									}"
+								>
+									{{ header.label }}
+								</div>
+								<span class="flex flex-col">
+									<button
+										class="el-icon-caret-top -mb-[1px]"
+										:class="{
+											'text-primary':
+												header.value === orderBy && sortBy === 'ASC',
+										}"
+										@click="sortHandler(header, 'ASC')"
+									/>
+									<button
+										class="el-icon-caret-bottom -mt-[1px]"
+										:class="{
+											'text-primary':
+												header.value === orderBy && sortBy === 'DESC',
+										}"
+										@click="sortHandler(header, 'DESC')"
+									/>
+								</span>
+							</div>
+							<button class="el-icon-more" @click="handleShowFilter(header)" />
+						</div>
 
-            <div v-else>
-              {{ header.label }}
-            </div>
+						<div v-else>
+							{{ header.label }}
+						</div>
 
-            <!-- Filter Section -->
-            <div
-              v-if="showFilter === header.value"
-              v-click-outside="handleClickOutside"
-              class="bg-white px-4 py-2 absolute left-0 z-50 top-12 h-[325px] w-[200px] shadow-sm shadow-primary/25 rounded-sm filter-container"
-            >
-              <el-input
-                v-model="searchFilter"
-                size="small"
-                :placeholder="'Search ' + header.label"
-                @input="handleSearchFilter"
-              />
+						<!-- Filter Section -->
+						<div
+							v-if="showFilter === header.value"
+							v-click-outside="handleClickOutside"
+							class="bg-white px-4 py-2 absolute left-0 z-50 top-12 h-[325px] w-[200px] shadow-sm shadow-primary/25 rounded-sm filter-container"
+						>
+							<el-input
+								v-model="searchFilter"
+								size="small"
+								:placeholder="'Search ' + header.label"
+								@input="handleSearchFilter"
+							/>
 
-              <p class="text-gray-400 text-xs mt-4 mb-2">
-                {{ filterData[header.value].length }} {{ header.label }}
-              </p>
-              <div
-                v-infinite-scroll="loadFilterData"
-                class="h-[210px] w-full overflow-y-auto"
-                :infinite-scroll-disabled="disabledScroll"
-                infinite-scroll-distance="5"
-                :infinite-scroll-immediate="false"
-              >
-                <el-checkbox-group
-                  v-model="optionsChecked"
-                  class="flex flex-col gap-y-3"
-                  @change="handleFilterChecked"
-                >
-                  <el-checkbox
-                    v-for="item in optionsData"
-                    v-if="!isSearching"
-                    :key="item"
-                    :label="item"
-                  >
-                    {{ item }}
-                  </el-checkbox>
-                  <LoadingSpinner v-else-if="isSearching" />
-                </el-checkbox-group>
-              </div>
+							<p class="text-gray-400 text-xs mt-4 mb-2">
+								{{ filterData[header.value].length }} {{ header.label }}
+							</p>
+							<div
+								v-infinite-scroll="loadFilterData"
+								class="h-[210px] w-full overflow-y-auto"
+								:infinite-scroll-disabled="disabledScroll"
+								infinite-scroll-distance="5"
+								:infinite-scroll-immediate="false"
+							>
+								<el-checkbox-group
+									v-model="optionsChecked"
+									class="flex flex-col gap-y-3"
+									@change="handleFilterChecked"
+								>
+									<el-checkbox
+										v-for="item in optionsData"
+										v-if="!isSearching"
+										:key="item"
+										:label="item"
+									>
+										{{ item }}
+									</el-checkbox>
+									<LoadingSpinner v-else-if="isSearching" />
+								</el-checkbox-group>
+							</div>
 
-              <div class="flex justify-around bg-white py-2">
-                <button @click="handleResetFilter(header)">
-                  Reset
-                </button>
-                <button
-                  :disabled="optionsChecked.length === 0"
-                  :class="
-                    optionsChecked.length === 0
-                      ? 'text-gray-400'
-                      : 'text-primary'
-                  "
-                  @click="handleSubmitFilter(header)"
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-          </th>
+							<div class="flex justify-around bg-white py-2">
+								<button @click="handleResetFilter(header)">Reset</button>
+								<button
+									:disabled="optionsChecked.length === 0"
+									:class="
+										optionsChecked.length === 0
+											? 'text-gray-400'
+											: 'text-primary'
+									"
+									@click="handleSubmitFilter(header)"
+								>
+									Apply
+								</button>
+							</div>
+						</div>
+					</th>
 
-          <!-- Action Column -->
-          <th
-            class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px]"
-          >
-            Action
-          </th>
-        </tr>
-      </thead>
+					<!-- Action Column -->
+					<th
+						class="text-xs font-medium text-gray-600 text-left mx-4 px-4 py-2 relative min-w-[150px]"
+					>
+						Action
+					</th>
+				</tr>
+			</thead>
 
-      <div
-        v-if="(!data || data.length === 0) && !loading"
-        class="absolute left-1/2"
-      >
-        <el-empty description="No Data" />
-      </div>
+			<div
+				v-if="(!data || data.length === 0) && !loading"
+				class="absolute left-1/2"
+			>
+				<el-empty description="No Data" />
+			</div>
 
-      <tbody v-else-if="data && data.length > 0 && !loading">
-        <tr
-          v-for="(row, index) in data"
-          :key="row.activityID + '-' + row.siteID"
-          class="border-b"
-        >
-          <!-- Index Number -->
-          <td
-            class="p-2 text-gray-900 flex justify-center items-center h-11 border-r"
-          >
-            <input
-              :name="'checkbox' + '-' + row.activityID"
-              :value="row.siteID"
-              type="checkbox"
-              class="w-3 h-3 bg-gray-100 border-gray-300 rounded accent-primary checkbox_activity cursor-pointer"
-              :checked="
-                planActivityChecked.has(row.activityID) &&
-                  planActivityChecked
-                    .get(row.activityID)
-                    .sites.findIndex((site) => site === row.siteID) !== -1
-                  ? true
-                  : false
-              "
-              @change="emit('onBulkUpdate', row)"
-            >
-          </td>
-          <!-- Index Number -->
-          <td
-            class="text-xs p-2 whitespace-nowrap text-gray-900 text-center border-r"
-          >
-            {{ numberFormat.digitFormat(index + numberStart) }}
-          </td>
+			<tbody v-else-if="data && data.length > 0 && !loading">
+				<tr
+					v-for="(row, index) in data"
+					:key="row.activityID + '-' + row.siteID"
+					class="border-b"
+				>
+					<!-- Index Number -->
+					<td
+						class="p-2 text-gray-900 flex justify-center items-center h-11 border-r"
+					>
+						<input
+							:name="'checkbox' + '-' + row.activityID"
+							:value="row.siteID"
+							type="checkbox"
+							class="w-3 h-3 bg-gray-100 border-gray-300 rounded accent-primary checkbox_activity cursor-pointer"
+							:checked="
+								planActivityChecked.has(row.activityID) &&
+								planActivityChecked
+									.get(row.activityID)
+									.sites.findIndex((site) => site === row.siteID) !== -1
+									? true
+									: false
+							"
+							@change="emit('onBulkUpdate', row)"
+						/>
+					</td>
+					<!-- Index Number -->
+					<td class="text-xs p-2 text-gray-900 text-center border-r">
+						{{ numberFormat.digitFormat(index + numberStart) }}
+					</td>
 
-          <!-- Deskripsi Activity -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
-            v-html="row.deskripsiActivity"
-          />
+					<!-- Deskripsi Activity -->
+					<td
+						class="text-xs text-gray-900 p-2 border-r"
+						v-html="row.deskripsiActivity"
+					/>
 
-          <!-- Site ID -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.siteID }}
-          </td>
+					<!-- Site ID -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.siteID }}
+					</td>
 
-          <!-- Site Name -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.siteName }}
-          </td>
+					<!-- Site Name -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.siteName }}
+					</td>
 
-          <!-- Status -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
-          >
-            <PopOverStatus
-              :status="row.status"
-              @onUpdate="(result) => handleStatusUpdate(row, result)"
-            />
-          </td>
+					<!-- Status -->
+					<td class="text-xs text-gray-900 p-2 text-center border-r">
+						<PopOverStatus
+							:status="row.status"
+							@onUpdate="(result) => handleStatusUpdate(row, result)"
+						/>
+					</td>
 
-          <!-- Updated By -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
-          >
-            {{ row.updatedBy }}
-          </td>
+					<!-- Updated By -->
+					<td class="text-xs text-gray-900 p-2 text-center border-r">
+						{{ row.updatedBy }}
+					</td>
 
-          <!-- Week Executed -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
-          >
-            {{ row.weekExecuted }}
-          </td>
+					<!-- Week Executed -->
+					<td class="text-xs text-gray-900 p-2 text-center border-r">
+						{{ row.weekExecuted }}
+					</td>
 
-          <!-- Date Executed -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap text-center border-r"
-          >
-            {{
-              row.dateExecuted
-                ? dateUtil.convertDateToMMMDDYY(row.dateExecuted)
-                : ""
-            }}
-          </td>
+					<!-- Date Executed -->
+					<td class="text-xs text-gray-900 p-2 text-center border-r">
+						{{
+							row.dateExecuted
+								? dateUtil.convertDateToMMMDDYY(row.dateExecuted)
+								: ""
+						}}
+					</td>
 
-          <!-- Nama Program -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaProgram }}
-          </td>
+					<!-- Nama Program -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaProgram }}
+					</td>
 
-          <!-- Nama Subprogram -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaSubprogram }}
-          </td>
+					<!-- Nama Subprogram -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaSubprogram }}
+					</td>
 
-          <!-- Additional Info -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
-            v-html="row.additionalInfo"
-          />
+					<!-- Additional Info -->
+					<td
+						class="text-xs text-gray-900 p-2 border-r"
+						v-html="row.additionalInfo"
+					/>
 
-          <!-- NS -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaNS }}
-          </td>
+					<!-- NS -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaNS }}
+					</td>
 
-          <!-- DO -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaDO }}
-          </td>
+					<!-- DO -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaDO }}
+					</td>
 
-          <!-- Kabupaten -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaKabupaten }}
-          </td>
+					<!-- Kabupaten -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaKabupaten }}
+					</td>
 
-          <!-- PIC -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.namaPIC }}
-          </td>
+					<!-- PIC -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.namaPIC }}
+					</td>
 
-          <!-- Target Q -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap border-r">
-            {{ row.targetQuartal }}
-          </td>
+					<!-- Target Q -->
+					<td class="text-xs text-gray-900 p-2 border-r">
+						{{ row.targetQuartal }}
+					</td>
 
-          <!-- Remark -->
-          <td
-            class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
-            v-html="row.remark"
-          />
+					<!-- Remark -->
+					<td class="text-xs text-gray-900 p-2 border-r" v-html="row.remark" />
 
-          <!-- Budget -->
-          <td
-            v-if="userStore.getters.role === 'admin'"
-            class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
-            v-html="row.budget"
-          />
+					<!-- Budget -->
+					<td
+						v-if="userStore.getters.role === 'admin'"
+						class="text-xs text-gray-900 p-2 border-r"
+						v-html="row.budget"
+					/>
 
-          <!-- Cost -->
-          <td
-            v-if="userStore.getters.role === 'admin'"
-            class="text-xs text-gray-900 p-2 whitespace-nowrap border-r"
-          >
-            {{
-              row.cost && row.cost !== "0"
-                ? numberFormat.currencyFormat(row.cost)
-                : ""
-            }}
-          </td>
+					<!-- Cost -->
+					<td
+						v-if="userStore.getters.role === 'admin'"
+						class="text-xs text-gray-900 p-2 border-r"
+					>
+						{{
+							row.cost && row.cost !== "0"
+								? numberFormat.currencyFormat(row.cost)
+								: ""
+						}}
+					</td>
 
-          <!-- Action -->
-          <td class="text-xs text-gray-900 p-2 whitespace-nowrap">
-            <div class="flex justify-center gap-x-2">
-              <el-button
-                v-if="userStore.getters.role !== 'admin'"
-                type="text"
-                icon="el-icon-edit"
-                size="small"
-                circle
-                @click="handleEdit(row, index)"
-              >
-                Edit
-              </el-button>
-			  
-              <el-tooltip
-                v-if="userStore.getters.role === 'admin'"
-                class="item"
-                effect="dark"
-                content="Edit Plan"
-                placement="top-start"
-              >
-                <el-button
-                  type="warning"
-                  icon="el-icon-edit"
-                  size="small"
-                  circle
-                  @click="handleEdit(row, index)"
-                />
-              </el-tooltip>
+					<!-- Action -->
+					<td class="text-xs text-gray-900 p-2">
+						<div class="flex justify-center gap-x-2">
+							<el-button
+								v-if="userStore.getters.role !== 'admin'"
+								type="text"
+								icon="el-icon-edit"
+								size="small"
+								circle
+								@click="handleEdit(row, index)"
+							>
+								Edit
+							</el-button>
 
-              <el-tooltip
-                v-if="userStore.getters.role === 'admin'"
-                class="item"
-                effect="dark"
-                content="Delete Plan"
-                placement="top-start"
-              >
-                <el-button
-                  type="primary"
-                  icon="el-icon-delete"
-                  size="small"
-                  circle
-                  @click="handleRemove(row, index)"
-                />
-              </el-tooltip>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+							<el-tooltip
+								v-if="userStore.getters.role === 'admin'"
+								class="item"
+								effect="dark"
+								content="Edit Plan"
+								placement="top-start"
+							>
+								<el-button
+									type="warning"
+									icon="el-icon-edit"
+									size="small"
+									circle
+									@click="handleEdit(row, index)"
+								/>
+							</el-tooltip>
+
+							<el-tooltip
+								v-if="userStore.getters.role === 'admin'"
+								class="item"
+								effect="dark"
+								content="Delete Plan"
+								placement="top-start"
+							>
+								<el-button
+									type="primary"
+									icon="el-icon-delete"
+									size="small"
+									circle
+									@click="handleRemove(row, index)"
+								/>
+							</el-tooltip>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
 </template>
 
 <script setup>

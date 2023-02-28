@@ -130,7 +130,7 @@ const weekInMonths = ref([]);
 const totalWeeks = ref([]);
 
 // watch
-onMounted(async () => {
+onMounted(() => {
 	progressActivityUrl.value = "/api/activity-plan/program-progress-by-month";
 	projectPlannerUrl.value = "/api/activity-plan/project-planner";
 	progressActivity.doFetch();

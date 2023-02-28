@@ -1,180 +1,149 @@
 <template>
-  <div
-    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50"
-    :class="isShowInput ? 'right-0' : '-right-full'"
-  >
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-lg lg:text-xl font-bold">
-        Input Plan Activity
-      </h2>
-      <OutlinedButton
-        size="sm"
-        @onClick="emit('closeInputActivities')"
-      >
-        &#10006;
-      </OutlinedButton>
-    </div>
-    <el-form
-      ref="ruleFormRef"
-      :model="formInputActivity"
-      :rules="rules"
-      label-position="top"
-    >
-      <el-form-item
-        label="Activity"
-        :label-width="formLabelWidth"
-        prop="deskripsiActivity"
-      >
-        <RemoteSearchSelect
-          :model-value="formInputActivity.deskripsiActivity"
-          :options="unref(searchActivities.data)"
-          class="w-full"
-          :is-multiple="false"
-          placeholder="Select Activity"
-          label-option="deskripsiActivity"
-          value-option="id"
-          @onChange="handleSearchActivities"
-          @onUpdate="handleUpdateActivity"
-        />
-      </el-form-item>
+	<div
+		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50"
+		:class="isShowInput ? 'right-0' : '-right-full'"
+	>
+		<div class="flex justify-between items-center mb-6">
+			<h2 class="text-lg lg:text-xl font-bold">Input Plan Activity</h2>
+			<OutlinedButton size="sm" @onClick="emit('closeInputActivities')">
+				&#10006;
+			</OutlinedButton>
+		</div>
+		<el-form
+			ref="ruleFormRef"
+			:model="formInputActivity"
+			:rules="rules"
+			label-position="top"
+		>
+			<el-form-item
+				label="Activity"
+				:label-width="formLabelWidth"
+				prop="deskripsiActivity"
+			>
+				<RemoteSearchSelect
+					:model-value="formInputActivity.deskripsiActivity"
+					:options="unref(searchActivities.data)"
+					class="w-full"
+					:is-multiple="false"
+					placeholder="Select Activity"
+					label-option="deskripsiActivity"
+					value-option="id"
+					@onChange="handleSearchActivities"
+					@onUpdate="handleUpdateActivity"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Site"
-        :label-width="formLabelWidth"
-        prop="siteId"
-      >
-        <RemoteSearchSelect
-          :model-value="formInputActivity.siteId"
-          :options="unref(searchSites.data)"
-          class="w-full"
-          :is-multiple="false"
-          placeholder="Select Site"
-          label-option="id,name"
-          value-option="id"
-          @onChange="handleSearchSites"
-          @onUpdate="handleUpdateSite"
-        />
-      </el-form-item>
+			<el-form-item label="Site" :label-width="formLabelWidth" prop="siteId">
+				<RemoteSearchSelect
+					:model-value="formInputActivity.siteId"
+					:options="unref(searchSites.data)"
+					class="w-full"
+					:is-multiple="false"
+					placeholder="Select Site"
+					label-option="id,name"
+					value-option="id"
+					@onChange="handleSearchSites"
+					@onUpdate="handleUpdateSite"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="PIC"
-        :label-width="formLabelWidth"
-        prop="pic"
-      >
-        <el-input
-          v-model="formInputActivity.pic"
-          autocomplete="off"
-          placeholder="PIC"
-        />
-      </el-form-item>
+			<el-form-item label="PIC" :label-width="formLabelWidth" prop="pic">
+				<el-input
+					v-model="formInputActivity.pic"
+					autocomplete="off"
+					placeholder="PIC"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Additional Info"
-        :label-width="formLabelWidth"
-        prop="additionalInfo"
-      >
-        <el-input
-          v-model="formInputActivity.additionalInfo"
-          autocomplete="off"
-          placeholder="Additional Info"
-          type="textarea"
-          :rows="2"
-        />
-      </el-form-item>
+			<el-form-item
+				label="Additional Info"
+				:label-width="formLabelWidth"
+				prop="additionalInfo"
+			>
+				<el-input
+					v-model="formInputActivity.additionalInfo"
+					autocomplete="off"
+					placeholder="Additional Info"
+					type="textarea"
+					:rows="2"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Remark"
-        :label-width="formLabelWidth"
-        prop="remark"
-      >
-        <el-input
-          v-model="formInputActivity.remark"
-          autocomplete="off"
-          placeholder="Remark"
-        />
-      </el-form-item>
+			<el-form-item label="Remark" :label-width="formLabelWidth" prop="remark">
+				<el-input
+					v-model="formInputActivity.remark"
+					autocomplete="off"
+					placeholder="Remark"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Budget"
-        :label-width="formLabelWidth"
-        prop="budget"
-      >
-        <el-input
-          v-model="formInputActivity.budget"
-          autocomplete="off"
-          placeholder="Budget"
-        />
-      </el-form-item>
+			<el-form-item label="Budget" :label-width="formLabelWidth" prop="budget">
+				<el-input
+					v-model="formInputActivity.budget"
+					autocomplete="off"
+					placeholder="Budget"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        type="number"
-        label="Cost"
-        :label-width="formLabelWidth"
-        prop="cost"
-      >
-        <el-input
-          v-model="formInputActivity.cost"
-          autocomplete="off"
-          placeholder="Cost"
-        />
-      </el-form-item>
+			<el-form-item
+				type="number"
+				label="Cost"
+				:label-width="formLabelWidth"
+				prop="cost"
+			>
+				<CurrencyInput v-model="formInputActivity.cost" />
+			</el-form-item>
 
-      <el-form-item
-        label="Target Quartal"
-        :label-width="formLabelWidth"
-        prop="targetQuartal"
-      >
-        <Select
-          v-model="formInputActivity.targetQuartal"
-          :options="options.quarters"
-          :is-multiple="false"
-          placeholder="Select Target Quartal"
-          class="w-full"
-          @onChange="onUpdateQuartal"
-        />
-      </el-form-item>
+			<el-form-item
+				label="Target Quartal"
+				:label-width="formLabelWidth"
+				prop="targetQuartal"
+			>
+				<Select
+					v-model="formInputActivity.targetQuartal"
+					:options="options.quarters"
+					:is-multiple="false"
+					placeholder="Select Target Quartal"
+					class="w-full"
+					@onChange="onUpdateQuartal"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Status"
-        :label-width="formLabelWidth"
-        prop="status"
-      >
-        <el-select
-          v-model="formInputActivity.status"
-          placeholder="Select Status"
-          class="w-full"
-        >
-          <el-option
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
+			<el-form-item label="Status" :label-width="formLabelWidth" prop="status">
+				<el-select
+					v-model="formInputActivity.status"
+					placeholder="Select Status"
+					class="w-full"
+				>
+					<el-option
+						v-for="item in statusOptions"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</el-select>
+			</el-form-item>
 
-      <el-form-item
-        v-if="parseInt(formInputActivity.status) === 1"
-        label="Date Executed"
-        :label-width="formLabelWidth"
-        prop="dateExecuted"
-      >
-        <el-date-picker
-          v-model="formInputActivity.dateExecuted"
-          value-format="yyyy-MM-dd"
-          type="date"
-          placeholder="Pick a day"
-          :picker-options="pickerOptions"
-        />
-      </el-form-item>
+			<el-form-item
+				v-if="parseInt(formInputActivity.status) === 1"
+				label="Date Executed"
+				:label-width="formLabelWidth"
+				prop="dateExecuted"
+			>
+				<el-date-picker
+					v-model="formInputActivity.dateExecuted"
+					value-format="yyyy-MM-dd"
+					type="date"
+					placeholder="Pick a day"
+					:picker-options="pickerOptions"
+				/>
+			</el-form-item>
 
-      <div class="mt-8">
-        <Button @onClick="onSubmit()">
-          Input Data
-        </Button>
-      </div>
-    </el-form>
-  </div>
+			<div class="mt-8">
+				<Button @onClick="onSubmit()"> Input Data </Button>
+			</div>
+		</el-form>
+	</div>
 </template>
 
 <script setup>
@@ -183,6 +152,7 @@ import {
 	Button,
 	RemoteSearchSelect,
 	Select,
+	CurrencyInput,
 } from "@/components";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import { useFetch } from "@/composables";
@@ -254,7 +224,7 @@ const rules = ref({
 	cost: [
 		{
 			validator: (rule, value, callback) => {
-				if(parseInt(value) === 0 || Number(value)){
+				if (parseInt(value) === 0 || Number(value)) {
 					callback();
 				} else {
 					callback(new Error("Please input number"));

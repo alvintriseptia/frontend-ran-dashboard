@@ -1,141 +1,118 @@
 <template>
-  <div
-    class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
-    :class="isShowInput ? 'right-0' : '-right-full'"
-  >
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-lg lg:text-xl font-bold">
-        Update Plan Activity
-      </h2>
-      <OutlinedButton
-        size="sm"
-        @onClick="emit('closeFormUpdateActivity')"
-      >
-        &#10006;
-      </OutlinedButton>
-    </div>
-    <el-form
-      ref="ruleFormRef"
-      :model="formUpdateActivity"
-      :rules="rules"
-      label-position="top"
-    >
-      <el-form-item
-        label="Activity"
-        :label-width="formLabelWidth"
-        prop="deskripsiActivity"
-      >
-        <el-input
-          v-model="formUpdateActivity.deskripsiActivity"
-          autocomplete="off"
-          :disabled="true"
-        />
-      </el-form-item>
+	<div
+		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
+		:class="isShowInput ? 'right-0' : '-right-full'"
+	>
+		<div class="flex justify-between items-center mb-6">
+			<h2 class="text-lg lg:text-xl font-bold">Update Plan Activity</h2>
+			<OutlinedButton size="sm" @onClick="emit('closeFormUpdateActivity')">
+				&#10006;
+			</OutlinedButton>
+		</div>
+		<el-form
+			ref="ruleFormRef"
+			:model="formUpdateActivity"
+			:rules="rules"
+			label-position="top"
+		>
+			<el-form-item
+				label="Activity"
+				:label-width="formLabelWidth"
+				prop="deskripsiActivity"
+			>
+				<el-input
+					v-model="formUpdateActivity.deskripsiActivity"
+					autocomplete="off"
+					:disabled="true"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Site"
-        :label-width="formLabelWidth"
-        prop="siteId"
-      >
-        <el-input
-          v-model="formUpdateActivity.siteId"
-          autocomplete="off"
-          :disabled="true"
-        />
-      </el-form-item>
+			<el-form-item label="Site" :label-width="formLabelWidth" prop="siteId">
+				<el-input
+					v-model="formUpdateActivity.siteId"
+					autocomplete="off"
+					:disabled="true"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="PIC"
-        :label-width="formLabelWidth"
-        prop="pic"
-      >
-        <el-input
-          v-model="formUpdateActivity.pic"
-          autocomplete="off"
-          placeholder="PIC"
-        />
-      </el-form-item>
+			<el-form-item label="PIC" :label-width="formLabelWidth" prop="pic">
+				<el-input
+					v-model="formUpdateActivity.pic"
+					autocomplete="off"
+					placeholder="PIC"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Additional Info"
-        :label-width="formLabelWidth"
-        prop="additionalInfo"
-      >
-        <el-input
-          v-model="formUpdateActivity.additionalInfo"
-          autocomplete="off"
-          type="textarea"
-          :rows="2"
-          placeholder="Additional Info"
-        />
-      </el-form-item>
+			<el-form-item
+				label="Additional Info"
+				:label-width="formLabelWidth"
+				prop="additionalInfo"
+			>
+				<el-input
+					v-model="formUpdateActivity.additionalInfo"
+					autocomplete="off"
+					type="textarea"
+					:rows="2"
+					placeholder="Additional Info"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        label="Remark"
-        :label-width="formLabelWidth"
-        prop="remark"
-      >
-        <el-input
-          v-model="formUpdateActivity.remark"
-          autocomplete="off"
-          placeholder="Remark"
-        />
-      </el-form-item>
+			<el-form-item label="Remark" :label-width="formLabelWidth" prop="remark">
+				<el-input
+					v-model="formUpdateActivity.remark"
+					autocomplete="off"
+					placeholder="Remark"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        v-if="userStore.getters.role === 'admin'"
-        label="Budget"
-        :label-width="formLabelWidth"
-        prop="budget"
-      >
-        <el-input
-          v-model="formUpdateActivity.budget"
-          autocomplete="off"
-          placeholder="Budget"
-        />
-      </el-form-item>
+			<el-form-item
+				v-if="userStore.getters.role === 'admin'"
+				label="Budget"
+				:label-width="formLabelWidth"
+				prop="budget"
+			>
+				<el-input
+					v-model="formUpdateActivity.budget"
+					autocomplete="off"
+					placeholder="Budget"
+				/>
+			</el-form-item>
 
-      <el-form-item
-        v-if="userStore.getters.role === 'admin'"
-        type="number"
-        label="Cost"
-        :label-width="formLabelWidth"
-        prop="cost"
-      >
-        <el-input
-          v-model="formUpdateActivity.cost"
-          autocomplete="off"
-          placeholder="Cost"
-        />
-      </el-form-item>
+			<el-form-item
+				v-if="userStore.getters.role === 'admin'"
+				type="number"
+				label="Cost"
+				:label-width="formLabelWidth"
+				prop="cost"
+			>
+				<CurrencyInput v-model="formUpdateActivity.cost" />
+			</el-form-item>
 
-      <el-form-item
-        label="Target Quartal"
-        :label-width="formLabelWidth"
-        prop="targetQuartal"
-      >
-        <Select
-          v-model="formUpdateActivity.targetQuartal"
-          :options="options.quarters"
-          :is-multiple="false"
-          placeholder="Select Target Quartal"
-          :default-value="formUpdateActivity.targetQuartal"
-          class="w-full"
-          @onChange="onUpdateQuartal"
-        />
-      </el-form-item>
+			<el-form-item
+				label="Target Quartal"
+				:label-width="formLabelWidth"
+				prop="targetQuartal"
+			>
+				<Select
+					v-model="formUpdateActivity.targetQuartal"
+					:options="options.quarters"
+					:is-multiple="false"
+					placeholder="Select Target Quartal"
+					:default-value="formUpdateActivity.targetQuartal"
+					class="w-full"
+					@onChange="onUpdateQuartal"
+				/>
+			</el-form-item>
 
-      <div class="mt-8">
-        <Button @onClick="onSubmit()">
-          Update Data
-        </Button>
-      </div>
-    </el-form>
-  </div>
+			<div class="mt-8">
+				<Button @onClick="onSubmit()"> Update Data </Button>
+			</div>
+		</el-form>
+	</div>
 </template>
 
 <script setup>
-import { OutlinedButton, Button, Select } from "@/components";
+import { OutlinedButton, Button, Select, CurrencyInput } from "@/components";
 import { computed, ref, watch } from "vue";
 import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
@@ -152,12 +129,7 @@ const formUpdateActivity = ref({
 	siteId: props.row.siteID,
 	pic: props.row.namaPIC,
 	budget: userStore.getters.role === "admin" ? props.row.budget : "",
-	cost:
-		userStore.getters.role === "admin"
-			? props.row.cost == 0
-				? ""
-				: props.row.cost
-			: "",
+	cost: userStore.getters.role === "admin" ? props.row.cost : "",
 });
 
 // watch props row
@@ -207,8 +179,12 @@ const rules = ref({
 	cost: [
 		{
 			validator: (rule, value, callback) => {
-				if (!Number(value)) {
+				if (value.length > 0 && !Number(value)) {
 					callback(new Error("Please input number"));
+				} else if (parseInt(value) < 0) {
+					callback(new Error("Number must be positive"));
+				} else if (value % 1 !== 0) {
+					callback(new Error("Number must be integer"));
 				} else {
 					callback();
 				}
@@ -276,8 +252,6 @@ function onSubmit() {
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
 						emit("closeFormUpdateActivity", newData);
-
-						ruleFormRef.value.model.targetQuartal = "";
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
