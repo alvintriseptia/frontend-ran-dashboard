@@ -156,7 +156,7 @@ import {
 	Select,
 } from "@/components";
 import { useFetch } from "@/composables";
-import { dateUtil, options } from "@/utils";
+import { dateUtil } from "@/utils";
 
 // ====================================== ChartJS ===============================================
 import {
@@ -262,22 +262,29 @@ const reloadActivitySummary = () => {
 		"Reloaded at " + dateUtil.convertDateToLocaleString(new Date());
 };
 
-const quarterOptions = ref([]);
+const quarterOptions = ref([
+	{
+		label: "All Quartal",
+		value: "",
+	},
+]);
 
 watch(activitySummary.data, (newVal) => {
 	if (newVal) {
-		console.log(newVal);
 		quarterOptions.value = newVal.filters.targetQuartal.map((item) => {
 			return {
 				label: item,
 				value: item,
 			};
 		});
+
+		quarterOptions.value.unshift({
+			label: "All Quartal",
+			value: "",
+		});
 	} else {
 		quarterOptions.value = [];
 	}
-
-	console.log(quarterOptions);
 });
 
 // handle quarter change
@@ -292,7 +299,12 @@ const programOptions = ref([]);
 
 // handle program change
 const handleProgramUpdate = (value) => {
-	activitySummaryParams.value.program = value;
+	quarterOptions.value = [];
+	activitySummaryParams.value = {
+		...activitySummaryParams.value,
+		program: value,
+		target_quartal: "",
+	};
 	subProgramParams.value.programId = value;
 };
 
