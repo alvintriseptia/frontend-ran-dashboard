@@ -34,11 +34,11 @@ const convertDateToMMMDDYYHHMM = (date) => {
 		const hours = d.getHours();
 		let minutes = d.getMinutes();
 		// if minutes < 10, add 0
-		if(parseInt(minutes) < 10){
-			minutes = '0' + minutes;
+		if (parseInt(minutes) < 10) {
+			minutes = "0" + minutes;
 		}
 
-		return `${month}, ${day} ${year} ${hours}:${minutes}`;
+		return `${month}, ${day} ${year} ${hours}:${minutes} WIB`;
 	} else {
 		return "";
 	}

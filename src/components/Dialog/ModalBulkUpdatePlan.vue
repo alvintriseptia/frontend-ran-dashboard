@@ -548,15 +548,16 @@
 		</section>
 
 		<span slot="footer" class="dialog-footer">
-			<el-button @click="toggleShowModalConfirmation(true, 'cancel')"
-				>Cancel</el-button
-			>
+			<el-button @click="toggleShowModalConfirmation(true, 'cancel')">
+				Cancel
+			</el-button>
 			<el-button
 				:disabled="planActivityChecked.length === 0"
 				type="primary"
 				@click="toggleShowModalConfirmation(true, 'update')"
-				>Update</el-button
 			>
+				Update
+			</el-button>
 		</span>
 
 		<ModalConfirmation
