@@ -399,7 +399,7 @@ Setelah memilih data yang ingin diupdate, Anda dapat mengklik button `Update Sta
 
 <img :src="$withBase('/images/plan-activities/bulk_update_status.png')" alt="plan activities update status massal" height="400" style="object-fit: contain;" />
 
-Pada modal tersebut akan muncul preview data yang akan dihapus. Anda dapat mengubah data-data site yang telah Anda pilih sebelumnya melalui form input yang terdapat pada modal tersebut. Setelah itu, Anda dapat memilih status <strong style="color:rgb(22, 163, 74);">Done</strong>, atau <strong style="color:#FF7723;">Not Yet</strong> pada masing-masing aktivitas yang telah Anda pilih. Apabila Anda mengklik status <strong style="color:rgb(22, 163, 74);">Done</strong>, maka Anda harus mengisi tanggal dieksekusinya status tersebut.
+Pada modal tersebut akan muncul preview data yang akan diupdate. Anda dapat mengubah data-data site yang telah Anda pilih sebelumnya melalui form input yang terdapat pada modal tersebut. Setelah itu, Anda dapat memilih status <strong style="color:rgb(22, 163, 74);">Done</strong>, atau <strong style="color:#FF7723;">Not Yet</strong> pada masing-masing aktivitas yang telah Anda pilih. Apabila Anda mengklik status <strong style="color:rgb(22, 163, 74);">Done</strong>, maka Anda harus mengisi tanggal dieksekusinya status tersebut.
 
 Jika semua status yang Anda pilih sudah sesuai, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan melakukan update status secara massal. Apabila Anda ingin membatalkan update status, Anda dapat mengklik button `Cancel`. Setelah melakukan update status, maka akan muncul notifikasi sukses dan secara otomatis data pada tabel akan berubah sesuai dengan data yang telah Anda update.
 

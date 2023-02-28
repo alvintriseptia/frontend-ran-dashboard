@@ -193,7 +193,7 @@ Apabila berhasil melakukan update status, maka status yang Anda pilih akan berub
 
 Sebelum ingin melakukan update status secara massal, Anda harus memilih data yang ingin Anda update statusnya dengan mengklik checkbox yang terdapat di sebelah kiri data tersebut. Selain mengklik satu per satu, Anda juga dapat mengklik button `Select All` untuk memilih semua data yang ada pada tabel di halaman tersebut atau mengklik button `Reset Checkbox` untuk membatalkan pilihan data yang telah Anda buat pada tabel di halaman tersebut.
 
-<img :src="$withBase('/images/plan-activities/bulk_button.png')" alt="plan activities checked button" height="350" style="object-fit: contain;" />
+<img :src="$withBase('/images/plan-activities/bulk_button_user.png')" alt="plan activities checked button" height="350" style="object-fit: contain;" />
 
 Setelah memilih data yang ingin diupdate, Anda dapat mengklik button `Update Status` dan akan muncul modal untuk melakukan update status secara massal.
 
@@ -201,7 +201,7 @@ Setelah memilih data yang ingin diupdate, Anda dapat mengklik button `Update Sta
 
 <img :src="$withBase('/images/plan-activities/bulk_update_status.png')" alt="plan activities update status massal" height="400" style="object-fit: contain;" />
 
-Pada modal tersebut akan muncul preview data yang akan dihapus. Anda dapat mengubah data-data site yang telah Anda pilih sebelumnya melalui form input yang terdapat pada modal tersebut. Setelah itu, Anda dapat memilih status <strong style="color:rgb(22, 163, 74);">Done</strong>, atau <strong style="color:#FF7723;">Not Yet</strong> pada masing-masing aktivitas yang telah Anda pilih. Apabila Anda mengklik status <strong style="color:rgb(22, 163, 74);">Done</strong>, maka Anda harus mengisi tanggal dieksekusinya status tersebut.
+Pada modal tersebut akan muncul preview data yang akan diupdate. Anda dapat mengubah data-data site yang telah Anda pilih sebelumnya melalui form input yang terdapat pada modal tersebut. Setelah itu, Anda dapat memilih status <strong style="color:rgb(22, 163, 74);">Done</strong>, atau <strong style="color:#FF7723;">Not Yet</strong> pada masing-masing aktivitas yang telah Anda pilih. Apabila Anda mengklik status <strong style="color:rgb(22, 163, 74);">Done</strong>, maka Anda harus mengisi tanggal dieksekusinya status tersebut.
 
 Jika semua status yang Anda pilih sudah sesuai, Anda dapat mengklik button `Update` dan mengonfirmasi bahwa akan melakukan update status secara massal. Apabila Anda ingin membatalkan update status, Anda dapat mengklik button `Cancel`. Setelah melakukan update status, maka akan muncul notifikasi sukses dan secara otomatis data pada tabel akan berubah sesuai dengan data yang telah Anda update.
 
