@@ -10,7 +10,7 @@
 
 Untuk mengakses website, Anda wajib melakukan login terlebih dahulu. Anda dapat menggunakan akun yang telah dibuat oleh admin. Jika Anda belum memiliki akun, Anda dapat menghubungi admin untuk membuatkan akun untuk Anda. Untuk login cukup mengisi kolom `username` dan `password` sebagai kredensial. Jika kredensial yang Anda masukkan benar, Anda akan diarahkan ke halaman dashboard.
 
-### Lupa Password
+### Lupa Password | Reset Akun
 
 <img :src="$withBase('/images/page_login_reset.png')" alt="login reset account link" height="400" style="object-fit: contain;" />
 
