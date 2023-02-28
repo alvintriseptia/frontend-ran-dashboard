@@ -32,7 +32,7 @@ langkah-langkahnya:
 
 <img :src="$withBase('/images/admin/database_import.png')" alt="import database" height="200" style="object-fit: contain;" />
 
-8. Pilih file database yang akan diimport, Anda dapat mengunduh struktur database pada link berikut: [database.sql]()
+8. Pilih file database yang akan diimport, Anda dapat mengunduh struktur database pada link berikut: [tsel_radio.sql](/documents/tsel_radio.sql)
 
 <img :src="$withBase('/images/admin/database_import_entry.png')" alt="entry import database" height="200" style="object-fit: contain;" />
 

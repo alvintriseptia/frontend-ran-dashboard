@@ -42,7 +42,8 @@ import Card from "./Layout/Card.vue";
 import LoadingSpinner from "./Layout/LoadingSpinner.vue";
 import APIResponseLayout from "./Layout/APIResponseLayout.vue";
 import LazyTable from "./Layout/LazyTable.vue";
-export { Card, LoadingSpinner, APIResponseLayout, LazyTable };
+import LoginLayout from "./Layout/LoginLayout.vue";
+export { Card, LoadingSpinner, APIResponseLayout, LazyTable, LoginLayout };
 
 // =================================================================================================================== //
 // List Item
