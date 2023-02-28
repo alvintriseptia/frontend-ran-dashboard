@@ -58,7 +58,7 @@
 					v-model="ruleForm.nsId"
 					:options="nsDepartmentOptions"
 					placeholder="Select NS Department"
-					:default-value="ruleForm.nsId"
+					:defaultValue="ruleForm.nsId"
 					@onChange="onUpdateNS"
 				/>
 			</el-form-item>
@@ -71,7 +71,7 @@
 					v-model="ruleForm.doID"
 					:options="doSubDepartmentOptions"
 					placeholder="Select DO Sub-Department"
-					:default-value="ruleForm.doID"
+					:defaultValue="ruleForm.doID"
 					@onChange="onUpdateDO"
 				/>
 			</el-form-item>
@@ -85,7 +85,7 @@
 					:options="kabupatenOptions"
 					:is-multiple="false"
 					placeholder="Select Kabupaten"
-					:default-value="ruleForm.kabupatenID"
+					:defaultValue="ruleForm.kabupatenID"
 					@onChange="onUpdateKabupaten"
 				/>
 			</el-form-item>

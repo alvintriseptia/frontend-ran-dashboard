@@ -37,7 +37,12 @@ const props = defineProps({
 	},
 });
 
-const options = computed(() => props.options);
+const options = computed(() => {
+	if (props.options.length === 0) {
+		value.value = "";
+	}
+	return props.options;
+});
 
 const value = ref("");
 
@@ -46,14 +51,10 @@ onMounted(() => {
 		value.value = props.defaultValue;
 	}
 
-	watch(
+	computed(
 		() => props.defaultValue,
 		(newVal) => {
-			if (newVal) {
-				value.value = newVal;
-			} else if (newVal === "") {
-				value.value = "";
-			}
+			value.value = newVal;
 		}
 	);
 });

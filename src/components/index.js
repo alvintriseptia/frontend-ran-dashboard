@@ -14,10 +14,11 @@ export { Button, OutlinedButton };
 
 // =================================================================================================================== //
 // Select
+import SelectFilter from "./Select/SelectFilter.vue";
 import Select from "./Select/Select.vue";
 import SearchSelect from "./Select/SearchSelect.vue";
 import RemoteSearchSelect from "./Select/RemoteSearchSelect.vue";
-export { Select, SearchSelect, RemoteSearchSelect };
+export { Select, SearchSelect, SelectFilter, RemoteSearchSelect };
 
 // =================================================================================================================== //
 // Table

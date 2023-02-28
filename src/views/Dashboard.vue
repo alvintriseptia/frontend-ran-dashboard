@@ -117,7 +117,7 @@
 						placeholder="Pilih Sub Program"
 						@onUpdate="handleSubProgramUpdate"
 					/>
-					<Select
+					<SelectFilter
 						:options="quarterOptions"
 						placeholder="Pilih Kuartal"
 						@onChange="handleQuarterUpdate"
@@ -153,7 +153,7 @@ import {
 	ActivitySummaryTable,
 	SearchSelect,
 	APIResponseLayout,
-	Select,
+	SelectFilter,
 } from "@/components";
 import { useFetch } from "@/composables";
 import { dateUtil } from "@/utils";
