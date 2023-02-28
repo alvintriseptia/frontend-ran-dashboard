@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Card title="Sites" :alert="alertCard">
+		<Card v-loading="loading" title="Sites" :alert="alertCard">
 			<template #header>
 				<OutlinedButton class="mr-4" @onClick="showInput('input')">
 					Input
@@ -114,6 +114,8 @@ import { useFetch } from "@/composables";
 import { debounce } from "vue-debounce";
 import { Notification, Loading } from "element-ui";
 import axios from "axios";
+
+const loading = ref(false);
 
 // ===================================== DATA SITES =====================================
 // Sites
@@ -333,6 +335,7 @@ const handleRemoveButton = (data) => {
 };
 
 const handleDelete = () => {
+	loading.value = true;
 	isShowModalConfirmation.value = false;
 	const url = "/api/site/" + row.value.siteID;
 
@@ -343,6 +346,8 @@ const handleDelete = () => {
 
 	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
 		if (newStatus === "success") {
+			loading.value = false;
+
 			sites.value.data.splice(index.value, 1);
 
 			const message = `Site ${row.value.siteID} has been deleted`;
@@ -360,6 +365,7 @@ const handleDelete = () => {
 
 			unwatch();
 		} else if (newStatus === "error" && newMessage) {
+			loading.value = false;
 			Notification.error({
 				title: "Error",
 				message: newError,
@@ -383,6 +389,7 @@ const deletedCount = ref(0);
 
 const handleShowModalConfirmation = (result) => {
 	if (result) {
+		loading.value = true;
 		row.value = result.row;
 		index.value = result.index;
 		type.value = result.type;
@@ -401,6 +408,7 @@ const handleShowModalConfirmation = (result) => {
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && (newData || newData === 0)) {
+						loading.value = false;
 						if (parseInt(newData) > 0) {
 							deletedCount.value = parseInt(newData);
 							if (result.type === "site") {
@@ -415,6 +423,7 @@ const handleShowModalConfirmation = (result) => {
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
+						loading.value = false;
 						Notification.error({
 							title: "Error",
 							message: newMessage,
@@ -433,6 +442,7 @@ const handleShowModalConfirmation = (result) => {
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
+						loading.value = false;
 						if (parseInt(newData) > 0) {
 							deletedCount.value = parseInt(newData);
 							descriptionDialog.value = `There are ${newData} sites that use this ${type.value.toUpperCase()} will be updated.`;
@@ -443,6 +453,7 @@ const handleShowModalConfirmation = (result) => {
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
+						loading.value = false;
 						Notification.error({
 							title: "Error",
 							message: newMessage,

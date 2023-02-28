@@ -86,7 +86,7 @@
 							<PopOverAccount
 								v-if="convertUtil.toBoolean(row.admin) === false"
 								:active="row.active"
-								@onUpdate="(result) => handleActive(row, result)"
+								@onUpdate="(result) => handleActive(row, index, result)"
 							/>
 						</div>
 					</td>
@@ -142,11 +142,9 @@
 </template>
 
 <script setup>
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { numberFormat, convertUtil, dateUtil } from "@/utils";
-import { useFetch } from "@/composables";
 import { PopOverAccount } from "@/components";
-import { Notification } from "element-ui";
 
 const tableHeader = [
 	{
@@ -193,7 +191,7 @@ const props = defineProps({
 const data = computed(() => props.data);
 const loading = computed(() => props.loading);
 
-const emit = defineEmits(["onUpdate", "onEdit"]);
+const emit = defineEmits(["onUpdate", "onEdit", "onActive"]);
 
 function handleReset(row, index) {
 	emit("onReset", { row, index, type: "reset" });
@@ -203,39 +201,11 @@ function handleEdit(row, index) {
 	emit("onEdit", { row, index, type: "edit" });
 }
 
-function handleActive(row) {
+function handleActive(row, index, result) {
 	const body = new FormData();
-	const active = convertUtil.toBoolean(row.active) === true ? 0 : 1;
-	body.append("active", active);
+	body.append("active", result);
+	const url = "/api/auth/user/change-status/" + row.uuid;
 
-	const { data, status, message } = useFetch({
-		url: "/api/auth/user/change-status/" + row.uuid,
-		method: "PUT",
-		body,
-	});
-
-	const unwatch = watch(
-		[data, status, message],
-		([newData, newStatus, newMessage]) => {
-			if (newStatus === "success" && newData) {
-				row.active = active.toString();
-				row.updatedAt = newData.updatedAt;
-
-				Notification.success({
-					title: "Success",
-					message: "Account status has been updated",
-				});
-
-				unwatch();
-			} else if (newStatus === "error" && newMessage) {
-				Notification.error({
-					title: "Error",
-					message: newMessage,
-				});
-
-				unwatch();
-			}
-		}
-	);
+	emit("onActive", { index, body, url });
 }
 </script>

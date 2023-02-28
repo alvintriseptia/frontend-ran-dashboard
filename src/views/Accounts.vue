@@ -1,6 +1,6 @@
 <template>
 	<main>
-		<Card title="Accounts">
+		<Card id="account-table" v-loading="isLoading" title="Accounts">
 			<template #header>
 				<OutlinedButton class="mr-4" @onClick="showInput()">
 					Add Account
@@ -11,6 +11,7 @@
 				:data="accounts.data"
 				@onReset="handleShowModalConfirmation"
 				@onEdit="handleShowModalAccount"
+				@onActive="handleActiveAccount"
 			/>
 		</Card>
 
@@ -64,6 +65,8 @@ const accounts = ref(
 		url: "/api/auth/user/all",
 	})
 );
+
+const isLoading = ref(false);
 
 // ====================================== ADD ACCOUNT ======================================
 // Menu Input
@@ -122,6 +125,7 @@ const handleCancelModalConfirmation = () => {
 };
 
 const handleConfirmModalConfirmation = () => {
+	isLoading.value = true;
 	const body = new FormData();
 	const reset = convertUtil.toBoolean(rowReset.value.reset) ? false : true;
 	body.append("reset", reset);
@@ -136,6 +140,8 @@ const handleConfirmModalConfirmation = () => {
 		[data, status, message],
 		([newData, newStatus, newMessage]) => {
 			if (newStatus === "success" && newData) {
+				isLoading.value = false;
+
 				Notification.success({
 					title: "Success",
 					message: reset
@@ -152,6 +158,8 @@ const handleConfirmModalConfirmation = () => {
 				accounts.value.data[indexReset.value].updatedAt = newData.updatedAt;
 				unwatch();
 			} else if (newStatus === "error" && newMessage) {
+				isLoading.value = false;
+
 				Notification.error({
 					title: "Error",
 					message: newMessage,
@@ -183,20 +191,37 @@ const handleCancelModal = () => {
 };
 
 const handleConfirmModalAccount = (result) => {
-	accounts.value.data[indexEdit.value].username = result.username;
-	accounts.value.data[indexEdit.value].nsID = result.nsID;
-	accounts.value.data[indexEdit.value].namaNS = result.namaNS;
-	accounts.value.data[indexEdit.value].updatedAt = result.updatedAt;
-
-	Notification.success({
-		title: "Success",
-		message: "Account has been updated",
+	isLoading.value = true;
+	const { data, status, message } = useFetch({
+		url: result.url,
+		method: "PUT",
+		body: result.body,
 	});
 
-	rowEdit.value = {};
-	indexEdit.value = null;
+	watch([data, status, message], ([newData, newStatus, newMessage]) => {
+		if (newStatus === "success" && newData) {
+			isLoading.value = false;
+			accounts.value.data[indexEdit.value].username = newData.username;
+			accounts.value.data[indexEdit.value].nsID = newData.nsID;
+			accounts.value.data[indexEdit.value].namaNS = newData.namaNS;
+			accounts.value.data[indexEdit.value].updatedAt = newData.updatedAt;
 
-	isShowModalAccount.value = false;
+			rowEdit.value = {};
+			indexEdit.value = null;
+
+			isShowModalAccount.value = false;
+			Notification.success({
+				title: "Success",
+				message: "Account has been updated",
+			});
+		} else if (newStatus === "error" && newMessage) {
+			isLoading.value = false;
+			Notification.error({
+				title: "Error",
+				message: newMessage,
+			});
+		}
+	});
 };
 
 // ================================ NS Department ================================
@@ -222,6 +247,41 @@ onMounted(async () => {
 		}
 	});
 });
+
+// ========================= HANDLE ACTIVE ACCOUNT =====================================
+const handleActiveAccount = (result) => {
+	isLoading.value = true;
+	const { data, status, message } = useFetch({
+		url: result.url,
+		method: "PUT",
+		body: result.body,
+	});
+
+	const unwatch = watch(
+		[data, status, message],
+		([newData, newStatus, newMessage]) => {
+			if (newStatus === "success" && newData) {
+				isLoading.value = false;
+				accounts.value.data[result.index].active = newData.active;
+				accounts.value.data[result.index].updatedAt = newData.updatedAt;
+
+				Notification.success({
+					title: "Success",
+					message: "Account status has been updated",
+				});
+				unwatch();
+			} else if (newStatus === "error" && newMessage) {
+				isLoading.value = false;
+				Notification.error({
+					title: "Error",
+					message: newMessage,
+				});
+
+				unwatch();
+			}
+		}
+	);
+};
 
 // ========================= EXPORT EXCEL =========================
 const handleExportAccounts = async () => {

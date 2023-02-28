@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50"
+		v-loading="loading"
+		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-50 overflow-x-hidden"
 		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
@@ -159,6 +160,8 @@ import { useFetch } from "@/composables";
 import { Notification } from "element-ui";
 import { debounce } from "vue-debounce";
 import { options } from "@/utils";
+
+const loading = ref(false);
 
 const pickerOptions = {
 	disabledDate(time) {
@@ -349,6 +352,7 @@ function handleUpdateSite(value) {
 function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
 		if (valid) {
+			loading.value = true;
 			const body = new FormData();
 			body.append(
 				"activityId",
@@ -377,6 +381,7 @@ function onSubmit() {
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
+						loading.value = false;
 						//reset form
 						formInputActivity.value = {
 							deskripsiActivity: "",
@@ -398,6 +403,7 @@ function onSubmit() {
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
+						loading.value = false;
 						Notification.error({
 							title: "Error",
 							message: newMessage,

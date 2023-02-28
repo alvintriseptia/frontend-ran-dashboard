@@ -39,8 +39,6 @@
 <script setup>
 import { Select } from "@/components";
 import { computed, ref, watch } from "vue";
-import { useFetch } from "@/composables";
-import { Notification } from "element-ui";
 
 const emit = defineEmits(["onSubmit", "onCancel"]);
 const props = defineProps({
@@ -118,23 +116,7 @@ function onSubmit() {
 			body.append("ns", form.value.namaNS);
 			url = "/api/auth/user/" + userUuid.value;
 
-			const { data, status, message } = useFetch({
-				url: url,
-				method: "PUT",
-				body,
-			});
-
-			watch([data, status, message], ([newData, newStatus, newMessage]) => {
-				if (newStatus === "success" && newData) {
-					ruleFormRef.value.model.namaNS = "";
-					emit("onSubmit", newData);
-				} else if (newStatus === "error" && newMessage) {
-					Notification.error({
-						title: "Error",
-						message: newMessage,
-					});
-				}
-			});
+			emit("onSubmit", { body, url });
 		} else {
 			return false;
 		}

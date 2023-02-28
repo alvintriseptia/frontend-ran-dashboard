@@ -905,6 +905,12 @@ const handleCancelModalConfirmation = () => {
 };
 
 const handleConfirmModalConfirmation = () => {
+	Loading.service({
+		lock: true,
+		text: "Loading...",
+		spinner: "el-icon-loading",
+		background: "rgba(0, 0, 0, 0.7)",
+	});
 	const url =
 		"/api/activity-plan/" +
 		rowModalConfirmation.value.activityID +
@@ -918,6 +924,7 @@ const handleConfirmModalConfirmation = () => {
 
 	const unwatch = watch([status, message], ([newStatus, newMessage]) => {
 		if (newStatus === "success") {
+			Loading.service().close();
 			activities.value.data.splice(indexModalConfirmation.value, 1);
 			const message = `Plan ${rowModalConfirmation.value.deskripsiActivity} with site ${rowModalConfirmation.value.siteID} successfully deleted`;
 
@@ -933,6 +940,7 @@ const handleConfirmModalConfirmation = () => {
 
 			unwatch();
 		} else if (newStatus === "error" && newMessage) {
+			Loading.service().close();
 			isShowModalConfirmation.value = false;
 
 			Notification.error({

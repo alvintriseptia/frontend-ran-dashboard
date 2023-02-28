@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40"
+		v-loading="loading"
+		class="w-full md:w-[350px] p-8 h-full fixed top-0 bottom-0 bg-white transition-all duration-500 overflow-y-auto z-40 overflow-x-hidden"
 		:class="isShowInput ? 'right-0' : '-right-full'"
 	>
 		<div class="flex justify-between items-center mb-6">
@@ -119,6 +120,8 @@ import { Notification } from "element-ui";
 import { userStore } from "@/stores";
 import { options } from "@/utils";
 
+const loading = ref(false);
+
 // Form Input
 const formUpdateActivity = ref({
 	deskripsiActivity: props.row.deskripsiActivity,
@@ -222,6 +225,7 @@ const onUpdateQuartal = (value) => {
 function onSubmit() {
 	ruleFormRef.value.validate((valid) => {
 		if (valid) {
+			loading.value = true;
 			const body = new FormData();
 			body.append("activityId", formUpdateActivity.value.activityId);
 			body.append("siteId", formUpdateActivity.value.siteId);
@@ -251,10 +255,13 @@ function onSubmit() {
 				[data, status, message],
 				([newData, newStatus, newMessage]) => {
 					if (newStatus === "success" && newData) {
+						loading.value = false;
+
 						emit("closeFormUpdateActivity", newData);
 
 						unwatch();
 					} else if (newStatus === "error" && newMessage) {
+						loading.value = false;
 						Notification.error({
 							title: "Error",
 							message: newMessage,
