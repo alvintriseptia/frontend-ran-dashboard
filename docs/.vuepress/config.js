@@ -56,7 +56,7 @@ module.exports = {
 			"/user/": "auto" /* automatically generate single-page sidebars */,
 		},
 		nav: [
-			{ text: "Dashboard", link: "http://localhost:5173" },
+			{ text: "Dashboard", link: "http://ran.telkomsel" },
 			{ text: "Home", link: "/" },
 			{
 				text: "Guide",

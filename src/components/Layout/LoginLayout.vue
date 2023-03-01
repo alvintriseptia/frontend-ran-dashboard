@@ -24,5 +24,5 @@
 <script setup>
 import telkomselBackground from "@/assets/images/telkomsel-background.jpg";
 
-const manualGuideLink = "http://localhost:8080";
+const manualGuideLink = "http://docs.ran.telkomsel";
 </script>
