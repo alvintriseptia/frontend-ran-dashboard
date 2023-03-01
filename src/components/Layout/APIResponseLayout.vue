@@ -3,7 +3,7 @@
 		<LoadingSpinner />
 	</div>
 	<div v-else-if="error">
-		<el-result icon="error" title="Terjadi Kesalahan" :subTitle="error">
+		<el-result icon="error" title="an Error Occurred" :subTitle="error">
 			<template slot="extra">
 				<el-button type="primary" size="medium" @click="refreshFunction">
 					Refresh

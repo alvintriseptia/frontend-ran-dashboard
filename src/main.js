@@ -11,7 +11,7 @@ import VueRouter from "vue-router";
 import locale from "element-ui/lib/locale/lang/en";
 import vClickOutside from "v-click-outside";
 
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "http://www.api.ran.telkomsel";
 axios.defaults.withCredentials = true;
 
 Vue.use(vClickOutside);
